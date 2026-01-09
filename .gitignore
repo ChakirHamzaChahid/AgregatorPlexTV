@@ -1,0 +1,5 @@
+cache_assets/
+cache_posters/
+app/cache_assets/
+app/cache_posters/
+app/__pycache__
