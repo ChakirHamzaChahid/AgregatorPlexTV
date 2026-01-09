@@ -9,7 +9,7 @@ from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse, JSO
 from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 
-# Imports locaux
+# Imports locaux (Architecture Modulaire)
 from app.config import settings
 from app.models import MovieDetail, ServerInfo
 from app.plex_client import plex_client
@@ -33,33 +33,39 @@ class TokenFilter(logging.Filter):
         return True
 
 def setup_logging():
-    """Configure un système de log robuste (Console + Fichier Rotatif)."""
-    # 1. Création du Logger
-    logger = logging.getLogger("API")
-    logger.setLevel(logging.INFO)
+    """Configure un système de log robuste (Console + Fichier Rotatif) pour TOUTE l'app."""
+    # 1. On récupère le Logger RACINE (Root) pour tout capturer
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
     
-    # 2. Format des logs
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # Nettoyage des handlers existants (pour éviter les doublons lors du reload)
+    if root_logger.hasHandlers():
+        root_logger.handlers.clear()
     
-    # 3. Handler Console (Sortie standard)
+    # 2. Format des logs (Plus précis avec le nom du module)
+    # Ex: 2023-10-25 12:00:00 - PlexClient - INFO - Scan terminé
+    formatter = logging.Formatter('%(asctime)s - %(name)-12s - %(levelname)-8s - %(message)s')
+    
+    # 3. Handler Console
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
-    console_handler.addFilter(TokenFilter()) # Applique le filtre de sécurité
-    logger.addHandler(console_handler)
+    console_handler.addFilter(TokenFilter())
+    root_logger.addHandler(console_handler)
     
-    # 4. Handler Fichier (Rotation automatique : 10Mo, garde 5 backups)
-    # Permet de garder un historique sans saturer le disque dur
+    # 4. Handler Fichier (server.log)
+    # Capture PlexClient, API, Discovery... TOUT.
     file_handler = RotatingFileHandler("server.log", maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
     file_handler.setFormatter(formatter)
     file_handler.addFilter(TokenFilter())
-    logger.addHandler(file_handler)
+    root_logger.addHandler(file_handler)
 
-    # 5. Silence radio pour les librairies bavardes (Docker/VPN errors)
+    # 5. Silence radio pour les librairies externes bavardes
     logging.getLogger("plexapi").setLevel(logging.CRITICAL)
     logging.getLogger("urllib3").setLevel(logging.CRITICAL)
     logging.getLogger("multipart").setLevel(logging.WARNING)
+    logging.getLogger("watchfiles").setLevel(logging.WARNING)
     
-    return logger
+    return logging.getLogger("API")
 
 logger = setup_logging()
 templates = Jinja2Templates(directory="app/templates")
@@ -70,6 +76,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 # Timeouts généreux (60s) pour tolérer les serveurs distants lents
 timeout_config = httpx.Timeout(60.0, connect=30.0)
+# Limites pour éviter de saturer l'OS tout en permettant le streaming fluide
 limits = httpx.Limits(max_keepalive_connections=settings.MAX_STREAMS + 2, max_connections=20)
 
 http_client = httpx.AsyncClient(
@@ -78,17 +85,18 @@ http_client = httpx.AsyncClient(
     limits=limits
 )
 
-# Sémaphore : Gestion des slots de streaming simultanés
+# Sémaphore : Gestion des slots de streaming simultanés (ex: 3 max)
 stream_semaphore = asyncio.Semaphore(settings.MAX_STREAMS)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Cycle de vie : Démarrage et Arrêt."""
-    logger.info("🚀 Démarrage du serveur PlexHub...")
+    logger.info("🚀 Démarrage du serveur PlexHub (Version Prod)...")
     
     # 1. SCAN AU DÉMARRAGE (Background)
     # force=True : Lance le scan réseau même si le cache disque est chargé.
+    # Assure que les nouvelles séries/films apparaissent rapidement.
     asyncio.create_task(plex_client.refresh_library(force=True))
     
     # 2. DÉCOUVERTE AUTO (mDNS)
@@ -135,7 +143,7 @@ async def get_movies(request: Request):
     """
     base_url = str(request.base_url).rstrip('/')
     
-    # Récupération ultra-rapide depuis la RAM
+    # Récupération ultra-rapide depuis la RAM (déjà formaté par plex_client)
     movies = list(plex_client.movies_cache.values())
     
     results = []
@@ -160,6 +168,23 @@ async def get_movies(request: Request):
             new_sources.append(s_copy)
         m_copy.sources = new_sources
         
+        # Pour les séries, on doit aussi injecter les URLs dans les épisodes imbriqués
+        if m_copy.type == 'show':
+            for season in m_copy.seasons:
+                for ep in season.episodes:
+                    if ep.thumb_url and ep.thumb_url.startswith("/"):
+                        ep.thumb_url = base_url + ep.thumb_url
+                    
+                    new_ep_sources = []
+                    for s in ep.sources:
+                        s_ep_copy = s.model_copy()
+                        if s_ep_copy.stream_url.startswith("/"):
+                            s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
+                        if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
+                            s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
+                        new_ep_sources.append(s_ep_copy)
+                    ep.sources = new_ep_sources
+
         results.append(m_copy)
             
     return results
@@ -177,6 +202,7 @@ async def get_movie_detail(movie_id: str, request: Request):
     if m_copy.poster_url.startswith("/"):
         m_copy.poster_url = base_url + m_copy.poster_url
         
+    # Injection URLs (copie de la logique ci-dessus pour le détail unique)
     new_sources = []
     for s in m_copy.sources:
         s_copy = s.model_copy()
@@ -186,6 +212,21 @@ async def get_movie_detail(movie_id: str, request: Request):
             s_copy.m3u_url = base_url + s_copy.m3u_url
         new_sources.append(s_copy)
     m_copy.sources = new_sources
+    
+    if m_copy.type == 'show':
+        for season in m_copy.seasons:
+            for ep in season.episodes:
+                if ep.thumb_url and ep.thumb_url.startswith("/"):
+                    ep.thumb_url = base_url + ep.thumb_url
+                new_ep_sources = []
+                for s in ep.sources:
+                    s_ep_copy = s.model_copy()
+                    if s_ep_copy.stream_url.startswith("/"):
+                        s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
+                    if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
+                        s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
+                    new_ep_sources.append(s_ep_copy)
+                ep.sources = new_ep_sources
     
     return m_copy
 

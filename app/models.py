@@ -1,20 +1,36 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict
 
-class MovieSource(BaseModel):
-    """Source unique d'un média."""
+class Source(BaseModel):
+    """Source de lecture (Fichier sur un serveur précis)."""
     server_name: str
     resolution: str
     is_owned: bool
-    stream_url: str      # Lecture directe JSON/Browser
-    m3u_url: str         # <--- NOUVEAU : Lien Playlist pour lecteurs externes
+    stream_url: str
+    m3u_url: str
     plex_deeplink: str
     plex_web_url: str
 
-class MovieDetail(BaseModel):
-    """Agrégation d'un média (Film ou Série)."""
+class EpisodeDetail(BaseModel):
+    """Détail d'un épisode."""
+    id: str             # ex: "S01E01"
+    index: int          # Numéro épisode
+    title: str
+    summary: str
+    thumb_url: str = "" # Image spécifique de l'épisode
+    sources: List[Source] = Field(default_factory=list)
+
+class SeasonDetail(BaseModel):
+    """Détail d'une saison."""
+    index: int          # Numéro saison (1, 2...)
+    title: str          # "Saison 1"
+    episode_count: int
+    episodes: List[EpisodeDetail] = Field(default_factory=list)
+
+class MediaDetail(BaseModel):
+    """Objet racine (Film ou Série)."""
     id: str
-    type: str = "movie"  # <--- NOUVEAU : 'movie' ou 'show'
+    type: str           # 'movie' ou 'show'
     title: str
     year: int
     director: str
@@ -22,7 +38,15 @@ class MovieDetail(BaseModel):
     summary: str
     rating: float
     poster_url: str
-    sources: List[MovieSource] = Field(default_factory=list)
+    
+    # Pour les films :
+    sources: List[Source] = Field(default_factory=list)
+    
+    # Pour les séries :
+    seasons: List[SeasonDetail] = Field(default_factory=list)
+
+# Alias pour compatibilité avec le code existant si besoin
+MovieDetail = MediaDetail 
 
 class ServerInfo(BaseModel):
     name: str

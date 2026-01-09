@@ -5,18 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlexHub - Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: { 
                 extend: { 
-                    colors: { 
-                        plex: '#e5a00d', 
-                        darkbg: '#0f1115', 
-                        cardbg: '#181b21',
-                        sidebar: '#131519'
-                    },
+                    colors: { plex: '#e5a00d', darkbg: '#0f1115', cardbg: '#181b21', sidebar: '#131519'},
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
                 } 
             }
@@ -25,12 +19,11 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         [x-cloak] { display: none !important; }
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f1115; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #e5a00d; }
     </style>
-    
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
@@ -42,69 +35,76 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
                 <div class="flex items-center gap-6">
                     <div class="flex flex-col">
-                        <h1 class="text-3xl font-black text-white tracking-tighter uppercase italic leading-none cursor-default">
-                            Plex<span class="text-plex">Hub</span>
+                        <h1 class="text-3xl font-black text-white tracking-tighter uppercase italic leading-none cursor-default hover:text-plex transition-colors duration-300">
+                            Plex<span class="text-plex text-white hover:text-white">Hub</span>
                         </h1>
-                        <span class="text-[9px] font-mono text-gray-500 uppercase tracking-widest pl-0.5" x-text="scanStatus">...</span>
+                        <span class="text-[9px] font-mono text-gray-500 uppercase tracking-widest pl-0.5" x-text="scanStatus">Initialisation...</span>
                     </div>
 
                     <div class="hidden sm:flex gap-2 border-l border-gray-700 pl-6">
-                        <div class="bg-cardbg px-3 py-1 rounded-lg border border-gray-800 flex flex-col items-center min-w-[60px]">
+                        <div class="bg-cardbg px-4 py-1.5 rounded-lg border border-gray-800 flex flex-col items-center min-w-[70px] shadow-sm">
                             <span class="text-[8px] text-gray-500 font-bold uppercase tracking-wider">Films</span>
-                            <span class="text-plex font-black text-lg leading-none" x-text="stats.movies">0</span>
+                            <span class="text-plex font-black text-xl leading-none" x-text="stats.movies">0</span>
                         </div>
-                        <div class="bg-cardbg px-3 py-1 rounded-lg border border-gray-800 flex flex-col items-center min-w-[60px]">
+                        <div class="bg-cardbg px-4 py-1.5 rounded-lg border border-gray-800 flex flex-col items-center min-w-[70px] shadow-sm">
                             <span class="text-[8px] text-gray-500 font-bold uppercase tracking-wider">Séries</span>
-                            <span class="text-white font-black text-lg leading-none" x-text="stats.shows">0</span>
+                            <span class="text-white font-black text-xl leading-none" x-text="stats.shows">0</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex gap-3 w-full md:w-auto">
                     <button @click="refreshLibrary()" 
-                            class="bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-2 border border-gray-700">
+                            class="bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-2 border border-gray-700 shadow-lg"
+                            title="Lancer un scan manuel">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                         SCAN
                     </button>
                     
-                    <div class="relative flex-grow md:flex-grow-0">
+                    <div class="relative flex-grow md:flex-grow-0 group">
                         <input type="text" x-model="filters.search" placeholder="Rechercher un titre..." 
-                               class="w-full md:w-64 bg-cardbg border border-gray-700 rounded-xl pl-10 pr-4 py-2 text-sm focus:border-plex focus:ring-1 focus:ring-plex outline-none transition-all placeholder-gray-600">
-                        <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                               class="w-full md:w-64 bg-cardbg border border-gray-700 rounded-xl pl-10 pr-4 py-2 text-sm focus:border-plex focus:ring-1 focus:ring-plex outline-none transition-all placeholder-gray-600 group-hover:border-gray-600">
+                        <svg class="w-4 h-4 text-gray-500 absolute left-3 top-2.5 group-hover:text-plex transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-4 border-t border-gray-800 pt-3">
                 
-                <div class="bg-cardbg p-1 rounded-lg border border-gray-700 flex">
+                <div class="bg-cardbg p-1 rounded-lg border border-gray-700 flex shadow-inner">
                     <button @click="filters.type = 'movie'" 
-                            :class="filters.type === 'movie' ? 'bg-plex text-black shadow-lg' : 'text-gray-400 hover:text-white'"
-                            class="px-4 py-1.5 rounded-md text-xs font-black uppercase transition-all duration-300">
+                            :class="filters.type === 'movie' ? 'bg-plex text-black shadow-md' : 'text-gray-400 hover:text-white'"
+                            class="px-5 py-1.5 rounded-md text-xs font-black uppercase transition-all duration-300 transform">
                         Films
                     </button>
                     <button @click="filters.type = 'show'" 
-                            :class="filters.type === 'show' ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'"
-                            class="px-4 py-1.5 rounded-md text-xs font-black uppercase transition-all duration-300">
+                            :class="filters.type === 'show' ? 'bg-white text-black shadow-md' : 'text-gray-400 hover:text-white'"
+                            class="px-5 py-1.5 rounded-md text-xs font-black uppercase transition-all duration-300 transform">
                         Séries
                     </button>
                 </div>
 
                 <div class="h-6 w-px bg-gray-800 hidden sm:block"></div>
 
-                <select x-model="filters.genre" class="bg-transparent text-xs font-bold text-gray-400 hover:text-plex outline-none cursor-pointer uppercase tracking-wide">
-                    <option value="all">Tous les genres</option>
-                    <template x-for="g in availableGenres" :key="g">
-                        <option :value="g" x-text="g"></option>
-                    </template>
-                </select>
+                <div class="relative group">
+                    <select x-model="filters.genre" class="bg-transparent text-xs font-bold text-gray-400 hover:text-plex outline-none cursor-pointer uppercase tracking-wide appearance-none pr-6">
+                        <option value="all">Tous les genres</option>
+                        <template x-for="g in availableGenres" :key="g">
+                            <option :value="g" x-text="g"></option>
+                        </template>
+                    </select>
+                    <span class="absolute right-0 top-0.5 pointer-events-none text-gray-600 group-hover:text-plex">▼</span>
+                </div>
 
-                <select x-model="filters.sort" class="bg-transparent text-xs font-bold text-gray-400 hover:text-white outline-none cursor-pointer uppercase tracking-wide ml-auto">
-                    <option value="year_desc">Année (Récent)</option>
-                    <option value="year_asc">Année (Ancien)</option>
-                    <option value="rating">Note (Haute)</option>
-                    <option value="alpha">Titre (A-Z)</option>
-                </select>
+                <div class="ml-auto relative group">
+                    <select x-model="filters.sort" class="bg-transparent text-xs font-bold text-gray-400 hover:text-white outline-none cursor-pointer uppercase tracking-wide appearance-none pr-6 text-right">
+                        <option value="year_desc">Année (Récent)</option>
+                        <option value="year_asc">Année (Ancien)</option>
+                        <option value="rating">Note (Haute)</option>
+                        <option value="alpha">Titre (A-Z)</option>
+                    </select>
+                    <span class="absolute right-0 top-0.5 pointer-events-none text-gray-600 group-hover:text-white">▼</span>
+                </div>
             </div>
         </div>
     </header>
@@ -117,25 +117,25 @@
         </div>
 
         <div x-show="!loading && processedMedia.length === 0" x-cloak class="text-center py-32">
-            <p class="text-gray-600 text-lg">Aucun résultat trouvé.</p>
-            <button @click="filters.search = ''; filters.genre = 'all'" class="text-plex hover:underline text-sm mt-2">Réinitialiser les filtres</button>
+            <p class="text-gray-600 text-lg font-light">Aucun résultat ne correspond à votre recherche.</p>
+            <button @click="filters.search = ''; filters.genre = 'all'" class="text-plex hover:text-white font-bold text-sm mt-4 border-b border-plex hover:border-white transition-colors">Réinitialiser les filtres</button>
         </div>
 
-        <div x-show="!loading" x-cloak class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-5">
+        <div x-show="!loading" x-cloak class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-6">
             <template x-for="item in processedMedia" :key="item.id">
                 <div @click="openModal(item)" 
-                     class="group relative bg-cardbg rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 ring-1 ring-white/5 hover:ring-plex shadow-lg hover:shadow-plex/20">
+                     class="group relative bg-cardbg rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-300 ring-1 ring-white/5 hover:ring-plex shadow-lg hover:shadow-plex/20">
                     
                     <div class="aspect-[2/3] overflow-hidden bg-gray-900 relative">
                         <img :src="item.poster_url" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100">
                         
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity"></div>
                         
                         <div class="absolute top-2 right-2">
-                             <span class="bg-black/60 backdrop-blur-md text-white border border-white/10 px-1.5 py-0.5 rounded text-[9px] font-bold shadow-sm" x-text="getMaxResolution(item)"></span>
+                             <span class="bg-black/60 backdrop-blur-md text-white border border-white/10 px-1.5 py-0.5 rounded text-[9px] font-bold shadow-sm" x-text="getQualityBadge(item)"></span>
                         </div>
 
-                        <div x-show="item.sources.length > 1" class="absolute bottom-2 right-2">
+                        <div x-show="item.sources.length > 1 || (item.type === 'show' && item.seasons.length > 0)" class="absolute bottom-2 right-2">
                             <span class="bg-plex text-black px-1.5 py-0.5 rounded text-[9px] font-black shadow-md uppercase">Multi</span>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                         <h3 class="font-bold text-gray-100 text-xs truncate leading-tight group-hover:text-plex transition-colors" x-text="item.title"></h3>
                         <div class="flex justify-between items-center mt-2">
                             <span class="text-[10px] text-gray-500 font-medium" x-text="item.year"></span>
-                            <div class="flex items-center gap-1 bg-gray-800/50 px-1.5 py-0.5 rounded">
+                            <div class="flex items-center gap-1 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700">
                                 <span class="text-plex text-[10px]">★</span>
                                 <span class="text-[10px] text-gray-300 font-bold" x-text="item.rating > 0 ? item.rating : '-'"></span>
                             </div>
@@ -177,70 +177,54 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-cardbg to-transparent md:bg-gradient-to-r"></div>
             </div>
 
-            <div class="p-6 md:p-10 md:w-2/3 overflow-y-auto custom-scrollbar">
-                <button @click="closeModal()" class="absolute top-4 right-4 p-2 text-gray-500 hover:text-white bg-black/20 hover:bg-gray-700 rounded-full transition-all">
+            <div class="p-6 md:p-10 md:w-2/3 overflow-y-auto custom-scrollbar flex flex-col h-full relative">
+                <button @click="closeModal()" class="absolute top-4 right-4 p-2 text-gray-500 hover:text-white bg-black/20 hover:bg-gray-700 rounded-full transition-all z-10">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
                 
                 <template x-if="selectedItem">
-                    <div class="space-y-6">
-                        <div>
+                    <div class="flex-grow">
+                        
+                        <div class="mb-8">
                             <div class="flex items-center gap-3 mb-2">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border"
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border shadow-sm"
                                       :class="selectedItem.type === 'movie' ? 'bg-plex/10 text-plex border-plex/20' : 'bg-white/10 text-white border-white/20'"
                                       x-text="selectedItem.type === 'movie' ? 'FILM' : 'SÉRIE TV'">
                                 </span>
                                 <span class="text-gray-500 text-xs font-bold" x-text="selectedItem.year"></span>
+                                <span class="text-plex font-bold text-xs">★ <span x-text="selectedItem.rating"></span></span>
                             </div>
-                            <h2 class="text-3xl md:text-4xl font-black text-white uppercase italic leading-none" x-text="selectedItem.title"></h2>
-                        </div>
-
-                        <div class="flex flex-wrap gap-4 text-sm text-gray-400 border-b border-gray-800 pb-6">
-                            <div class="flex items-center gap-2">
-                                <span class="text-gray-600 font-bold uppercase text-[10px]">De</span>
-                                <span class="text-white font-semibold" x-text="selectedItem.director"></span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-gray-600 font-bold uppercase text-[10px]">Note</span>
-                                <span class="text-plex font-bold">★ <span x-text="selectedItem.rating"></span></span>
-                            </div>
-                            <div class="flex flex-wrap gap-2 ml-auto">
+                            
+                            <h2 class="text-3xl md:text-5xl font-black text-white uppercase italic leading-none mb-4" x-text="selectedItem.title"></h2>
+                            
+                            <div class="flex flex-wrap gap-2 mb-6">
                                 <template x-for="g in selectedItem.genres" :key="g">
-                                    <span class="text-[10px] uppercase font-bold text-gray-500 bg-gray-800 px-2 py-1 rounded" x-text="g"></span>
+                                    <span class="text-[10px] uppercase font-bold text-gray-400 bg-gray-800/50 border border-gray-700 px-2 py-1 rounded hover:text-white transition-colors" x-text="g"></span>
                                 </template>
                             </div>
+
+                            <p class="text-gray-300 text-sm leading-relaxed border-l-2 border-plex pl-4" x-text="selectedItem.summary || 'Aucun résumé disponible.'"></p>
                         </div>
 
-                        <p class="text-gray-300 text-sm leading-relaxed" x-text="selectedItem.summary || 'Aucun résumé disponible.'"></p>
-
-                        <div class="space-y-4 pt-4">
-                            <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest">Sources Disponibles</h3>
+                        <div x-show="selectedItem.type === 'movie'" class="bg-black/20 rounded-xl p-4 border border-gray-800">
+                            <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 01-2 2v4a2 2 0 012 2h14a2 2 0 012-2v-4a2 2 0 01-2-2m-2-4h.01M17 16h.01"></path></svg>
+                                Sources Disponibles
+                            </h3>
                             
-                            <template x-for="source in selectedItem.sources" :key="source.stream_url">
-                                <div class="bg-darkbg p-4 rounded-xl border border-gray-800 hover:border-plex/30 transition-all group">
-                                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                                        
-                                        <div class="flex items-center gap-4 w-full md:w-auto">
-                                            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-500 group-hover:text-white transition-colors">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 01-2 2v4a2 2 0 012 2h14a2 2 0 012-2v-4a2 2 0 01-2-2m-2-4h.01M17 16h.01"></path></svg>
-                                            </div>
+                            <div class="space-y-3">
+                                <template x-for="source in selectedItem.sources" :key="source.stream_url">
+                                    <div class="bg-darkbg p-3 rounded-xl border border-gray-800 hover:border-plex/30 transition-all group flex flex-col sm:flex-row justify-between items-center gap-3">
+                                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                                            <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-500 font-bold text-xs border border-gray-700">SRV</div>
                                             <div>
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-bold text-white text-sm" x-text="source.server_name"></span>
-                                                    <span x-show="source.is_owned" class="text-[9px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-bold">LOCAL</span>
-                                                </div>
-                                                <span class="text-[10px] font-mono text-gray-500 uppercase" x-text="source.resolution"></span>
+                                                <div class="font-bold text-white text-sm" x-text="source.server_name"></div>
+                                                <div class="text-[10px] text-gray-500 font-mono" x-text="source.resolution"></div>
                                             </div>
                                         </div>
-
-                                        <div class="flex flex-wrap justify-end gap-2 w-full md:w-auto">
-                                            <a :href="source.plex_deeplink" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg text-[10px] font-bold uppercase transition-colors" title="Ouvrir App Native">
-                                                App
-                                            </a>
-                                            <a :href="source.plex_web_url" target="_blank" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg text-[10px] font-bold uppercase transition-colors" title="Ouvrir Plex Web">
-                                                Web
-                                            </a>
-                                            <a :href="source.m3u_url" class="px-3 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg text-[10px] font-bold uppercase transition-colors flex items-center gap-1 shadow-lg shadow-orange-900/20" title="Playlist VLC/IPTV">
+                                        
+                                        <div class="flex gap-2 w-full sm:w-auto justify-end">
+                                            <a :href="source.m3u_url" class="px-3 py-2 bg-gray-700 hover:bg-orange-600 text-gray-300 hover:text-white rounded-lg text-[10px] font-bold uppercase transition-all flex items-center gap-1">
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
                                                 M3U
                                             </a>
@@ -250,9 +234,76 @@
                                             </a>
                                         </div>
                                     </div>
-                                </div>
-                            </template>
+                                </template>
+                            </div>
                         </div>
+
+                        <div x-show="selectedItem.type === 'show'" x-data="{ view: 'seasons', currentSeason: null }">
+                            
+                            <div x-show="view === 'seasons'" x-transition:enter="transition ease-out duration-300">
+                                <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-4 border-b border-gray-800 pb-2">Sélectionner une saison</h3>
+                                <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+                                    <template x-for="season in selectedItem.seasons" :key="season.index">
+                                        <button @click="currentSeason = season; view = 'episodes'" 
+                                                class="bg-darkbg hover:bg-gray-800 border border-gray-800 hover:border-plex p-4 rounded-xl text-center transition-all group flex flex-col items-center justify-center aspect-square">
+                                            <div class="text-3xl font-black text-white group-hover:text-plex mb-1" x-text="season.index"></div>
+                                            <div class="text-[9px] text-gray-500 uppercase font-bold group-hover:text-white" x-text="season.episode_count + ' ÉPISODES'"></div>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div x-show="view === 'episodes'" x-transition:enter="transition ease-out duration-300">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <button @click="view = 'seasons'" class="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                    </button>
+                                    <h3 class="text-xl font-black text-white uppercase italic">Saison <span class="text-plex" x-text="currentSeason?.index"></span></h3>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <template x-for="ep in currentSeason?.episodes" :key="ep.id">
+                                        <div x-data="{ showSources: false }" class="bg-darkbg rounded-xl border border-gray-800 overflow-hidden transition-all hover:border-gray-600">
+                                            
+                                            <div @click="showSources = !showSources" class="p-3 flex gap-4 cursor-pointer hover:bg-white/5 transition-colors items-center">
+                                                <div class="w-20 h-12 bg-black rounded overflow-hidden shrink-0 relative">
+                                                    <img :src="ep.thumb_url || selectedItem.poster_url" class="w-full h-full object-cover opacity-80">
+                                                    <div class="absolute inset-0 flex items-center justify-center bg-black/50" x-show="!showSources">
+                                                        <svg class="w-5 h-5 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow min-w-0">
+                                                    <div class="flex items-baseline gap-2">
+                                                        <span class="text-plex font-mono font-bold text-xs shrink-0" x-text="'E' + ep.index"></span>
+                                                        <span class="text-white font-bold text-sm truncate" x-text="ep.title"></span>
+                                                    </div>
+                                                    <p class="text-gray-500 text-[10px] line-clamp-1 mt-0.5" x-text="ep.summary || 'Pas de résumé'"></p>
+                                                </div>
+                                                <div class="shrink-0 text-gray-600 transition-transform duration-300" :class="showSources ? 'rotate-180 text-plex' : ''">
+                                                    ▼
+                                                </div>
+                                            </div>
+
+                                            <div x-show="showSources" x-collapse class="bg-black/40 border-t border-gray-800 p-3 space-y-2">
+                                                <template x-for="source in ep.sources" :key="source.stream_url">
+                                                    <div class="flex justify-between items-center pl-2 border-l-2 border-gray-700 hover:border-plex transition-colors">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-[10px] font-bold text-gray-300" x-text="source.server_name"></span>
+                                                            <span class="text-[9px] bg-gray-700 text-gray-300 px-1.5 rounded border border-gray-600" x-text="source.resolution"></span>
+                                                        </div>
+                                                        <div class="flex gap-2">
+                                                            <a :href="source.m3u_url" class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-[9px] font-bold transition-colors">M3U</a>
+                                                            <a :href="source.stream_url" class="px-3 py-1 bg-plex hover:bg-yellow-400 text-black rounded text-[9px] font-bold transition-colors shadow-lg">JOUER</a>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </template>
             </div>
@@ -270,7 +321,7 @@
                 
                 filters: {
                     search: '',
-                    type: 'movie', // 'movie' ou 'show'
+                    type: 'movie',
                     genre: 'all',
                     sort: 'year_desc'
                 },
@@ -278,7 +329,7 @@
                 init() {
                     console.log("PlexHub Initialized");
                     this.fetchLibrary();
-                    // Auto-refresh léger toutes les 30s
+                    // Auto-refresh silencieux toutes les 30s
                     setInterval(() => this.fetchLibrary(true), 30000);
                 },
 
@@ -287,14 +338,15 @@
                     try {
                         const res = await fetch('/api/movies');
                         if (res.ok) {
-                            // On utilise Alpine.raw pour la performance sur les grosses listes
                             const data = await res.json();
                             this.rawMedia = Alpine.raw(data);
                             this.scanStatus = "Connecté";
+                        } else {
+                            this.scanStatus = "Erreur API";
                         }
                     } catch (e) {
                         console.error("Erreur API:", e);
-                        this.scanStatus = "Erreur Connexion";
+                        this.scanStatus = "Hors Ligne";
                     } finally {
                         this.loading = false;
                     }
@@ -310,8 +362,7 @@
                     }
                 },
 
-                // --- COMPUTED PROPERTIES ---
-
+                // --- CALCULS DYNAMIQUES (DASHBOARD) ---
                 get stats() {
                     return {
                         movies: this.rawMedia.filter(m => m.type === 'movie').length,
@@ -320,7 +371,6 @@
                 },
 
                 get availableGenres() {
-                    // Extrait les genres uniques dynamiquement
                     const currentTypeMedia = this.rawMedia.filter(m => m.type === this.filters.type);
                     const genres = new Set();
                     currentTypeMedia.forEach(m => {
@@ -330,21 +380,17 @@
                 },
 
                 get processedMedia() {
-                    // 1. Filter by Type
                     let result = this.rawMedia.filter(m => m.type === this.filters.type);
 
-                    // 2. Filter by Search
                     if (this.filters.search) {
                         const q = this.filters.search.toLowerCase();
                         result = result.filter(m => m.title.toLowerCase().includes(q));
                     }
 
-                    // 3. Filter by Genre
                     if (this.filters.genre !== 'all') {
                         result = result.filter(m => m.genres && m.genres.includes(this.filters.genre));
                     }
 
-                    // 4. Sort
                     return result.sort((a, b) => {
                         if (this.filters.sort === 'year_desc') return (b.year || 0) - (a.year || 0);
                         if (this.filters.sort === 'year_asc') return (a.year || 0) - (b.year || 0);
@@ -354,9 +400,13 @@
                     });
                 },
 
-                // --- UTILS ---
-
-                getMaxResolution(item) {
+                // --- UTILITAIRES UI ---
+                getQualityBadge(item) {
+                    // Pour les séries, on affiche le nombre de saisons
+                    if (item.type === 'show') {
+                        return item.seasons ? item.seasons.length + ' S' : 'TV';
+                    }
+                    // Pour les films, on cherche la meilleure résolution
                     if (!item.sources || item.sources.length === 0) return 'SD';
                     const resList = item.sources.map(s => s.resolution);
                     if (resList.includes('4K')) return '4K';
@@ -366,15 +416,15 @@
                 },
 
                 openModal(item) {
-                    this.selectedItem = Alpine.raw(item); // Optimisation
+                    this.selectedItem = Alpine.raw(item);
                     this.modalOpen = true;
-                    document.body.style.overflow = 'hidden'; // Bloque le scroll
+                    document.body.style.overflow = 'hidden';
                 },
 
                 closeModal() {
                     this.modalOpen = false;
                     this.selectedItem = null;
-                    document.body.style.overflow = ''; // Débloque le scroll
+                    document.body.style.overflow = '';
                 }
             }
         }
