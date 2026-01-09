@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+httpx
+plexapi
+zeroconf
+jinja2
+pydantic
