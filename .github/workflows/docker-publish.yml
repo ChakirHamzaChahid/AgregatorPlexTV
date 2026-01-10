@@ -27,15 +27,20 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
-        id: meta
+        id: meta # Cet ID est CRUCIAL
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Ajout explicite pour forcer le tag de la branche
+          tags: |
+            type=ref,event=branch
+            type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ${{ env.meta.outputs.tags }}
-          labels: ${{ env.meta.outputs.labels }}
+          # Vérifiez bien cette syntaxe exacte :
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
