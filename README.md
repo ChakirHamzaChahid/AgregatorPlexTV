@@ -53,14 +53,26 @@ app/models.py : Schémas de données Pydantic.
 
 cache_assets/ : Stockage de la base library.db et des images optimisées.
 
-🛠️ Roadmap (Lot 2 - En cours)
-[ ] Distribution du scan entre les workers (Queue SQLite).
-
-[ ] Interface de monitoring temps réel des ressources NAS.
-
-[ ] Cache IMDB persistant pour enrichir les notes.
-
-🤝 Contribution
-Ce projet a été développé avec une approche Agile/Scrum. Les contributions respectant les standards de qualité et de sécurité (PEP8, gestion des secrets) sont les bienvenues.
+# ====================================================================
+  # PLEXHUB BACKEND - Votre agrégateur Python
+  # ====================================================================
+  plexhub:
+    build: .
+    container_name: plexhub-backend
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - TZ=${TZ}
+    volumes:
+      - /mnt/app-config/plexhub:/app/cache_assets
+      - /mnt/app-config/plexhub/logs/server.log:/app/server.log
+    depends_on:
+      - plex
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
 
 Développé par Chakir El Arram – Ingénieur IT & Scrum Master.
