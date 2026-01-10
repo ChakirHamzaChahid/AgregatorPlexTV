@@ -1,63 +1,55 @@
-📺 PlexHub Backend (VPerf)
-PlexHub est un agrégateur haute performance pour serveurs Plex, conçu spécifiquement pour être déployé sur un NAS avec des ressources optimisées.
+# 📺 PlexHub Backend (VPerf)
 
-Il permet de centraliser le contenu de plusieurs serveurs Plex (les vôtres et ceux partagés) dans une interface unique, fluide et légère.
+[![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/release/python-3130/)
+[![Docker](https://img.shields.io/badge/docker-enabled-blue.svg)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-🚀 Caractéristiques du Lot 1 (Stable)
-Architecture Multi-Worker : Optimisé pour le multiprocessing (Uvicorn/Gunicorn) avec gestion intelligente d'un "Worker Maître" pour éviter les scans redondants.
+**PlexHub** est un agrégateur haute performance pour serveurs Plex, conçu spécifiquement pour être déployé sur un NAS  avec des ressources optimisées. Il centralise le contenu de plusieurs serveurs dans une interface unique, fluide et légère.
 
-Moteur SQLite (Mode WAL) : Persistance des données ultra-rapide sur SSD NVMe, permettant des lectures/écritures simultanées sans verrouillage de base de données.
 
-Optimisation d'Image (Pillow/WebP) : Proxy d'images intelligent qui redimensionne et convertit les posters en WebP pour économiser l'espace disque et accélérer le chargement IHM.
 
-Streaming Robuste : Système de proxy vidéo avec bascule automatique (720p Transcode -> Direct Play) et gestion de slots simultanés via sémaphore.
+## 🚀 Caractéristiques du Lot 1 (Stable)
 
-Découverte mDNS : Annonce automatique du service sur le réseau local via Zeroconf.
+* **Architecture Multi-Worker** : Optimisé pour le multiprocessing (Uvicorn) avec 4 workers et gestion d'un "Worker Maître" via verrouillage atomique pour éviter les scans redondants.
+* **Moteur SQLite (Mode WAL)** : Persistance des données ultra-rapide sur SSD NVMe, permettant des accès concurrents sans verrouillage.
+* **Optimisation d'Image (Pillow/WebP)** : Proxy d'images qui redimensionne et convertit les posters en WebP à la volée pour économiser l'espace et la bande passante.
+* **Streaming Robuste** : Gestion de flux via sémaphore avec bascule automatique entre transcodage 720p et Direct Play.
+* **Découverte mDNS** : Annonce automatique du service sur le réseau local via Zeroconf pour une intégration simplifiée.
+* **Hardening & Sécurité** : Filtrage des tokens dans les logs et gestion des secrets via variables d'environnement (`python-dotenv`).
 
-Hardening & Sécurité : Filtrage automatique des tokens dans les logs et gestion des secrets via variables d'environnement.
+## 🛠️ Installation & Déploiement
 
-🛠️ Installation
-Prérequis
-Python 3.13+
+### Prérequis
+* Python 3.13+
+* Un compte Plex et un Token valide
+* Docker & Docker Compose
 
-Un compte Plex avec un Token valide
+### Configuration
+1.  **Clonez le dépôt** :
+    ```bash
+    git clone [https://github.com/ChakirHamzaChahid/AgregatorPlexTV.git](https://github.com/ChakirHamzaChahid/AgregatorPlexTV.git)
+    cd AgregatorPlexTV
+    ```
+2.  **Créez un fichier `.env`** à la racine (ne pas commiter) :
+    ```env
+    PLEX_TOKEN=votre_token_plex
+    TZ=Europe/Paris
+    PUID=1000
+    PGID=1000
+    ```
 
-Docker & Docker Compose (pour le déploiement NAS)
+### 🐳 Stack Docker de Production
+Voici la configuration recommandée pour votre `docker-compose.yml`:
 
-Configuration
-Clonez le dépôt :
+```yaml
+services:
+ 
 
-Bash
-
-git clone https://github.com/votre-compte/PlexHub-Backend.git
-cd PlexHub-Backend
-Créez un fichier .env à la racine :
-
-Plaintext
-
-PLEX_TOKEN=votre_token_plex_ici
-Déploiement via Docker (Recommandé)
-Le projet est optimisé pour tourner avec une limite de 4 Go de RAM.
-
-Bash
-
-docker-compose up -d --build
-📈 Structure du Projet
-run.py : Point d'entrée gérant le multi-processing.
-
-app/main.py : API FastAPI et logique de proxy.
-
-app/plex_client.py : Moteur de scan et interface SQLite.
-
-app/models.py : Schémas de données Pydantic.
-
-cache_assets/ : Stockage de la base library.db et des images optimisées.
-
-# ====================================================================
+  # ====================================================================
   # PLEXHUB BACKEND - Votre agrégateur Python
   # ====================================================================
   plexhub:
-    build: .
+    image: ghcr.io/chakirhamzachahid/agregatorplextv:latest
     container_name: plexhub-backend
     restart: unless-stopped
     network_mode: host
@@ -74,5 +66,3 @@ cache_assets/ : Stockage de la base library.db et des images optimisées.
         limits:
           memory: 4G
           cpus: '2.0'
-
-Développé par Chakir El Arram – Ingénieur IT & Scrum Master.
