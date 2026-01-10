@@ -1,5 +1,5 @@
 📺 PlexHub Backend (VPerf)
-PlexHub est un agrégateur haute performance pour serveurs Plex, conçu spécifiquement pour être déployé sur un NAS (type Antec P183 / Ryzen 3600) avec des ressources optimisées.
+PlexHub est un agrégateur haute performance pour serveurs Plex, conçu spécifiquement pour être déployé sur un NAS avec des ressources optimisées.
 
 Il permet de centraliser le contenu de plusieurs serveurs Plex (les vôtres et ceux partagés) dans une interface unique, fluide et légère.
 
