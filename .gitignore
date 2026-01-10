@@ -4,3 +4,17 @@ app/cache_assets/
 app/cache_posters/
 app/__pycache__
 server.log
+server.log
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+
+# Données et Cache
+cache_assets/
+server.log
+app/imdb_ratings_cache.json
+
+# Environnement et Secrets
+.env

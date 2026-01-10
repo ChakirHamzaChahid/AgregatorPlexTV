@@ -1,10 +1,28 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Calcul du chemin absolu vers la racine du projet (là où est run.py et .env)
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / ".env"
+
+# Chargement explicite
+load_dotenv(dotenv_path=env_path)
 
 class Settings:
-    # --- Identifiants ---
-    PLEX_TOKEN: str = os.getenv("PLEX_TOKEN", "yRS6nPz__19BvpuuPYX2")
-    CLIENT_ID: str = os.getenv("CLIENT_ID", "PlexHub-Backend-VPerf")
+   # --- Identifiants ---
+    # On ne met plus de valeur par défaut "secrète"
+    # Si la variable n'existe pas, l'app pourra lever une erreur ou rester vide
+    PLEX_TOKEN: str = os.getenv("PLEX_TOKEN", "") 
+
+    def __init__(self):
+        # Débug : Vérifie si le token est bien chargé (affiche les 4 premiers caractères)
+        if self.PLEX_TOKEN:
+            print(f"✅ Token chargé : {self.PLEX_TOKEN[:4]}****")
+        else:
+            print("❌ ERREUR : PLEX_TOKEN non trouvé dans l'environnement !")
+
+    CLIENT_ID: str = os.getenv("CLIENT_ID", "PlexHub-Chakir-Server")
     
     # --- Chemins ---
     PROJECT_ROOT: Path = Path(__file__).parent.parent
