@@ -3,3 +3,4 @@ cache_posters/
 app/cache_assets/
 app/cache_posters/
 app/__pycache__
+server.log

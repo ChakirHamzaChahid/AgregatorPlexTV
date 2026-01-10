@@ -14203,3 +14203,1004 @@
 2026-01-10 02:03:53,117 - PlexClient   - INFO     -       📺 Série 'Carl Hiaasen’s Bad Monkey' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
 2026-01-10 02:03:53,181 - PlexClient   - INFO     -       📺 Série 'JAG' [PLEX-Larod] : 10 Saison(s) | 227 Épisodes
 2026-01-10 02:03:53,259 - PlexClient   - INFO     -       📺 Série 'Le Nounou' [DS423plus] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:01,755 - PlexClient   - INFO     -       📺 Série 'Kung Fu Panda : Les Pattes du Destin' [PlexStation] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:01,784 - PlexClient   - INFO     -       📺 Série 'Ahsoka' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:01,811 - PlexClient   - INFO     -       📺 Série 'A Journey Through Another World Raising Kids While Adventuring' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:01,813 - PlexClient   - INFO     -       📺 Série 'Castlevania : Nocturne' [TACOS] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:01,840 - PlexClient   - INFO     -       📺 Série 'La casa de papel' [aubeplex - Apple M4] : 2 Saison(s) | 38 Épisodes
+2026-01-10 02:04:01,871 - PlexClient   - INFO     -       📺 Série 'Le Problème à 3 corps' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:01,912 - PlexClient   - INFO     -       📺 Série 'Jayce et les Conquérants de la lumière' [PLEX-Larod] : 2 Saison(s) | 66 Épisodes
+2026-01-10 02:04:01,965 - PlexClient   - INFO     -       📺 Série 'Ailes Grises' [Swafflix] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:02,001 - PlexClient   - INFO     -       📺 Série 'Jujutsu Kaisen Henshū' [VM NAS Plex] : 4 Saison(s) | 51 Épisodes
+2026-01-10 02:04:02,023 - PlexClient   - INFO     -       📺 Série 'L'Attaque des Titans' [PlexStation] : 5 Saison(s) | 97 Épisodes
+2026-01-10 02:04:02,077 - PlexClient   - INFO     -       📺 Série 'Castle Rock' [aubeplex - Apple M4] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:02,100 - PlexClient   - INFO     -       📺 Série 'Cat's Eye' [TACOS] : 2 Saison(s) | 73 Épisodes
+2026-01-10 02:04:02,137 - httpx        - INFO     - HTTP Request: GET https://2-11-151-192.2b23851d94584a5ebf492afb83ed81f7.plex.direct:16066/library/metadata/291202/thumb/1767926263?X-Plex-Token=-d9BLzCKG-hrXZbDQuso "HTTP/1.1 200 OK"
+2026-01-10 02:04:02,139 - PlexClient   - INFO     -       📺 Série 'Le retour de K2000' [DS423plus] : 1 Saison(s) | 18 Épisodes
+2026-01-10 02:04:02,167 - PlexClient   - INFO     -       📺 Série 'L’Enfer du Pacifique' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:02,208 - PlexClient   - INFO     -       📺 Série 'Air Gear' [Swafflix] : 2 Saison(s) | 26 Épisodes
+2026-01-10 02:04:02,237 - PlexClient   - INFO     -       📺 Série 'Kaiju No. 8' [VM NAS Plex] : 2 Saison(s) | 23 Épisodes
+2026-01-10 02:04:02,242 - PlexClient   - INFO     -       📺 Série 'L'empire des cinq' [PlexStation] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:02,299 - PlexClient   - INFO     -       📺 Série 'Castlevania' [aubeplex - Apple M4] : 4 Saison(s) | 32 Épisodes
+2026-01-10 02:04:02,358 - PlexClient   - INFO     -       📺 Série 'Chainsaw Man' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:02,388 - PlexClient   - INFO     -       📺 Série 'Le Seigneur des anneaux : Les Anneaux de pouvoir' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:02,426 - PlexClient   - INFO     -       📺 Série 'Landman' [PLEX-Larod] : 2 Saison(s) | 14 Épisodes
+2026-01-10 02:04:02,470 - PlexClient   - INFO     -       📺 Série 'Ajin : semi-humain' [Swafflix] : 2 Saison(s) | 26 Épisodes
+2026-01-10 02:04:07,637 - PlexClient   - INFO     -       📺 Série 'Kenshin le vagabond' [VM NAS Plex] : 2 Saison(s) | 58 Épisodes
+2026-01-10 02:04:07,645 - PlexClient   - INFO     -       📺 Série 'L'Île au trésor' [PlexStation] : 2 Saison(s) | 35 Épisodes
+2026-01-10 02:04:07,678 - PlexClient   - INFO     -       📺 Série 'Castlevania : Nocturne' [aubeplex - Apple M4] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:07,705 - PlexClient   - INFO     -       📺 Série 'Chillin’ in Another World with Level 2 Super Cheat Powers' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:07,766 - PlexClient   - INFO     -       📺 Série 'Les 4400' [DS423plus] : 4 Saison(s) | 45 Épisodes
+2026-01-10 02:04:07,830 - PlexClient   - INFO     -       📺 Série 'The Last Frontier' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:07,868 - PlexClient   - INFO     -       📺 Série 'Akashic Records of Bastard Magic Instructor' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:07,899 - PlexClient   - INFO     -       📺 Série 'Kenshin le Vagabond' [VM NAS Plex] : 3 Saison(s) | 94 Épisodes
+2026-01-10 02:04:07,915 - PlexClient   - INFO     -       📺 Série 'L'oiseau bleu' [PlexStation] : 1 Saison(s) | 27 Épisodes
+2026-01-10 02:04:07,949 - PlexClient   - INFO     -       📺 Série 'Central Park' [aubeplex - Apple M4] : 3 Saison(s) | 39 Épisodes
+2026-01-10 02:04:07,998 - PlexClient   - INFO     -       📺 Série 'City the Animation' [TACOS] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:08,029 - PlexClient   - INFO     -       📺 Série 'Les Frères Sun' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:12,276 - PlexClient   - INFO     -       📺 Série 'The Last of Us' [PLEX-Larod] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:12,319 - PlexClient   - INFO     -       📺 Série 'Kill la Kill' [VM NAS Plex] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:12,326 - PlexClient   - INFO     -       📺 Série 'Aladdin' [Swafflix] : 3 Saison(s) | 86 Épisodes
+2026-01-10 02:04:12,362 - PlexClient   - INFO     -       📺 Série 'L’Âge de glace - Les aventures de Scrat' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:12,389 - PlexClient   - INFO     -       📺 Série 'Chacal' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:12,420 - PlexClient   - INFO     -       📺 Série 'Les mécanos de Rust Valley' [DS423plus] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:12,477 - PlexClient   - INFO     -       📺 Série 'Clarence' [TACOS] : 3 Saison(s) | 66 Épisodes
+2026-01-10 02:04:12,525 - PlexClient   - INFO     -       📺 Série 'Le Bateau' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:12,559 - PlexClient   - INFO     -       📺 Série 'Albator' [Swafflix] : 1 Saison(s) | 42 Épisodes
+2026-01-10 02:04:12,589 - PlexClient   - INFO     -       📺 Série 'Chad Powers' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:12,608 - PlexClient   - INFO     -       📺 Série 'Lady Oscar' [PlexStation] : 1 Saison(s) | 41 Épisodes
+2026-01-10 02:04:12,641 - PlexClient   - INFO     -       📺 Série 'Kingdom' [VM NAS Plex] : 6 Saison(s) | 149 Épisodes
+2026-01-10 02:04:12,662 - PlexClient   - INFO     -       📺 Série 'Clifford le Gros Chien Rouge' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:12,692 - PlexClient   - INFO     -       📺 Série 'Le Chemin de l'olivier' [PLEX-Larod] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:12,728 - PlexClient   - INFO     -       📺 Série 'Albator 84' [Swafflix] : 1 Saison(s) | 22 Épisodes
+2026-01-10 02:04:12,786 - PlexClient   - INFO     -       📺 Série 'Chainsaw Man' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:12,814 - PlexClient   - INFO     -       📺 Série 'Konosuba : Sois béni monde merveilleux !' [VM NAS Plex] : 3 Saison(s) | 31 Épisodes
+2026-01-10 02:04:12,819 - PlexClient   - INFO     -       📺 Série 'Laura ou la passion du théâtre' [PlexStation] : 1 Saison(s) | 22 Épisodes
+2026-01-10 02:04:12,852 - PlexClient   - INFO     -       📺 Série 'Code Geass: Lelouch of the Rebellion' [TACOS] : 2 Saison(s) | 50 Épisodes
+2026-01-10 02:04:12,887 - PlexClient   - INFO     -       📺 Série 'Le Continental : D'après l'univers de John Wick' [PLEX-Larod] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:12,931 - httpx        - INFO     - HTTP Request: GET https://192-168-0-175.73d044407d6741c8a17d97a88c22846e.plex.direct:32400/library/metadata/67408/thumb/1767956300?X-Plex-Token=HIDDEN_TOKEN "HTTP/1.1 200 OK"
+2026-01-10 02:04:18,249 - PlexClient   - INFO     -       📺 Série 'Alcatraz' [Swafflix] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:18,284 - PlexClient   - INFO     -       📺 Série 'Chasse à l'homme' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:18,308 - PlexClient   - INFO     -       📺 Série 'Le Monde merveilleux de Mickey' [PlexStation] : 1 Saison(s) | 20 Épisodes
+2026-01-10 02:04:18,335 - PlexClient   - INFO     -       📺 Série 'Le pacte des Yokaïs' [VM NAS Plex] : 8 Saison(s) | 90 Épisodes
+2026-01-10 02:04:18,355 - PlexClient   - INFO     -       📺 Série 'Le Livre perdu des sortilèges' [PLEX-Larod] : 3 Saison(s) | 25 Épisodes
+2026-01-10 02:04:18,395 - PlexClient   - INFO     -       📺 Série 'La Cour de récré' [TACOS] : 6 Saison(s) | 65 Épisodes
+2026-01-10 02:04:18,434 - PlexClient   - INFO     -       📺 Série 'Aldnoah.Zero' [Swafflix] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:18,476 - PlexClient   - INFO     -       📺 Série 'La Chasse aux scoops' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:18,503 - PlexClient   - INFO     -       📺 Série 'Le Rakugo ou la vie' [VM NAS Plex] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:18,508 - PlexClient   - INFO     -       📺 Série 'Le Petit Nicolas' [PlexStation] : 1 Saison(s) | 52 Épisodes
+2026-01-10 02:04:18,543 - PlexClient   - INFO     -       📺 Série 'Le Problème à 3 corps' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:18,590 - PlexClient   - INFO     -       📺 Série 'Cowboy Bebop' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:18,640 - PlexClient   - INFO     -       📺 Série 'La Légende de Raoh' [VM NAS Plex] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:18,643 - PlexClient   - INFO     -       📺 Série 'Chernobyl' [aubeplex - Apple M4] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:18,665 - PlexClient   - INFO     -       📺 Série 'Le Tour du monde en 80 jours' [PlexStation] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:18,701 - PlexClient   - INFO     -       📺 Série 'Le Renard : Prince des voleurs' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:18,769 - PlexClient   - INFO     -       📺 Série 'Criminelles fiançailles' [TACOS] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:18,836 - PlexClient   - INFO     -       📺 Série 'Les Carnets de l'apothicaire' [VM NAS Plex] : 2 Saison(s) | 48 Épisodes
+2026-01-10 02:04:18,843 - PlexClient   - INFO     -       📺 Série 'Chief of War' [aubeplex - Apple M4] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:18,870 - PlexClient   - INFO     -       📺 Série 'LEGO Ninjago : Le soulèvement des dragons' [PlexStation] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:18,952 - PlexClient   - INFO     -       📺 Série 'Le Seigneur des anneaux : Les Anneaux de pouvoir' [PLEX-Larod] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:18,992 - PlexClient   - INFO     -       📺 Série 'Cyberpunk : Edgerunners' [TACOS] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:19,024 - PlexClient   - INFO     -       📺 Série 'Les Simpson' [DS423plus] : 24 Saison(s) | 520 Épisodes
+2026-01-10 02:04:19,157 - PlexClient   - INFO     -       📺 Série 'Chucky' [aubeplex - Apple M4] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:19,236 - PlexClient   - INFO     -       📺 Série 'Les Mystérieuses Cités d'Or' [VM NAS Plex] : 4 Saison(s) | 117 Épisodes
+2026-01-10 02:04:19,253 - PlexClient   - INFO     -       📺 Série 'Les Brigades du Tigre' [PLEX-Larod] : 6 Saison(s) | 36 Épisodes
+2026-01-10 02:04:19,315 - PlexClient   - INFO     -       📺 Série 'Alerte Cobra' [Swafflix] : 49 Saison(s) | 399 Épisodes
+2026-01-10 02:04:19,410 - PlexClient   - INFO     -       📺 Série 'Cynthia ou le Rythme de la Vie' [TACOS] : 1 Saison(s) | 19 Épisodes
+2026-01-10 02:04:19,469 - PlexClient   - INFO     -       📺 Série 'Les Touristes' [DS423plus] : 1 Saison(s) | 11 Épisodes
+2026-01-10 02:04:19,500 - PlexClient   - INFO     -       📺 Série 'La chute de P. Diddy' [aubeplex - Apple M4] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:19,524 - PlexClient   - INFO     -       📺 Série 'Link Click' [VM NAS Plex] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:19,531 - PlexClient   - INFO     -       📺 Série 'Les Disparues de la gare' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:19,576 - PlexClient   - INFO     -       📺 Série 'LEGO Ninjago : Les maîtres du Spinjitzu' [PlexStation] : 16 Saison(s) | 212 Épisodes
+2026-01-10 02:04:19,629 - PlexClient   - INFO     -       📺 Série 'Alertes : COBRA' [Swafflix] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:19,657 - PlexClient   - INFO     -       📺 Série 'DAN DA DAN' [TACOS] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:19,693 - PlexClient   - INFO     -       📺 Série 'Les voyageurs du temps' [DS423plus] : 3 Saison(s) | 34 Épisodes
+2026-01-10 02:04:19,774 - PlexClient   - INFO     -       📺 Série 'Cité des ombres' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:19,796 - PlexClient   - INFO     -       📺 Série 'Made In Abyss' [VM NAS Plex] : 3 Saison(s) | 26 Épisodes
+2026-01-10 02:04:19,806 - PlexClient   - INFO     -       📺 Série 'Les  Aventures de Tintin' [PlexStation] : 1 Saison(s) | 39 Épisodes
+2026-01-10 02:04:19,841 - PlexClient   - INFO     -       📺 Série 'Alexa & Katie' [Swafflix] : 4 Saison(s) | 39 Épisodes
+2026-01-10 02:04:19,868 - PlexClient   - INFO     -       📺 Série 'Les Mystérieuses Cités d'Or' [PLEX-Larod] : 4 Saison(s) | 98 Épisodes
+2026-01-10 02:04:19,912 - PlexClient   - INFO     -       📺 Série 'Danganronpa: The Animation' [TACOS] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:19,973 - PlexClient   - INFO     -       📺 Série 'Loki' [DS423plus] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:20,001 - PlexClient   - INFO     -       📺 Série 'Marvel Zombies' [VM NAS Plex] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:20,003 - PlexClient   - INFO     -       📺 Série 'City of Shadows' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:20,023 - PlexClient   - INFO     -       📺 Série 'Les Aventures de Petit Ours Brun' [PlexStation] : 1 Saison(s) | 52 Épisodes
+2026-01-10 02:04:20,070 - PlexClient   - INFO     -       📺 Série 'Les Sentinelles' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:20,112 - PlexClient   - INFO     -       📺 Série 'Alias' [Swafflix] : 5 Saison(s) | 105 Épisodes
+2026-01-10 02:04:20,183 - PlexClient   - INFO     -       📺 Série 'LOL : Qui (c)rie, sort !' [DS423plus] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:20,213 - PlexClient   - INFO     -       📺 Série 'The Master of Diabolism' [VM NAS Plex] : 3 Saison(s) | 35 Épisodes
+2026-01-10 02:04:20,218 - PlexClient   - INFO     -       📺 Série 'DanMachi - La légende des Familias' [TACOS] : 5 Saison(s) | 74 Épisodes
+2026-01-10 02:04:20,274 - PlexClient   - INFO     -       📺 Série 'City the Animation' [aubeplex - Apple M4] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:20,300 - PlexClient   - INFO     -       📺 Série 'Les Barbapapa' [PlexStation] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:20,330 - PlexClient   - INFO     -       📺 Série 'Les Têtes Brûlées' [PLEX-Larod] : 2 Saison(s) | 36 Épisodes
+2026-01-10 02:04:20,374 - PlexClient   - INFO     -       📺 Série 'Alice et la pâtisserie des merveilles' [Swafflix] : 2 Saison(s) | 50 Épisodes
+2026-01-10 02:04:20,401 - PlexClient   - INFO     -       📺 Série 'The Misfit of Demon King Academy' [VM NAS Plex] : 2 Saison(s) | 37 Épisodes
+2026-01-10 02:04:20,407 - PlexClient   - INFO     -       📺 Série 'LOL : Qui rit, sort !' [DS423plus] : 5 Saison(s) | 33 Épisodes
+2026-01-10 02:04:20,438 - PlexClient   - INFO     -       📺 Série 'Claymore' [aubeplex - Apple M4] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:20,482 - PlexClient   - INFO     -       📺 Série 'Daria' [TACOS] : 5 Saison(s) | 68 Épisodes
+2026-01-10 02:04:20,516 - PlexClient   - INFO     -       📺 Série 'Les Chevaliers du Zodiaque - Saint Seiya' [PlexStation] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:20,564 - PlexClient   - INFO     -       📺 Série 'Alice in Borderland' [Swafflix] : 3 Saison(s) | 22 Épisodes
+2026-01-10 02:04:20,603 - PlexClient   - INFO     -       📺 Série 'Loïs et Clark : Les Nouvelles Aventures de Superman' [PLEX-Larod] : 4 Saison(s) | 88 Épisodes
+2026-01-10 02:04:20,656 - PlexClient   - INFO     -       📺 Série 'Monogatari' [VM NAS Plex] : 14 Saison(s) | 91 Épisodes
+2026-01-10 02:04:20,680 - PlexClient   - INFO     -       📺 Série 'Lucifer' [DS423plus] : 6 Saison(s) | 93 Épisodes
+2026-01-10 02:04:20,727 - PlexClient   - INFO     -       📺 Série 'The Clearing' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:20,751 - PlexClient   - INFO     -       📺 Série 'Death Note' [TACOS] : 1 Saison(s) | 37 Épisodes
+2026-01-10 02:04:20,795 - PlexClient   - INFO     -       📺 Série 'Les Entrechats' [PlexStation] : 2 Saison(s) | 80 Épisodes
+2026-01-10 02:04:20,834 - PlexClient   - INFO     -       📺 Série 'Alien: Earth' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:20,879 - PlexClient   - INFO     -       📺 Série 'Loki' [PLEX-Larod] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:20,919 - PlexClient   - INFO     -       📺 Série 'Monster Kai' [VM NAS Plex] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:20,941 - PlexClient   - INFO     -       📺 Série 'Lupin' [DS423plus] : 2 Saison(s) | 17 Épisodes
+2026-01-10 02:04:20,978 - PlexClient   - INFO     -       📺 Série 'CODE GEASS Rozé of the Recapture' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:21,000 - PlexClient   - INFO     -       📺 Série 'Demon Slayer : Kimetsu no Yaiba' [TACOS] : 5 Saison(s) | 63 Épisodes
+2026-01-10 02:04:21,040 - PlexClient   - INFO     -       📺 Série 'Les Gummi' [PlexStation] : 6 Saison(s) | 65 Épisodes
+2026-01-10 02:04:21,088 - PlexClient   - INFO     -       📺 Série 'All of Us Are Dead' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:21,122 - PlexClient   - INFO     -       📺 Série 'Malice' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:21,183 - PlexClient   - INFO     -       📺 Série 'Murder Princess' [VM NAS Plex] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:21,185 - PlexClient   - INFO     -       📺 Série 'Code Quantum' [aubeplex - Apple M4] : 1 Saison(s) | 96 Épisodes
+2026-01-10 02:04:21,256 - PlexClient   - INFO     -       📺 Série 'All Star Shore' [Swafflix] : 2 Saison(s) | 23 Épisodes
+2026-01-10 02:04:21,288 - PlexClient   - INFO     -       📺 Série 'Les Lapins Crétins : Invasion' [PlexStation] : 3 Saison(s) | 78 Épisodes
+2026-01-10 02:04:21,332 - PlexClient   - INFO     -       📺 Série 'Ma Famille d'abord' [DS423plus] : 5 Saison(s) | 123 Épisodes
+2026-01-10 02:04:21,378 - PlexClient   - INFO     -       📺 Série 'Détective Conan' [TACOS] : 8 Saison(s) | 170 Épisodes
+2026-01-10 02:04:21,422 - PlexClient   - INFO     -       📺 Série 'The Mandalorian' [PLEX-Larod] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:21,523 - PlexClient   - INFO     -       📺 Série 'Mushishi' [VM NAS Plex] : 3 Saison(s) | 48 Épisodes
+2026-01-10 02:04:21,532 - PlexClient   - INFO     -       📺 Série 'Commissariat Central' [aubeplex - Apple M4] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:21,555 - PlexClient   - INFO     -       📺 Série 'Allegra' [Swafflix] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:21,594 - PlexClient   - INFO     -       📺 Série 'Devil May Cry' [TACOS] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:21,641 - PlexClient   - INFO     -       📺 Série 'Les Maîtres de l'univers' [PlexStation] : 2 Saison(s) | 130 Épisodes
+2026-01-10 02:04:21,699 - PlexClient   - INFO     -       📺 Série 'Marianne' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:21,742 - PlexClient   - INFO     -       📺 Série 'Mushoku Tensei: Jobless Reincarnation' [VM NAS Plex] : 3 Saison(s) | 49 Épisodes
+2026-01-10 02:04:21,762 - PlexClient   - INFO     -       📺 Série 'Conan le fils du futur' [aubeplex - Apple M4] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:21,806 - PlexClient   - INFO     -       📺 Série 'Malcolm' [DS423plus] : 7 Saison(s) | 151 Épisodes
+2026-01-10 02:04:21,863 - PlexClient   - INFO     -       📺 Série 'Ally McBeal' [Swafflix] : 5 Saison(s) | 112 Épisodes
+2026-01-10 02:04:21,911 - PlexClient   - INFO     -       📺 Série 'Les Minipouss' [PlexStation] : 4 Saison(s) | 34 Épisodes
+2026-01-10 02:04:21,940 - PlexClient   - INFO     -       📺 Série 'Marvel Zombies' [PLEX-Larod] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:21,972 - PlexClient   - INFO     -       📺 Série 'Didou' [TACOS] : 3 Saison(s) | 117 Épisodes
+2026-01-10 02:04:22,010 - PlexClient   - INFO     -       📺 Série 'My Adventures with Superman' [VM NAS Plex] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:22,014 - PlexClient   - INFO     -       📺 Série 'Constellation' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:22,039 - PlexClient   - INFO     -       📺 Série 'The Man Who Fell to Earth' [DS423plus] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:22,073 - PlexClient   - INFO     -       📺 Série 'Alphas' [Swafflix] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:22,121 - PlexClient   - INFO     -       📺 Série 'Les Mondes engloutis' [PlexStation] : 2 Saison(s) | 52 Épisodes
+2026-01-10 02:04:22,154 - PlexClient   - INFO     -       📺 Série 'Mercredi' [PLEX-Larod] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:22,193 - PlexClient   - INFO     -       📺 Série 'Digimon : Ghost Game' [TACOS] : 1 Saison(s) | 39 Épisodes
+2026-01-10 02:04:22,221 - PlexClient   - INFO     -       📺 Série 'Couples Therapy' [aubeplex - Apple M4] : 5 Saison(s) | 55 Épisodes
+2026-01-10 02:04:22,259 - PlexClient   - INFO     -       📺 Série 'The Mandalorian' [DS423plus] : 3 Saison(s) | 17 Épisodes
+2026-01-10 02:04:22,300 - PlexClient   - INFO     -       📺 Série 'My Hero Academia' [VM NAS Plex] : 6 Saison(s) | 77 Épisodes
+2026-01-10 02:04:22,310 - PlexClient   - INFO     -       📺 Série 'Altered Carbon' [Swafflix] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:22,354 - PlexClient   - INFO     -       📺 Série 'Merteuil' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:22,387 - PlexClient   - INFO     -       📺 Série 'Digimon : Tamers' [TACOS] : 1 Saison(s) | 51 Épisodes
+2026-01-10 02:04:22,445 - PlexClient   - INFO     -       📺 Série 'Cowboy Bebop' [aubeplex - Apple M4] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:22,474 - PlexClient   - INFO     -       📺 Série 'Les Mystérieuses Cités d'Or' [PlexStation] : 4 Saison(s) | 119 Épisodes
+2026-01-10 02:04:22,528 - PlexClient   - INFO     -       📺 Série 'Naruto Yabai' [VM NAS Plex] : 4 Saison(s) | 18 Épisodes
+2026-01-10 02:04:22,555 - PlexClient   - INFO     -       📺 Série 'Mercredi' [DS423plus] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:22,595 - PlexClient   - INFO     -       📺 Série 'Meurtres à Åre' [PLEX-Larod] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:22,628 - PlexClient   - INFO     -       📺 Série 'Dr Slump et la petite Arale' [TACOS] : 1 Saison(s) | 53 Épisodes
+2026-01-10 02:04:22,658 - PlexClient   - INFO     -       📺 Série 'Alvinnn !!! et les Chipmunks' [Swafflix] : 5 Saison(s) | 155 Épisodes
+2026-01-10 02:04:22,699 - PlexClient   - INFO     -       📺 Série 'Cross' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:22,729 - PlexClient   - INFO     -       📺 Série 'Les Popples' [PlexStation] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:22,785 - PlexClient   - INFO     -       📺 Série 'Naruto Shippuden Yabai' [VM NAS Plex] : 4 Saison(s) | 29 Épisodes
+2026-01-10 02:04:22,832 - PlexClient   - INFO     -       📺 Série 'Merteuil' [DS423plus] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:22,858 - PlexClient   - INFO     -       📺 Série 'MobLand' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:22,900 - PlexClient   - INFO     -       📺 Série 'Alya Sometimes Hides Her Feelings in Russian' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:22,947 - PlexClient   - INFO     -       📺 Série 'Dr. STONE' [TACOS] : 5 Saison(s) | 81 Épisodes
+2026-01-10 02:04:22,984 - PlexClient   - INFO     -       📺 Série 'The Curse' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,014 - PlexClient   - INFO     -       📺 Série 'NieR Automata Ver1.1a' [VM NAS Plex] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:23,017 - PlexClient   - INFO     -       📺 Série 'Monarch: Legacy of Monsters' [DS423plus] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:23,048 - PlexClient   - INFO     -       📺 Série 'Monarch: Legacy of Monsters' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,096 - PlexClient   - INFO     -       📺 Série 'Ameku M.D.: Doctor Detective' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:23,131 - PlexClient   - INFO     -       📺 Série 'Dragon Age: Absolution' [TACOS] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:23,156 - PlexClient   - INFO     -       📺 Série 'Ninja Scroll' [VM NAS Plex] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:23,159 - PlexClient   - INFO     -       📺 Série 'Cyberpunk : Edgerunners' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,184 - PlexClient   - INFO     -       📺 Série 'Mr Inbetween' [DS423plus] : 3 Saison(s) | 26 Épisodes
+2026-01-10 02:04:23,246 - PlexClient   - INFO     -       📺 Série 'Motorheads' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,313 - PlexClient   - INFO     -       📺 Série 'American Crime Story' [Swafflix] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:23,348 - PlexClient   - INFO     -       📺 Série 'Noragami' [VM NAS Plex] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:23,355 - PlexClient   - INFO     -       📺 Série 'Les Schtroumpfs' [PlexStation] : 10 Saison(s) | 297 Épisodes
+2026-01-10 02:04:23,438 - PlexClient   - INFO     -       📺 Série 'Daisy Jones And the Six' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,487 - PlexClient   - INFO     -       📺 Série 'Murderbot – Journal d’un AssaSynth' [DS423plus] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,518 - PlexClient   - INFO     -       📺 Série 'Dragon Ball' [TACOS] : 7 Saison(s) | 153 Épisodes
+2026-01-10 02:04:23,562 - PlexClient   - INFO     -       📺 Série 'Murderbot – Journal d’un AssaSynth' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,599 - PlexClient   - INFO     -       📺 Série 'One Piece Kaï' [VM NAS Plex] : 6 Saison(s) | 55 Épisodes
+2026-01-10 02:04:23,625 - PlexClient   - INFO     -       📺 Série 'DAN DA DAN' [aubeplex - Apple M4] : 2 Saison(s) | 17 Épisodes
+2026-01-10 02:04:23,675 - PlexClient   - INFO     -       📺 Série 'Dragon Ball DAIMA' [TACOS] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:23,715 - PlexClient   - INFO     -       📺 Série 'Nus et Culottés' [DS423plus] : 13 Saison(s) | 51 Épisodes
+2026-01-10 02:04:23,785 - PlexClient   - INFO     -       📺 Série 'Dans leur regard' [aubeplex - Apple M4] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:23,805 - PlexClient   - INFO     -       📺 Série 'One-Punch Man' [VM NAS Plex] : 4 Saison(s) | 49 Épisodes
+2026-01-10 02:04:23,837 - PlexClient   - INFO     -       📺 Série 'Obi-Wan Kenobi' [DS423plus] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:23,878 - PlexClient   - INFO     -       📺 Série 'Dragon Ball GT' [TACOS] : 4 Saison(s) | 64 Épisodes
+2026-01-10 02:04:23,956 - PlexClient   - INFO     -       📺 Série 'Nicky Larson' [PLEX-Larod] : 4 Saison(s) | 140 Épisodes
+2026-01-10 02:04:24,030 - PlexClient   - INFO     -       📺 Série 'The Ossan Newbie Adventurer, Trained to Death by the Most Powerful Party, Became Invincible' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:24,035 - PlexClient   - INFO     -       📺 Série 'American Dad!' [Swafflix] : 21 Saison(s) | 388 Épisodes
+2026-01-10 02:04:24,128 - PlexClient   - INFO     -       📺 Série 'Daredevil' [aubeplex - Apple M4] : 3 Saison(s) | 39 Épisodes
+2026-01-10 02:04:24,174 - PlexClient   - INFO     -       📺 Série 'One Trillion Dollars' [DS423plus] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:24,207 - PlexClient   - INFO     -       📺 Série 'Our Last Crusade or the Rise of a New World' [VM NAS Plex] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:24,212 - PlexClient   - INFO     -       📺 Série 'The Night Agent' [PLEX-Larod] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:24,256 - PlexClient   - INFO     -       📺 Série 'Dragon Ball Super' [TACOS] : 1 Saison(s) | 131 Épisodes
+2026-01-10 02:04:24,298 - PlexClient   - INFO     -       📺 Série 'American Dragon: Jake Long' [Swafflix] : 2 Saison(s) | 52 Épisodes
+2026-01-10 02:04:24,326 - PlexClient   - INFO     -       📺 Série 'Daredevil : Born Again' [aubeplex - Apple M4] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:24,351 - PlexClient   - INFO     -       📺 Série 'Paranoia Agent' [VM NAS Plex] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:24,354 - PlexClient   - INFO     -       📺 Série 'Opérations spéciales : Lioness' [DS423plus] : 2 Saison(s) | 15 Épisodes
+2026-01-10 02:04:24,404 - PlexClient   - INFO     -       📺 Série 'Nobody Wants This' [PLEX-Larod] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:24,445 - PlexClient   - INFO     -       📺 Série 'American Gigolo' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:24,484 - PlexClient   - INFO     -       📺 Série 'Parasite : La Maxime' [VM NAS Plex] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:24,492 - PlexClient   - INFO     -       📺 Série 'Dark' [aubeplex - Apple M4] : 3 Saison(s) | 26 Épisodes
+2026-01-10 02:04:24,528 - PlexClient   - INFO     -       📺 Série 'Orphan Black' [DS423plus] : 5 Saison(s) | 50 Épisodes
+2026-01-10 02:04:24,620 - PlexClient   - INFO     -       📺 Série 'One Trillion Dollars' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:24,670 - PlexClient   - INFO     -       📺 Série 'Perfect World' [VM NAS Plex] : 1 Saison(s) | 18 Épisodes
+2026-01-10 02:04:24,675 - PlexClient   - INFO     -       📺 Série 'American Gods' [Swafflix] : 3 Saison(s) | 26 Épisodes
+2026-01-10 02:04:24,723 - PlexClient   - INFO     -       📺 Série 'Dark Matter' [aubeplex - Apple M4] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:24,745 - PlexClient   - INFO     -       📺 Série 'Dragon Ball Z' [TACOS] : 9 Saison(s) | 293 Épisodes
+2026-01-10 02:04:24,823 - PlexClient   - INFO     -       📺 Série 'The Orville' [DS423plus] : 3 Saison(s) | 36 Épisodes
+2026-01-10 02:04:24,909 - PlexClient   - INFO     -       📺 Série 'Pluto' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:24,912 - PlexClient   - INFO     -       📺 Série 'Opérations spéciales : Lioness' [PLEX-Larod] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:24,958 - PlexClient   - INFO     -       📺 Série 'Les Simpson' [PlexStation] : 26 Saison(s) | 574 Épisodes
+2026-01-10 02:04:25,080 - PlexClient   - INFO     -       📺 Série 'Deadwood' [aubeplex - Apple M4] : 3 Saison(s) | 36 Épisodes
+2026-01-10 02:04:25,107 - PlexClient   - INFO     -       📺 Série 'American Horror Story' [Swafflix] : 12 Saison(s) | 132 Épisodes
+2026-01-10 02:04:25,166 - PlexClient   - INFO     -       📺 Série 'Primal' [VM NAS Plex] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:25,180 - PlexClient   - INFO     -       📺 Série 'Parasyte: The Grey' [DS423plus] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:25,212 - PlexClient   - INFO     -       📺 Série 'Dragon Ball Z Kaï' [TACOS] : 3 Saison(s) | 167 Épisodes
+2026-01-10 02:04:25,301 - PlexClient   - INFO     -       📺 Série 'Les Sisters' [PlexStation] : 2 Saison(s) | 52 Épisodes
+2026-01-10 02:04:25,332 - PlexClient   - INFO     -       📺 Série 'Death Note' [aubeplex - Apple M4] : 1 Saison(s) | 37 Épisodes
+2026-01-10 02:04:25,357 - PlexClient   - INFO     -       📺 Série 'La Panthère rose' [PLEX-Larod] : 4 Saison(s) | 124 Épisodes
+2026-01-10 02:04:25,419 - PlexClient   - INFO     -       📺 Série 'American Patriot' [Swafflix] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:25,446 - PlexClient   - INFO     -       📺 Série 'The Promised Neverland' [VM NAS Plex] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:25,453 - PlexClient   - INFO     -       📺 Série 'Pawn Stars, les rois des enchères' [DS423plus] : 3 Saison(s) | 63 Épisodes
+2026-01-10 02:04:25,489 - PlexClient   - INFO     -       📺 Série 'Dragon Raja' [TACOS] : 2 Saison(s) | 40 Épisodes
+2026-01-10 02:04:25,522 - PlexClient   - INFO     -       📺 Série 'Les Tiny Toons' [PlexStation] : 3 Saison(s) | 81 Épisodes
+2026-01-10 02:04:25,562 - PlexClient   - INFO     -       📺 Série 'Demon Slayer : Kimetsu no Yaiba' [aubeplex - Apple M4] : 5 Saison(s) | 63 Épisodes
+2026-01-10 02:04:25,600 - PlexClient   - INFO     -       📺 Série 'Peaky Blinders' [PLEX-Larod] : 6 Saison(s) | 36 Épisodes
+2026-01-10 02:04:25,654 - PlexClient   - INFO     -       📺 Série 'Pseudo Harem' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:25,658 - PlexClient   - INFO     -       📺 Série 'Amphibia' [Swafflix] : 3 Saison(s) | 58 Épisodes
+2026-01-10 02:04:25,712 - PlexClient   - INFO     -       📺 Série 'Périphériques : Les Mondes de Flynne' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:25,745 - PlexClient   - INFO     -       📺 Série 'Dragons : les neuf royaumes' [TACOS] : 8 Saison(s) | 51 Épisodes
+2026-01-10 02:04:25,773 - PlexClient   - INFO     -       📺 Série 'Les Trois Mousquetaires' [PlexStation] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:25,808 - PlexClient   - INFO     -       📺 Série 'Desperate Housewives' [aubeplex - Apple M4] : 4 Saison(s) | 93 Épisodes
+2026-01-10 02:04:25,846 - PlexClient   - INFO     -       📺 Série 'The Penguin' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:25,882 - PlexClient   - INFO     -       📺 Série 'Quality Assurance in Another World' [VM NAS Plex] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:25,885 - PlexClient   - INFO     -       📺 Série 'Amy Bradley, la passagère disparue' [Swafflix] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:25,912 - PlexClient   - INFO     -       📺 Série 'Prime Target' [DS423plus] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:25,941 - PlexClient   - INFO     -       📺 Série 'DreamZzz' [TACOS] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:25,985 - PlexClient   - INFO     -       📺 Série 'Devil May Cry' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:26,017 - PlexClient   - INFO     -       📺 Série 'Périphériques : Les Mondes de Flynne' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:26,054 - PlexClient   - INFO     -       📺 Série 'The Quintessential Quintuplets' [VM NAS Plex] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:26,057 - PlexClient   - INFO     -       📺 Série 'Anaon' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:26,090 - PlexClient   - INFO     -       📺 Série 'Prison Break' [DS423plus] : 5 Saison(s) | 87 Épisodes
+2026-01-10 02:04:26,134 - PlexClient   - INFO     -       📺 Série 'Devilman Crybaby' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:26,189 - PlexClient   - INFO     -       📺 Série 'Du mouvement de la Terre' [TACOS] : 1 Saison(s) | 17 Épisodes
+2026-01-10 02:04:26,219 - PlexClient   - INFO     -       📺 Série 'Ranking of Kings' [VM NAS Plex] : 1 Saison(s) | 23 Épisodes
+2026-01-10 02:04:26,223 - PlexClient   - INFO     -       📺 Série 'The Pitt' [PLEX-Larod] : 1 Saison(s) | 15 Épisodes
+2026-01-10 02:04:26,270 - PlexClient   - INFO     -       📺 Série 'The Ancient Magus Bride' [Swafflix] : 3 Saison(s) | 53 Épisodes
+2026-01-10 02:04:26,333 - PlexClient   - INFO     -       📺 Série 'Reacher' [DS423plus] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:26,369 - PlexClient   - INFO     -       📺 Série 'Devs' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:26,394 - PlexClient   - INFO     -       📺 Série 'Ranking of Kings : Le trésor du courage' [VM NAS Plex] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:26,396 - PlexClient   - INFO     -       📺 Série 'The Eminence in Shadow' [TACOS] : 2 Saison(s) | 32 Épisodes
+2026-01-10 02:04:26,435 - PlexClient   - INFO     -       📺 Série 'Plaine orientale' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:26,474 - PlexClient   - INFO     -       📺 Série 'And Just Like That' [Swafflix] : 3 Saison(s) | 33 Épisodes
+2026-01-10 02:04:26,538 - PlexClient   - INFO     -       📺 Série 'El refugio atómico' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:26,564 - PlexClient   - INFO     -       📺 Série 'Dexter' [aubeplex - Apple M4] : 8 Saison(s) | 96 Épisodes
+2026-01-10 02:04:26,632 - PlexClient   - INFO     -       📺 Série 'Erased' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:26,658 - PlexClient   - INFO     -       📺 Série 'Re:ZERO -Starting Life in Another World-' [VM NAS Plex] : 3 Saison(s) | 66 Épisodes
+2026-01-10 02:04:26,703 - PlexClient   - INFO     -       📺 Série 'Platonic' [PLEX-Larod] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:26,760 - PlexClient   - INFO     -       📺 Série 'Angel Beats !' [Swafflix] : 2 Saison(s) | 14 Épisodes
+2026-01-10 02:04:26,790 - PlexClient   - INFO     -       📺 Série 'La Roue du temps' [DS423plus] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:26,829 - PlexClient   - INFO     -       📺 Série 'Dexter : Les Origines' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:26,874 - PlexClient   - INFO     -       📺 Série 'Even Given the Worthless "Appraiser" Class, I'm Actualy the Strongest' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:26,899 - PlexClient   - INFO     -       📺 Série 'Red Eyes Sword : Akame ga Kill!' [VM NAS Plex] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:26,903 - PlexClient   - INFO     -       📺 Série 'The Playlist' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:26,935 - PlexClient   - INFO     -       📺 Série 'Angel Cop' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:26,961 - PlexClient   - INFO     -       📺 Série 'Looney Tunes' [PlexStation] : 36 Saison(s) | 570 Épisodes
+2026-01-10 02:04:27,032 - PlexClient   - INFO     -       📺 Série 'Sans limites avec Chris Hemsworth' [DS423plus] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:27,057 - PlexClient   - INFO     -       📺 Série 'Dexter : Résurrection' [aubeplex - Apple M4] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:27,087 - PlexClient   - INFO     -       📺 Série 'Exploding Kittens' [TACOS] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:27,118 - PlexClient   - INFO     -       📺 Série 'Pluribus' [PLEX-Larod] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:27,162 - PlexClient   - INFO     -       📺 Série 'Rick et Morty' [VM NAS Plex] : 8 Saison(s) | 81 Épisodes
+2026-01-10 02:04:27,175 - PlexClient   - INFO     -       📺 Série 'Ángela' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:27,243 - PlexClient   - INFO     -       📺 Série 'Lucile Amour Et Rock'n'Roll' [PlexStation] : 1 Saison(s) | 42 Épisodes
+2026-01-10 02:04:27,293 - PlexClient   - INFO     -       📺 Série 'Digimon : Ghost Game' [aubeplex - Apple M4] : 2 Saison(s) | 68 Épisodes
+2026-01-10 02:04:27,329 - PlexClient   - INFO     -       📺 Série 'Eyes of Wakanda' [TACOS] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:27,360 - PlexClient   - INFO     -       📺 Série 'Scorpion' [DS423plus] : 4 Saison(s) | 92 Épisodes
+2026-01-10 02:04:27,408 - PlexClient   - INFO     -       📺 Série 'Power Book II: Ghost' [PLEX-Larod] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:27,462 - PlexClient   - INFO     -       📺 Série 'Samurai 7' [VM NAS Plex] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:27,470 - PlexClient   - INFO     -       📺 Série 'Angéla Anaconda' [Swafflix] : 3 Saison(s) | 65 Épisodes
+2026-01-10 02:04:27,501 - PlexClient   - INFO     -       📺 Série 'Lucky Luke' [PlexStation] : 2 Saison(s) | 52 Épisodes
+2026-01-10 02:04:27,541 - PlexClient   - INFO     -       📺 Série 'Digimon : Savers' [aubeplex - Apple M4] : 1 Saison(s) | 48 Épisodes
+2026-01-10 02:04:27,563 - PlexClient   - INFO     -       📺 Série 'Famille Pirate' [TACOS] : 2 Saison(s) | 40 Épisodes
+2026-01-10 02:04:27,599 - PlexClient   - INFO     -       📺 Série 'Secret Level' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:27,632 - PlexClient   - INFO     -       📺 Série 'Samurai Champloo' [VM NAS Plex] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:27,636 - PlexClient   - INFO     -       📺 Série 'Power Book III: Raising Kanan' [PLEX-Larod] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:27,679 - PlexClient   - INFO     -       📺 Série 'Disclaimer' [aubeplex - Apple M4] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:27,711 - PlexClient   - INFO     -       📺 Série 'Masha et Michka' [PlexStation] : 2 Saison(s) | 47 Épisodes
+2026-01-10 02:04:27,740 - PlexClient   - INFO     -       📺 Série 'The Fated Magical Princess: Who Made Me a Princess' [TACOS] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:27,766 - PlexClient   - INFO     -       📺 Série 'Angelo la Débrouille' [Swafflix] : 5 Saison(s) | 132 Épisodes
+2026-01-10 02:04:27,807 - PlexClient   - INFO     -       📺 Série 'Scavengers Reign' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:27,813 - PlexClient   - INFO     -       📺 Série 'See' [DS423plus] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:27,871 - PlexClient   - INFO     -       📺 Série 'DJ Mehdi: Made in France' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:27,900 - PlexClient   - INFO     -       📺 Série 'Power Book IV: Force' [PLEX-Larod] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:27,941 - PlexClient   - INFO     -       📺 Série 'Max et Compagnie' [PlexStation] : 2 Saison(s) | 57 Épisodes
+2026-01-10 02:04:27,977 - PlexClient   - INFO     -       📺 Série 'Fermat Kitchen' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:28,002 - PlexClient   - INFO     -       📺 Série 'Sentenced to Be a Hero' [VM NAS Plex] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:28,005 - PlexClient   - INFO     -       📺 Série 'Angry Birds' [Swafflix] : 3 Saison(s) | 26 Épisodes
+2026-01-10 02:04:28,034 - PlexClient   - INFO     -       📺 Série 'Sense8' [DS423plus] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:28,076 - PlexClient   - INFO     -       📺 Série 'Doctor Who' [aubeplex - Apple M4] : 3 Saison(s) | 39 Épisodes
+2026-01-10 02:04:28,135 - PlexClient   - INFO     -       📺 Série 'Presque mariés, loin d'être amoureux' [PLEX-Larod] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:28,168 - PlexClient   - INFO     -       📺 Série 'Serial Experiments Lain' [VM NAS Plex] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:28,170 - PlexClient   - INFO     -       📺 Série 'Final Space' [TACOS] : 3 Saison(s) | 36 Épisodes
+2026-01-10 02:04:28,199 - PlexClient   - INFO     -       📺 Série 'Angry Birds Blues' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:28,235 - PlexClient   - INFO     -       📺 Série 'Sex Education' [DS423plus] : 4 Saison(s) | 32 Épisodes
+2026-01-10 02:04:28,270 - PlexClient   - INFO     -       📺 Série 'Maya l'abeille' [PlexStation] : 1 Saison(s) | 104 Épisodes
+2026-01-10 02:04:28,303 - PlexClient   - INFO     -       📺 Série 'Doom at Your Service' [aubeplex - Apple M4] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:28,330 - PlexClient   - INFO     -       📺 Série 'Shangri-La Frontier' [VM NAS Plex] : 2 Saison(s) | 50 Épisodes
+2026-01-10 02:04:28,339 - PlexClient   - INFO     -       📺 Série 'Reacher' [PLEX-Larod] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:28,390 - PlexClient   - INFO     -       📺 Série 'Fire Force' [TACOS] : 3 Saison(s) | 60 Épisodes
+2026-01-10 02:04:28,440 - PlexClient   - INFO     -       📺 Série 'Angry Birds Bubble Trouble' [Swafflix] : 2 Saison(s) | 7 Épisodes
+2026-01-10 02:04:28,466 - PlexClient   - INFO     -       📺 Série 'Sexe Intentions' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:28,503 - PlexClient   - INFO     -       📺 Série 'Shigurui: Death Frenzy' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:28,506 - PlexClient   - INFO     -       📺 Série 'Merveilleuse Creamy' [PlexStation] : 1 Saison(s) | 50 Épisodes
+2026-01-10 02:04:28,585 - PlexClient   - INFO     -       📺 Série 'The Recruit' [PLEX-Larod] : 2 Saison(s) | 14 Épisodes
+2026-01-10 02:04:28,635 - PlexClient   - INFO     -       📺 Série 'Flo et les robinson suisses' [TACOS] : 1 Saison(s) | 50 Épisodes
+2026-01-10 02:04:28,668 - PlexClient   - INFO     -       📺 Série 'Angry Birds Slingshot Stories' [Swafflix] : 3 Saison(s) | 7 Épisodes
+2026-01-10 02:04:33,793 - PlexClient   - INFO     -       📺 Série 'SHOSHIMIN: How to become Ordinary' [VM NAS Plex] : 2 Saison(s) | 11 Épisodes
+2026-01-10 02:04:33,796 - PlexClient   - INFO     -       📺 Série 'Silo' [DS423plus] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:33,834 - PlexClient   - INFO     -       📺 Série 'Dragon Ball Z' [aubeplex - Apple M4] : 1 Saison(s) | 290 Épisodes
+2026-01-10 02:04:33,882 - PlexClient   - INFO     -       📺 Série 'Rogue Heroes' [PLEX-Larod] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:33,921 - PlexClient   - INFO     -       📺 Série 'Angry Birds Stella' [Swafflix] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:33,946 - PlexClient   - INFO     -       📺 Série 'Food Wars! Shokugeki no Soma' [TACOS] : 4 Saison(s) | 73 Épisodes
+2026-01-10 02:04:33,986 - PlexClient   - INFO     -       📺 Série 'Miraculous, les aventures de Ladybug et Chat Noir' [PlexStation] : 6 Saison(s) | 132 Épisodes
+2026-01-10 02:04:34,032 - PlexClient   - INFO     -       📺 Série 'SI-VIS: The Sound of Heroes' [VM NAS Plex] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:34,034 - PlexClient   - INFO     -       📺 Série 'Sirens' [DS423plus] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:34,065 - PlexClient   - INFO     -       📺 Série 'Drifting Dragons' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:34,088 - PlexClient   - INFO     -       📺 Série 'Secret Invasion' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:34,135 - PlexClient   - INFO     -       📺 Série 'Angry Birds, l'île mystérieuse' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:34,196 - PlexClient   - INFO     -       📺 Série 'Frieren' [TACOS] : 1 Saison(s) | 28 Épisodes
+2026-01-10 02:04:34,233 - PlexClient   - INFO     -       📺 Série 'Slow Horses' [DS423plus] : 5 Saison(s) | 30 Épisodes
+2026-01-10 02:04:34,290 - PlexClient   - INFO     -       📺 Série 'Du mouvement de la Terre' [aubeplex - Apple M4] : 1 Saison(s) | 25 Épisodes
+2026-01-10 02:04:34,319 - PlexClient   - INFO     -       📺 Série 'Slam Dunk' [VM NAS Plex] : 5 Saison(s) | 101 Épisodes
+2026-01-10 02:04:34,334 - PlexClient   - INFO     -       📺 Série 'Severance' [PLEX-Larod] : 2 Saison(s) | 19 Épisodes
+2026-01-10 02:04:34,380 - PlexClient   - INFO     -       📺 Série 'Aniela' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:34,406 - PlexClient   - INFO     -       📺 Série 'Nicky Larson' [PlexStation] : 5 Saison(s) | 141 Épisodes
+2026-01-10 02:04:34,449 - PlexClient   - INFO     -       📺 Série 'From Old Country Bumpkin to Master Swordsman' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:34,499 - PlexClient   - INFO     -       📺 Série 'Squid Game' [DS423plus] : 3 Saison(s) | 22 Épisodes
+2026-01-10 02:04:34,540 - PlexClient   - INFO     -       📺 Série 'Du sport au meurtre : Dans la tête d’Aaron Hernandez' [aubeplex - Apple M4] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:34,570 - PlexClient   - INFO     -       📺 Série 'Solo Leveling' [VM NAS Plex] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:34,574 - PlexClient   - INFO     -       📺 Série 'Sex Education' [PLEX-Larod] : 4 Saison(s) | 32 Épisodes
+2026-01-10 02:04:34,615 - PlexClient   - INFO     -       📺 Série 'Animal Kingdom' [Swafflix] : 6 Saison(s) | 75 Épisodes
+2026-01-10 02:04:34,720 - PlexClient   - INFO     -       📺 Série 'Noir' [PlexStation] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:34,750 - PlexClient   - INFO     -       📺 Série 'Fruits Basket' [TACOS] : 3 Saison(s) | 63 Épisodes
+2026-01-10 02:04:34,793 - PlexClient   - INFO     -       📺 Série 'Dusk Beyond the End of the World' [aubeplex - Apple M4] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:34,812 - PlexClient   - INFO     -       📺 Série 'Soul Eater Kaï' [VM NAS Plex] : 1 Saison(s) | 11 Épisodes
+2026-01-10 02:04:34,831 - PlexClient   - INFO     -       📺 Série 'Star Trek' [DS423plus] : 3 Saison(s) | 79 Épisodes
+2026-01-10 02:04:34,905 - PlexClient   - INFO     -       📺 Série 'Animals' [Swafflix] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:34,934 - PlexClient   - INFO     -       📺 Série 'The Elusive Samurai' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:34,958 - PlexClient   - INFO     -       📺 Série 'Shameless' [PLEX-Larod] : 11 Saison(s) | 134 Épisodes
+2026-01-10 02:04:35,024 - PlexClient   - INFO     -       📺 Série 'Fullmetal Alchemist' [TACOS] : 1 Saison(s) | 51 Épisodes
+2026-01-10 02:04:35,068 - PlexClient   - INFO     -       📺 Série 'Steins;Gate' [VM NAS Plex] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:35,075 - PlexClient   - INFO     -       📺 Série 'Olive et Tom' [PlexStation] : 1 Saison(s) | 129 Épisodes
+2026-01-10 02:04:35,120 - PlexClient   - INFO     -       📺 Série 'Anne' [Swafflix] : 3 Saison(s) | 27 Épisodes
+2026-01-10 02:04:35,152 - PlexClient   - INFO     -       📺 Série 'Star Trek : Enterprise' [DS423plus] : 4 Saison(s) | 97 Épisodes
+2026-01-10 02:04:35,230 - PlexClient   - INFO     -       📺 Série 'Emily in Paris' [aubeplex - Apple M4] : 5 Saison(s) | 50 Épisodes
+2026-01-10 02:04:35,303 - PlexClient   - INFO     -       📺 Série 'Shōgun' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:35,344 - PlexClient   - INFO     -       📺 Série 'The Strongest Magician in the Demon Lord's Army Was a Human' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:35,347 - PlexClient   - INFO     -       📺 Série 'Fullmetal Alchemist : Brotherhood' [TACOS] : 1 Saison(s) | 64 Épisodes
+2026-01-10 02:04:35,395 - PlexClient   - INFO     -       📺 Série 'Anne Boleyn' [Swafflix] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:35,419 - PlexClient   - INFO     -       📺 Série 'Star Trek : Strange New Worlds' [DS423plus] : 3 Saison(s) | 27 Épisodes
+2026-01-10 02:04:35,460 - PlexClient   - INFO     -       📺 Série 'La Panthère rose' [PlexStation] : 4 Saison(s) | 124 Épisodes
+2026-01-10 02:04:35,501 - PlexClient   - INFO     -       📺 Série 'En Service' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:35,558 - PlexClient   - INFO     -       📺 Série 'Suicide Squad ISEKAI' [VM NAS Plex] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:35,576 - PlexClient   - INFO     -       📺 Série 'Silo' [PLEX-Larod] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:35,638 - PlexClient   - INFO     -       📺 Série 'Anohana: the Flower We Saw That Day' [Swafflix] : 1 Saison(s) | 11 Épisodes
+2026-01-10 02:04:35,665 - PlexClient   - INFO     -       📺 Série 'Star Wars : Andor' [DS423plus] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:35,704 - PlexClient   - INFO     -       📺 Série 'Futurama' [TACOS] : 10 Saison(s) | 122 Épisodes
+2026-01-10 02:04:35,746 - PlexClient   - INFO     -       📺 Série 'En traître' [aubeplex - Apple M4] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:35,788 - PlexClient   - INFO     -       📺 Série 'The Summer Hikaru Died' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:35,800 - PlexClient   - INFO     -       📺 Série 'Slow Horses' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:35,844 - PlexClient   - INFO     -       📺 Série 'Another' [Swafflix] : 2 Saison(s) | 13 Épisodes
+2026-01-10 02:04:35,874 - PlexClient   - INFO     -       📺 Série 'Star Wars : Skeleton Crew' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:35,914 - PlexClient   - INFO     -       📺 Série 'Gachiakuta' [TACOS] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:35,970 - PlexClient   - INFO     -       📺 Série 'Equinox' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:35,997 - PlexClient   - INFO     -       📺 Série 'TENGOKU-DAIMAKYO' [VM NAS Plex] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:35,999 - PlexClient   - INFO     -       📺 Série 'Snowpiercer' [PLEX-Larod] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:36,061 - PlexClient   - INFO     -       📺 Série 'Ant-Man (Courts-Métrages)' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:36,095 - PlexClient   - INFO     -       📺 Série 'Stargate Origins' [DS423plus] : 2 Saison(s) | 11 Épisodes
+2026-01-10 02:04:36,122 - PlexClient   - INFO     -       📺 Série 'Gagné ou Perdu' [TACOS] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:36,147 - PlexClient   - INFO     -       📺 Série 'Terror in Resonance' [VM NAS Plex] : 1 Saison(s) | 11 Épisodes
+2026-01-10 02:04:36,149 - PlexClient   - INFO     -       📺 Série 'Ergo Proxy' [aubeplex - Apple M4] : 1 Saison(s) | 23 Épisodes
+2026-01-10 02:04:36,177 - PlexClient   - INFO     -       📺 Série 'La Pat' Patrouille' [PlexStation] : 8 Saison(s) | 331 Épisodes
+2026-01-10 02:04:36,290 - PlexClient   - INFO     -       📺 Série 'Star Wars : Andor' [PLEX-Larod] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:36,334 - PlexClient   - INFO     -       📺 Série 'Ao Ashi' [Swafflix] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:36,370 - PlexClient   - INFO     -       📺 Série 'Galactik Football' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:36,400 - PlexClient   - INFO     -       📺 Série 'To Your Eternity' [VM NAS Plex] : 3 Saison(s) | 49 Épisodes
+2026-01-10 02:04:36,407 - PlexClient   - INFO     -       📺 Série 'Euphoria' [aubeplex - Apple M4] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:36,463 - PlexClient   - INFO     -       📺 Série 'Petit Poilu' [PlexStation] : 1 Saison(s) | 78 Épisodes
+2026-01-10 02:04:36,495 - PlexClient   - INFO     -       📺 Série 'Star Wars : Skeleton Crew' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:36,535 - PlexClient   - INFO     -       📺 Série 'Apocalypse - La Paix impossible (1918-1926)' [Swafflix] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:36,567 - PlexClient   - INFO     -       📺 Série 'Gamers !' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:36,596 - PlexClient   - INFO     -       📺 Série 'Tojima Wants to Be a Kamen Rider' [VM NAS Plex] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:36,599 - PlexClient   - INFO     -       📺 Série 'Extraordinary You' [aubeplex - Apple M4] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:36,634 - PlexClient   - INFO     -       📺 Série 'Pyjamasques' [PlexStation] : 1 Saison(s) | 46 Épisodes
+2026-01-10 02:04:36,676 - PlexClient   - INFO     -       📺 Série 'Stargate SG-1' [DS423plus] : 10 Saison(s) | 212 Épisodes
+2026-01-10 02:04:36,742 - PlexClient   - INFO     -       📺 Série 'Apocalypse - Le Crépuscule d'Hitler' [Swafflix] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:36,764 - PlexClient   - INFO     -       📺 Série 'Star Wars : The Bad Batch' [PLEX-Larod] : 3 Saison(s) | 47 Épisodes
+2026-01-10 02:04:36,804 - PlexClient   - INFO     -       📺 Série 'A Gatherer's Adventure in Isekai' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:36,831 - PlexClient   - INFO     -       📺 Série 'Tokyo Ghoul' [VM NAS Plex] : 3 Saison(s) | 48 Épisodes
+2026-01-10 02:04:36,839 - PlexClient   - INFO     -       📺 Série 'Eyes of Wakanda' [aubeplex - Apple M4] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:36,879 - PlexClient   - INFO     -       📺 Série 'Quick et Flupke' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:36,944 - PlexClient   - INFO     -       📺 Série 'Apocalypse : Hitler attaque à l'Ouest (1940)' [Swafflix] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:36,992 - PlexClient   - INFO     -       📺 Série 'Star Wars: Tales of the Jedi' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:37,050 - PlexClient   - INFO     -       📺 Série 'Stargate: Atlantis' [DS423plus] : 5 Saison(s) | 97 Épisodes
+2026-01-10 02:04:37,118 - PlexClient   - INFO     -       📺 Série 'Tokyo Revengers' [VM NAS Plex] : 3 Saison(s) | 50 Épisodes
+2026-01-10 02:04:37,125 - PlexClient   - INFO     -       📺 Série 'Gigi' [TACOS] : 1 Saison(s) | 64 Épisodes
+2026-01-10 02:04:37,163 - PlexClient   - INFO     -       📺 Série 'Apocalypse : La 1ère Guerre mondiale' [Swafflix] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:37,195 - PlexClient   - INFO     -       📺 Série 'Fairy Tail' [aubeplex - Apple M4] : 3 Saison(s) | 147 Épisodes
+2026-01-10 02:04:37,242 - PlexClient   - INFO     -       📺 Série 'Star Wars: Tales of the Underworld' [PLEX-Larod] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:37,280 - PlexClient   - INFO     -       📺 Série 'Ranma ½' [PlexStation] : 1 Saison(s) | 162 Épisodes
+2026-01-10 02:04:37,466 - PlexClient   - INFO     -       📺 Série 'TOUGEN ANKI' [VM NAS Plex] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:37,470 - PlexClient   - INFO     -       📺 Série 'Stargate: Universe' [DS423plus] : 2 Saison(s) | 39 Épisodes
+2026-01-10 02:04:37,517 - PlexClient   - INFO     -       📺 Série 'Giraya Ninja' [TACOS] : 1 Saison(s) | 49 Épisodes
+2026-01-10 02:04:37,557 - PlexClient   - INFO     -       📺 Série 'Apocalypse : La 2ème Guerre mondiale' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:37,579 - PlexClient   - INFO     -       📺 Série 'The Fall' [aubeplex - Apple M4] : 3 Saison(s) | 17 Épisodes
+2026-01-10 02:04:37,602 - PlexClient   - INFO     -       📺 Série 'Stranger Things' [PLEX-Larod] : 5 Saison(s) | 42 Épisodes
+2026-01-10 02:04:37,666 - PlexClient   - INFO     -       📺 Série 'Tower of God' [VM NAS Plex] : 2 Saison(s) | 39 Épisodes
+2026-01-10 02:04:37,672 - PlexClient   - INFO     -       📺 Série 'Rémi sans famille' [PlexStation] : 1 Saison(s) | 55 Épisodes
+2026-01-10 02:04:37,709 - PlexClient   - INFO     -       📺 Série 'Stranger Things' [DS423plus] : 5 Saison(s) | 42 Épisodes
+2026-01-10 02:04:37,749 - PlexClient   - INFO     -       📺 Série 'Gloutons & Dragons' [TACOS] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:37,781 - PlexClient   - INFO     -       📺 Série 'Apocalypse, Hitler' [Swafflix] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:37,803 - PlexClient   - INFO     -       📺 Série 'Fallout' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:37,827 - PlexClient   - INFO     -       📺 Série 'The Studio' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:37,915 - PlexClient   - INFO     -       📺 Série 'Tsubasa Chronicle' [VM NAS Plex] : 3 Saison(s) | 57 Épisodes
+2026-01-10 02:04:37,923 - PlexClient   - INFO     -       📺 Série 'Rita et Crocodile' [PlexStation] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:37,951 - PlexClient   - INFO     -       📺 Série 'Apocalypse, La Guerre des mondes (1945-1991)' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:37,974 - PlexClient   - INFO     -       📺 Série 'Supercopter' [DS423plus] : 4 Saison(s) | 80 Épisodes
+2026-01-10 02:04:38,024 - PlexClient   - INFO     -       📺 Série 'Family Business' [aubeplex - Apple M4] : 3 Saison(s) | 18 Épisodes
+2026-01-10 02:04:38,059 - PlexClient   - INFO     -       📺 Série 'Goldorak' [TACOS] : 1 Saison(s) | 74 Épisodes
+2026-01-10 02:04:38,107 - PlexClient   - INFO     -       📺 Série 'Übel Blatt' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:38,111 - PlexClient   - INFO     -       📺 Série 'Succession' [PLEX-Larod] : 4 Saison(s) | 39 Épisodes
+2026-01-10 02:04:38,157 - PlexClient   - INFO     -       📺 Série 'Apocalypse, Les débarquements' [Swafflix] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:38,180 - PlexClient   - INFO     -       📺 Série 'Sword of the Demon Hunter: Kijin Gentosho' [DS423plus] : 1 Saison(s) | 22 Épisodes
+2026-01-10 02:04:38,249 - PlexClient   - INFO     -       📺 Série 'Fargo' [aubeplex - Apple M4] : 5 Saison(s) | 51 Épisodes
+2026-01-10 02:04:38,285 - PlexClient   - INFO     -       📺 Série 'Sailor Moon' [PlexStation] : 3 Saison(s) | 128 Épisodes
+2026-01-10 02:04:38,319 - PlexClient   - INFO     -       📺 Série 'Ulysse 31' [VM NAS Plex] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:38,324 - PlexClient   - INFO     -       📺 Série 'Goldorak U' [TACOS] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:38,353 - PlexClient   - INFO     -       📺 Série 'Sur écoute' [PLEX-Larod] : 5 Saison(s) | 60 Épisodes
+2026-01-10 02:04:38,405 - PlexClient   - INFO     -       📺 Série 'Apocalypse, Staline' [Swafflix] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:38,457 - PlexClient   - INFO     -       📺 Série 'Fate/stay night' [aubeplex - Apple M4] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:38,480 - PlexClient   - INFO     -       📺 Série 'The Unwanted Undead Adventurer' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:38,484 - PlexClient   - INFO     -       📺 Série 'Saint Seiya - Soul of Gold' [PlexStation] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:38,515 - PlexClient   - INFO     -       📺 Série 'The Great North' [TACOS] : 3 Saison(s) | 55 Épisodes
+2026-01-10 02:04:38,570 - PlexClient   - INFO     -       📺 Série 'Task' [PLEX-Larod] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:38,608 - PlexClient   - INFO     -       📺 Série 'Apocalypse: Hitler attaque à l’Est (1941-1943)' [Swafflix] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:38,643 - PlexClient   - INFO     -       📺 Série 'Valkyrie Apocalypse' [VM NAS Plex] : 3 Saison(s) | 42 Épisodes
+2026-01-10 02:04:38,648 - PlexClient   - INFO     -       📺 Série 'Fate/Zero' [aubeplex - Apple M4] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:38,674 - PlexClient   - INFO     -       📺 Série 'Saint Seiya Kaï' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:38,726 - PlexClient   - INFO     -       📺 Série 'Great Pretender' [TACOS] : 1 Saison(s) | 23 Épisodes
+2026-01-10 02:04:38,796 - PlexClient   - INFO     -       📺 Série 'Ted Lasso' [PLEX-Larod] : 3 Saison(s) | 34 Épisodes
+2026-01-10 02:04:38,837 - PlexClient   - INFO     -       📺 Série 'Vinland Saga Henshū' [VM NAS Plex] : 2 Saison(s) | 7 Épisodes
+2026-01-10 02:04:38,862 - PlexClient   - INFO     -       📺 Série 'Appels d'urgence' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:38,898 - PlexClient   - INFO     -       📺 Série 'Fear the Walking Dead' [aubeplex - Apple M4] : 3 Saison(s) | 48 Épisodes
+2026-01-10 02:04:38,938 - PlexClient   - INFO     -       📺 Série 'The Big Bang Theory' [DS423plus] : 12 Saison(s) | 279 Épisodes
+2026-01-10 02:04:39,010 - PlexClient   - INFO     -       📺 Série 'She-Ra, la Princesse du Pouvoir' [PlexStation] : 1 Saison(s) | 93 Épisodes
+2026-01-10 02:04:39,043 - PlexClient   - INFO     -       📺 Série 'Great Teacher Onizuka' [TACOS] : 1 Saison(s) | 43 Épisodes
+2026-01-10 02:04:39,077 - PlexClient   - INFO     -       📺 Série 'The Terminal List: Dark Wolf' [PLEX-Larod] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:39,110 - PlexClient   - INFO     -       📺 Série 'Vivy -Fluorite Eye's Song-' [VM NAS Plex] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:39,113 - PlexClient   - INFO     -       📺 Série 'Apple Cider Vinegar' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:39,139 - PlexClient   - INFO     -       📺 Série 'Fire Force' [aubeplex - Apple M4] : 2 Saison(s) | 48 Épisodes
+2026-01-10 02:04:39,175 - PlexClient   - INFO     -       📺 Série 'Those About to Die' [DS423plus] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:39,209 - PlexClient   - INFO     -       📺 Série 'Sherlock Holmes' [PlexStation] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:39,241 - PlexClient   - INFO     -       📺 Série 'Grimgar, le Monde des Cendres et de Fantaisie' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:39,269 - PlexClient   - INFO     -       📺 Série 'Wind Breaker' [VM NAS Plex] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:39,273 - PlexClient   - INFO     -       📺 Série 'Terminator Zero' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:39,315 - PlexClient   - INFO     -       📺 Série 'The Apprentice: ONE Championship Edition' [Swafflix] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:39,362 - PlexClient   - INFO     -       📺 Série 'Fleabag' [aubeplex - Apple M4] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:39,386 - PlexClient   - INFO     -       📺 Série 'Tulsa King' [DS423plus] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:39,430 - PlexClient   - INFO     -       📺 Série 'Star Wars : The Bad Batch' [PlexStation] : 2 Saison(s) | 32 Épisodes
+2026-01-10 02:04:39,462 - PlexClient   - INFO     -       📺 Série 'Wistoria: Wand and Sword' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:39,465 - PlexClient   - INFO     -       📺 Série 'Gundam Build Divers' [TACOS] : 2 Saison(s) | 40 Épisodes
+2026-01-10 02:04:39,495 - PlexClient   - INFO     -       📺 Série 'Tom Sawyer' [PLEX-Larod] : 2 Saison(s) | 51 Épisodes
+2026-01-10 02:04:39,544 - PlexClient   - INFO     -       📺 Série 'Après la nuit' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:39,576 - PlexClient   - INFO     -       📺 Série 'Flippé' [aubeplex - Apple M4] : 2 Saison(s) | 40 Épisodes
+2026-01-10 02:04:39,602 - PlexClient   - INFO     -       📺 Série 'X-Men '97' [VM NAS Plex] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:39,605 - PlexClient   - INFO     -       📺 Série 'Star Wars: Tales of the Jedi' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:39,635 - PlexClient   - INFO     -       📺 Série 'Under the Dome' [DS423plus] : 3 Saison(s) | 39 Épisodes
+2026-01-10 02:04:39,674 - PlexClient   - INFO     -       📺 Série 'Gundam Build Fighters' [TACOS] : 1 Saison(s) | 25 Épisodes
+2026-01-10 02:04:39,709 - PlexClient   - INFO     -       📺 Série 'Trésors perdus : Le secret de Moctezuma' [PLEX-Larod] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:39,754 - PlexClient   - INFO     -       📺 Série 'Arcadia' [Swafflix] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:39,781 - PlexClient   - INFO     -       📺 Série 'Yu Yu Hakusho Kaï' [VM NAS Plex] : 4 Saison(s) | 13 Épisodes
+2026-01-10 02:04:39,796 - PlexClient   - INFO     -    📖 [VM NAS Plex] Scan Section 'Séries TV' (show)...
+2026-01-10 02:04:39,797 - PlexClient   - INFO     -       📺 Série 'The Flower of Evil' [aubeplex - Apple M4] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:39,828 - PlexClient   - INFO     -       📺 Série 'Super Mario Bros' [PlexStation] : 1 Saison(s) | 52 Épisodes
+2026-01-10 02:04:39,860 - PlexClient   - INFO     -       📺 Série 'Upload' [DS423plus] : 4 Saison(s) | 29 Épisodes
+2026-01-10 02:04:39,900 - PlexClient   - INFO     -       📺 Série 'Gurren Lagann' [TACOS] : 1 Saison(s) | 27 Épisodes
+2026-01-10 02:04:39,945 - PlexClient   - INFO     -       📺 Série 'Tulsa King' [PLEX-Larod] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:40,011 - PlexClient   - INFO     -       📺 Série 'Arcane' [Swafflix] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:40,058 - PlexClient   - INFO     -       📺 Série 'For All Mankind' [aubeplex - Apple M4] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:40,109 - PlexClient   - INFO     -       📺 Série 'SuperTed' [PlexStation] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:40,149 - PlexClient   - INFO     -    └── 99 éléments trouvés dans 'Séries TV' [VM NAS Plex].
+2026-01-10 02:04:40,152 - PlexClient   - INFO     -       📺 Série 'Vers les étoiles' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:40,179 - PlexClient   - INFO     -       📺 Série 'Haikyu!!' [TACOS] : 4 Saison(s) | 73 Épisodes
+2026-01-10 02:04:40,239 - PlexClient   - INFO     -       📺 Série 'Ulysse 31' [PLEX-Larod] : 1 Saison(s) | 28 Épisodes
+2026-01-10 02:04:40,282 - PlexClient   - INFO     -       📺 Série 'La Forêt de l'étrange' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:40,302 - PlexClient   - INFO     -       📺 Série '12 Monkeys' [VM NAS Plex] : 4 Saison(s) | 46 Épisodes
+2026-01-10 02:04:40,309 - PlexClient   - INFO     -       📺 Série 'Archer' [Swafflix] : 14 Saison(s) | 142 Épisodes
+2026-01-10 02:04:40,361 - PlexClient   - INFO     -       📺 Série 'T'choupi à l'école' [PlexStation] : 1 Saison(s) | 51 Épisodes
+2026-01-10 02:04:40,388 - PlexClient   - INFO     -       📺 Série 'Versailles' [DS423plus] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:40,431 - PlexClient   - INFO     -       📺 Série 'Un monde meilleur' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:40,468 - PlexClient   - INFO     -       📺 Série 'Franklin' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:40,496 - PlexClient   - INFO     -       📺 Série 'The Acolyte' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:40,498 - PlexClient   - INFO     -       📺 Série 'Archive 81' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:40,525 - PlexClient   - INFO     -       📺 Série 'Hajime no Ippo : The Fighting' [TACOS] : 3 Saison(s) | 126 Épisodes
+2026-01-10 02:04:40,592 - PlexClient   - INFO     -       📺 Série 'T'Choupi et ses amis' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:40,617 - PlexClient   - INFO     -       📺 Série 'Validé' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:40,652 - PlexClient   - INFO     -       📺 Série 'Alien: Earth' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:40,654 - PlexClient   - INFO     -       📺 Série 'Frères d'armes' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:40,683 - PlexClient   - INFO     -       📺 Série 'Vikings' [DS423plus] : 6 Saison(s) | 89 Épisodes
+2026-01-10 02:04:40,744 - PlexClient   - INFO     -       📺 Série 'Are you human?' [Swafflix] : 1 Saison(s) | 36 Épisodes
+2026-01-10 02:04:40,777 - PlexClient   - INFO     -       📺 Série 'Harley Quinn' [TACOS] : 4 Saison(s) | 46 Épisodes
+2026-01-10 02:04:40,814 - PlexClient   - INFO     -       📺 Série 'Tchaou et Grodo' [PlexStation] : 1 Saison(s) | 41 Épisodes
+2026-01-10 02:04:40,854 - PlexClient   - INFO     -       📺 Série 'Ash vs Evil Dead' [VM NAS Plex] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:40,859 - PlexClient   - INFO     -       📺 Série 'The Walking Dead : Daryl Dixon' [PLEX-Larod] : 3 Saison(s) | 19 Épisodes
+2026-01-10 02:04:40,921 - PlexClient   - INFO     -       📺 Série 'Frieren' [aubeplex - Apple M4] : 1 Saison(s) | 28 Épisodes
+2026-01-10 02:04:40,966 - PlexClient   - INFO     -       📺 Série 'Ark: The Animated Series' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:40,996 - PlexClient   - INFO     -       📺 Série 'Viper' [DS423plus] : 4 Saison(s) | 79 Épisodes
+2026-01-10 02:04:41,038 - PlexClient   - INFO     -       📺 Série 'Hazbin Hotel' [TACOS] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:41,064 - PlexClient   - INFO     -       📺 Série 'Barbares' [VM NAS Plex] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:41,067 - PlexClient   - INFO     -       📺 Série 'Tchoupi' [PlexStation] : 1 Saison(s) | 65 Épisodes
+2026-01-10 02:04:41,104 - PlexClient   - INFO     -       📺 Série 'The Walking Dead : Dead City' [PLEX-Larod] : 2 Saison(s) | 14 Épisodes
+2026-01-10 02:04:41,145 - PlexClient   - INFO     -       📺 Série 'From' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:41,167 - PlexClient   - INFO     -       📺 Série 'Arknights' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:41,199 - PlexClient   - INFO     -       📺 Série 'Vrais voisins, faux amis' [DS423plus] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:41,236 - PlexClient   - INFO     -       📺 Série 'Heaven Official's Blessing' [TACOS] : 2 Saison(s) | 15 Épisodes
+2026-01-10 02:04:41,261 - PlexClient   - INFO     -       📺 Série 'Better Call Saul' [VM NAS Plex] : 6 Saison(s) | 63 Épisodes
+2026-01-10 02:04:41,270 - PlexClient   - INFO     -       📺 Série 'Wet Hot American Summer: First Day of Camp' [PLEX-Larod] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:41,323 - PlexClient   - INFO     -       📺 Série 'Fullmetal Alchemist : Brotherhood' [aubeplex - Apple M4] : 1 Saison(s) | 64 Épisodes
+2026-01-10 02:04:41,357 - PlexClient   - INFO     -       📺 Série 'Arnold' [Swafflix] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:41,380 - PlexClient   - INFO     -       📺 Série 'The Tex Avery Show' [PlexStation] : 2 Saison(s) | 132 Épisodes
+2026-01-10 02:04:41,427 - PlexClient   - INFO     -       📺 Série 'WeCrashed' [DS423plus] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:41,461 - PlexClient   - INFO     -       📺 Série 'Hell's Paradise' [TACOS] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:41,493 - PlexClient   - INFO     -       📺 Série 'Black Sails' [VM NAS Plex] : 4 Saison(s) | 38 Épisodes
+2026-01-10 02:04:41,499 - PlexClient   - INFO     -       📺 Série 'The Witcher : L'héritage du sang' [PLEX-Larod] : 2 Saison(s) | 9 Épisodes
+2026-01-10 02:04:41,547 - PlexClient   - INFO     -       📺 Série 'Game of Thrones' [aubeplex - Apple M4] : 8 Saison(s) | 73 Épisodes
+2026-01-10 02:04:41,585 - PlexClient   - INFO     -       📺 Série 'Arrested development - Les nouveaux pauvres' [Swafflix] : 5 Saison(s) | 91 Épisodes
+2026-01-10 02:04:41,631 - PlexClient   - INFO     -       📺 Série 'Titi Et Grosminet Retrospective (1941-2003)' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:41,655 - PlexClient   - INFO     -       📺 Série 'Westworld' [DS423plus] : 4 Saison(s) | 35 Épisodes
+2026-01-10 02:04:41,702 - PlexClient   - INFO     -       📺 Série 'Hellsing' [TACOS] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:41,728 - PlexClient   - INFO     -       📺 Série 'The Boys' [VM NAS Plex] : 4 Saison(s) | 32 Épisodes
+2026-01-10 02:04:41,735 - PlexClient   - INFO     -       📺 Série 'Yellowstone' [PLEX-Larod] : 1 Saison(s) | 14 Épisodes
+2026-01-10 02:04:41,775 - PlexClient   - INFO     - ✅ [Scan] PLEX-Larod OK (1646.91ms)
+2026-01-10 02:04:41,785 - PlexClient   - INFO     -       📺 Série 'Gangs of London' [aubeplex - Apple M4] : 2 Saison(s) | 17 Épisodes
+2026-01-10 02:04:41,828 - PlexClient   - INFO     -       📺 Série 'Arrête de me chauffer, Nagatoro !' [Swafflix] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:41,862 - PlexClient   - INFO     -       📺 Série 'Hellsing Ultimate' [TACOS] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:41,886 - PlexClient   - INFO     -       📺 Série 'Braquo' [VM NAS Plex] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:41,891 - PlexClient   - INFO     -       📺 Série 'Tom et Jerry' [PlexStation] : 3 Saison(s) | 160 Épisodes
+2026-01-10 02:04:41,939 - PlexClient   - INFO     -       📺 Série 'Gangsta.' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:41,975 - PlexClient   - INFO     -       📺 Série 'Arrête Papa, tu me fais honte !' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:42,011 - PlexClient   - INFO     -       📺 Série 'Wheeler Dealers France' [DS423plus] : 10 Saison(s) | 121 Épisodes
+2026-01-10 02:04:42,051 - PlexClient   - INFO     -       📺 Série 'Hero Skill - Achats en ligne' [TACOS] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:42,081 - PlexClient   - INFO     -       📺 Série 'Breaking Bad' [VM NAS Plex] : 5 Saison(s) | 62 Épisodes
+2026-01-10 02:04:42,091 - PlexClient   - INFO     -       📺 Série 'Tom Sawyer' [PlexStation] : 1 Saison(s) | 49 Épisodes
+2026-01-10 02:04:42,174 - PlexClient   - INFO     -       📺 Série 'The Gentlemen' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:42,326 - PlexClient   - INFO     -       📺 Série 'The White Lotus' [DS423plus] : 3 Saison(s) | 21 Épisodes
+2026-01-10 02:04:42,373 - PlexClient   - INFO     -       📺 Série 'High School DxD' [TACOS] : 3 Saison(s) | 20 Épisodes
+2026-01-10 02:04:42,418 - PlexClient   - INFO     -       📺 Série 'Bref' [VM NAS Plex] : 2 Saison(s) | 88 Épisodes
+2026-01-10 02:04:42,434 - PlexClient   - INFO     -       📺 Série 'Trotro' [PlexStation] : 2 Saison(s) | 34 Épisodes
+2026-01-10 02:04:42,490 - PlexClient   - INFO     -       📺 Série 'Arrow' [Swafflix] : 8 Saison(s) | 170 Épisodes
+2026-01-10 02:04:42,547 - PlexClient   - INFO     -       📺 Série 'Ghost in the Shell : Stand Alone Complex' [aubeplex - Apple M4] : 2 Saison(s) | 52 Épisodes
+2026-01-10 02:04:42,585 - PlexClient   - INFO     -       📺 Série 'Yellowstone' [DS423plus] : 5 Saison(s) | 51 Épisodes
+2026-01-10 02:04:42,622 - PlexClient   - INFO     - ✅ [Scan] DS423plus OK (1677.37ms)
+2026-01-10 02:04:42,632 - PlexClient   - INFO     -       📺 Série 'Hundred' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:42,676 - PlexClient   - INFO     -       📺 Série 'Ça : Bienvenue à Derry' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:42,678 - PlexClient   - INFO     -       📺 Série 'Ulysse 31' [PlexStation] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:42,732 - PlexClient   - INFO     -       📺 Série 'Arslan Senki' [Swafflix] : 2 Saison(s) | 33 Épisodes
+2026-01-10 02:04:42,766 - PlexClient   - INFO     -       📺 Série 'La casa de papel' [VM NAS Plex] : 1 Saison(s) | 15 Épisodes
+2026-01-10 02:04:42,771 - PlexClient   - INFO     -       📺 Série 'Gilmore Girls' [aubeplex - Apple M4] : 7 Saison(s) | 153 Épisodes
+2026-01-10 02:04:42,841 - PlexClient   - INFO     -       📺 Série 'Vision d'Escaflowne' [PlexStation] : 2 Saison(s) | 27 Épisodes
+2026-01-10 02:04:42,870 - PlexClient   - INFO     -       📺 Série 'Hunter × Hunter' [TACOS] : 1 Saison(s) | 90 Épisodes
+2026-01-10 02:04:42,908 - PlexClient   - INFO     -       📺 Série 'Chernobyl' [VM NAS Plex] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:42,910 - PlexClient   - INFO     -       📺 Série 'As a Reincarnated Aristocrat, I'll Use My Appraisal Skill to Rise in the World' [Swafflix] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:42,945 - PlexClient   - INFO     -       📺 Série 'Ginny & Georgia' [aubeplex - Apple M4] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:42,969 - PlexClient   - INFO     -       📺 Série 'Voici Timmy' [PlexStation] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:43,003 - PlexClient   - INFO     -       📺 Série 'Chief of War' [VM NAS Plex] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:43,013 - PlexClient   - INFO     -       📺 Série 'Ash vs Evil Dead' [Swafflix] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:43,044 - PlexClient   - INFO     -       📺 Série 'Colony' [VM NAS Plex] : 2 Saison(s) | 23 Épisodes
+2026-01-10 02:04:43,048 - PlexClient   - INFO     -       📺 Série 'What If...?' [PlexStation] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:43,093 - PlexClient   - INFO     -       📺 Série 'The Crowned Clown' [VM NAS Plex] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:43,097 - PlexClient   - INFO     -       📺 Série 'Hunter x Hunter' [TACOS] : 1 Saison(s) | 146 Épisodes
+2026-01-10 02:04:43,156 - PlexClient   - INFO     -       📺 Série 'Dark' [VM NAS Plex] : 3 Saison(s) | 26 Épisodes
+2026-01-10 02:04:43,198 - PlexClient   - INFO     -       📺 Série 'I left my a-rank party to help my former students reach the dungeon depths!' [TACOS] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:43,278 - PlexClient   - INFO     -       📺 Série 'Ashita no Joe' [Swafflix] : 2 Saison(s) | 126 Épisodes
+2026-01-10 02:04:43,332 - PlexClient   - INFO     -       📺 Série 'Dark Matter' [VM NAS Plex] : 3 Saison(s) | 39 Épisodes
+2026-01-10 02:04:43,338 - PlexClient   - INFO     -       📺 Série 'I Parry Everything!' [TACOS] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:43,371 - PlexClient   - INFO     -       📺 Série 'Zig et Sharko' [PlexStation] : 2 Saison(s) | 156 Épisodes
+2026-01-10 02:04:43,464 - PlexClient   - INFO     -       📺 Série 'Gintama' [aubeplex - Apple M4] : 1 Saison(s) | 367 Épisodes
+2026-01-10 02:04:43,526 - PlexClient   - INFO     -       📺 Série 'Ashley Garcia : Géniale et amoureuse' [Swafflix] : 2 Saison(s) | 15 Épisodes
+2026-01-10 02:04:43,555 - PlexClient   - INFO     -       📺 Série 'Deadwood' [VM NAS Plex] : 3 Saison(s) | 36 Épisodes
+2026-01-10 02:04:43,561 - PlexClient   - INFO     -       📺 Série 'I Was Reincarnated as the 7th Prince so I Can Take My Time Perfecting My Magical Ability' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:43,591 - PlexClient   - INFO     -       📺 Série 'Zootopie+' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:43,623 - PlexClient   - INFO     -    📖 [PlexStation] Scan Section 'Docu-Séries' (show)...
+2026-01-10 02:04:43,625 - PlexClient   - INFO     -       📺 Série 'The Girlfriend' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:43,652 - PlexClient   - INFO     -       📺 Série 'Dune : Prophecy' [VM NAS Plex] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:43,655 - PlexClient   - INFO     -       📺 Série 'Aspergirl' [Swafflix] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:43,686 - PlexClient   - INFO     -       📺 Série 'Il était une fois… la Vie' [TACOS] : 1 Saison(s) | 25 Épisodes
+2026-01-10 02:04:43,736 - PlexClient   - INFO     -    └── 27 éléments trouvés dans 'Docu-Séries' [PlexStation].
+2026-01-10 02:04:43,736 - PlexClient   - INFO     -       📺 Série 'The Glory' [aubeplex - Apple M4] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:43,760 - PlexClient   - INFO     -       📺 Série 'Falling Skies' [VM NAS Plex] : 3 Saison(s) | 22 Épisodes
+2026-01-10 02:04:43,766 - PlexClient   - INFO     -       📺 Série 'Assassination Classroom' [Swafflix] : 2 Saison(s) | 47 Épisodes
+2026-01-10 02:04:44,647 - PlexClient   - INFO     -       📺 Série 'Apocalypse - La Paix impossible (1918-1926)' [PlexStation] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:44,679 - PlexClient   - INFO     -       📺 Série 'Il était une fois... les Amériques' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:44,710 - PlexClient   - INFO     -       📺 Série 'Golden Boy' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:44,736 - PlexClient   - INFO     -       📺 Série 'Fallout' [VM NAS Plex] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:44,739 - PlexClient   - INFO     -       📺 Série 'Astérix & Obélix : Le Combat des chefs' [Swafflix] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:44,771 - PlexClient   - INFO     -       📺 Série 'Apocalypse - Le Crépuscule d'Hitler' [PlexStation] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:44,802 - PlexClient   - INFO     -       📺 Série 'Il était une fois… les Découvreurs' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:44,841 - PlexClient   - INFO     -       📺 Série 'Good American Family' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:44,867 - PlexClient   - INFO     -       📺 Série 'Fargo' [VM NAS Plex] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:44,872 - PlexClient   - INFO     -       📺 Série 'Astrid et Raphaëlle' [Swafflix] : 7 Saison(s) | 50 Épisodes
+2026-01-10 02:04:44,944 - PlexClient   - INFO     -       📺 Série 'Apocalypse : La 1ère Guerre mondiale' [PlexStation] : 2 Saison(s) | 10 Épisodes
+2026-01-10 02:04:44,977 - PlexClient   - INFO     -       📺 Série 'Il était une fois... notre Terre' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:45,011 - PlexClient   - INFO     -       📺 Série 'Athleticus' [Swafflix] : 2 Saison(s) | 6 Épisodes
+2026-01-10 02:04:45,038 - PlexClient   - INFO     -       📺 Série 'Good Doctor' [aubeplex - Apple M4] : 7 Saison(s) | 126 Épisodes
+2026-01-10 02:04:45,079 - PlexClient   - INFO     -       📺 Série 'Apocalypse : La 2ème Guerre mondiale' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:45,124 - PlexClient   - INFO     -       📺 Série 'Fear the Walking Dead' [VM NAS Plex] : 8 Saison(s) | 105 Épisodes
+2026-01-10 02:04:45,149 - PlexClient   - INFO     -       📺 Série 'Good Omens' [aubeplex - Apple M4] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:45,191 - PlexClient   - INFO     -       📺 Série 'Atypical' [Swafflix] : 4 Saison(s) | 38 Épisodes
+2026-01-10 02:04:45,240 - PlexClient   - INFO     -       📺 Série 'Apocalypse, Hitler' [PlexStation] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:45,276 - PlexClient   - INFO     -       📺 Série 'Foundation' [VM NAS Plex] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:45,281 - PlexClient   - INFO     -       📺 Série 'Inazuma Eleven' [TACOS] : 3 Saison(s) | 127 Épisodes
+2026-01-10 02:04:45,329 - PlexClient   - INFO     -       📺 Série 'Gossip Girl, nouvelle génération' [aubeplex - Apple M4] : 2 Saison(s) | 22 Épisodes
+2026-01-10 02:04:45,359 - PlexClient   - INFO     -       📺 Série 'Au pair' [Swafflix] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:45,386 - PlexClient   - INFO     -       📺 Série 'Frères d'armes' [VM NAS Plex] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:45,388 - PlexClient   - INFO     -       📺 Série 'Apocalypse, La Guerre des mondes (1945-1991)' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:45,436 - PlexClient   - INFO     -       📺 Série 'Inside Job' [TACOS] : 1 Saison(s) | 18 Épisodes
+2026-01-10 02:04:45,496 - PlexClient   - INFO     -       📺 Série 'Great Teacher Onizuka' [aubeplex - Apple M4] : 1 Saison(s) | 43 Épisodes
+2026-01-10 02:04:45,530 - PlexClient   - INFO     -       📺 Série 'Frontier' [VM NAS Plex] : 3 Saison(s) | 18 Épisodes
+2026-01-10 02:04:45,535 - PlexClient   - INFO     -       📺 Série 'Au pays des têtes à claques' [Swafflix] : 3 Saison(s) | 37 Épisodes
+2026-01-10 02:04:45,570 - PlexClient   - INFO     -       📺 Série 'Apocalypse, Staline' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:45,626 - PlexClient   - INFO     -       📺 Série 'Grid' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:45,656 - PlexClient   - INFO     -       📺 Série 'Game of Thrones' [VM NAS Plex] : 8 Saison(s) | 73 Épisodes
+2026-01-10 02:04:45,667 - PlexClient   - INFO     -       📺 Série 'Au service de la France' [Swafflix] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:45,696 - PlexClient   - INFO     -       📺 Série 'Inspecteur Gadget' [TACOS] : 4 Saison(s) | 112 Épisodes
+2026-01-10 02:04:45,743 - PlexClient   - INFO     -       📺 Série 'Apocalypse: Verdun' [PlexStation] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:45,770 - PlexClient   - INFO     -       📺 Série 'Gen V' [VM NAS Plex] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:45,774 - PlexClient   - INFO     -       📺 Série 'Guilty Crown' [aubeplex - Apple M4] : 1 Saison(s) | 22 Épisodes
+2026-01-10 02:04:45,803 - PlexClient   - INFO     -       📺 Série 'Audrey est revenue' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:45,858 - PlexClient   - INFO     -       📺 Série 'Interspecies Reviewers' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:45,887 - PlexClient   - INFO     -       📺 Série 'The Beatles - Get Back' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:45,913 - PlexClient   - INFO     -       📺 Série 'The Goryeo-Khitan War' [VM NAS Plex] : 1 Saison(s) | 32 Épisodes
+2026-01-10 02:04:45,920 - PlexClient   - INFO     -       📺 Série 'Gurren Lagann' [aubeplex - Apple M4] : 1 Saison(s) | 27 Épisodes
+2026-01-10 02:04:45,940 - PlexClient   - INFO     -       📺 Série 'Aussie Shore' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:45,986 - PlexClient   - INFO     -       📺 Série 'Halo' [VM NAS Plex] : 2 Saison(s) | 17 Épisodes
+2026-01-10 02:04:45,991 - PlexClient   - INFO     -       📺 Série 'InuYasha' [TACOS] : 2 Saison(s) | 54 Épisodes
+2026-01-10 02:04:46,023 - PlexClient   - INFO     -       📺 Série 'Burger Quiz' [PlexStation] : 1 Saison(s) | 59 Épisodes
+2026-01-10 02:04:46,078 - PlexClient   - INFO     -       📺 Série 'Hajime no Ippo : The Fighting' [aubeplex - Apple M4] : 3 Saison(s) | 76 Épisodes
+2026-01-10 02:04:46,109 - PlexClient   - INFO     -       📺 Série 'House of the Dragon' [VM NAS Plex] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:46,113 - PlexClient   - INFO     -       📺 Série 'Avatar : La légende de Korra' [Swafflix] : 4 Saison(s) | 52 Épisodes
+2026-01-10 02:04:46,171 - PlexClient   - INFO     -       📺 Série 'Invincible' [TACOS] : 3 Saison(s) | 13 Épisodes
+2026-01-10 02:04:46,201 - PlexClient   - INFO     -       📺 Série 'C'est toujours pas sorcier' [PlexStation] : 3 Saison(s) | 54 Épisodes
+2026-01-10 02:04:46,234 - PlexClient   - INFO     -       📺 Série 'Hal & Harper' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:46,256 - PlexClient   - INFO     -       📺 Série 'Iljimae' [VM NAS Plex] : 1 Saison(s) | 20 Épisodes
+2026-01-10 02:04:46,260 - PlexClient   - INFO     -       📺 Série 'Avatar : Le dernier maître de l'air' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:46,292 - PlexClient   - INFO     -       📺 Série 'The Irregular at Magic High School' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:46,347 - PlexClient   - INFO     -       📺 Série 'Invasion' [VM NAS Plex] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:46,351 - PlexClient   - INFO     -       📺 Série 'The Handmaid's Tale : La Servante écarlate' [aubeplex - Apple M4] : 5 Saison(s) | 56 Épisodes
+2026-01-10 02:04:46,402 - PlexClient   - INFO     -       📺 Série 'Cauchemar en cuisine avec Philippe Etchebest' [PlexStation] : 13 Saison(s) | 73 Épisodes
+2026-01-10 02:04:46,434 - PlexClient   - INFO     -       📺 Série 'Avatar : Le Dernier Maître de l'air' [Swafflix] : 3 Saison(s) | 61 Épisodes
+2026-01-10 02:04:46,476 - PlexClient   - INFO     -       📺 Série 'Isekai Cheat Magician' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:46,501 - PlexClient   - INFO     -       📺 Série 'Invincible' [VM NAS Plex] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:46,507 - PlexClient   - INFO     -       📺 Série 'Hannibal' [aubeplex - Apple M4] : 3 Saison(s) | 38 Épisodes
+2026-01-10 02:04:46,713 - PlexClient   - INFO     -       📺 Série 'Isekai Onsen Paradise' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:46,751 - PlexClient   - INFO     -       📺 Série 'The IT Crowd' [VM NAS Plex] : 4 Saison(s) | 24 Épisodes
+2026-01-10 02:04:46,758 - PlexClient   - INFO     -       📺 Série 'Hazbin Hotel' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:46,786 - PlexClient   - INFO     -       📺 Série 'Faites entrer l'accusé' [PlexStation] : 11 Saison(s) | 141 Épisodes
+2026-01-10 02:04:46,838 - PlexClient   - INFO     -       📺 Série 'Jang Yeong Sil' [VM NAS Plex] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:46,841 - PlexClient   - INFO     -       📺 Série 'Ishura' [TACOS] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:46,870 - PlexClient   - INFO     -       📺 Série 'Avengers Rassemblement' [Swafflix] : 5 Saison(s) | 127 Épisodes
+2026-01-10 02:04:46,918 - PlexClient   - INFO     -       📺 Série 'Hell's Paradise' [aubeplex - Apple M4] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:46,940 - PlexClient   - INFO     -       📺 Série 'L'Exorciste' [VM NAS Plex] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:46,943 - PlexClient   - INFO     -       📺 Série 'Grégory' [PlexStation] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:46,972 - PlexClient   - INFO     -       📺 Série 'Iwájú' [TACOS] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:46,997 - PlexClient   - INFO     -       📺 Série 'Avenir' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:47,022 - PlexClient   - INFO     -       📺 Série 'Hello Kitty : La forêt des pommes' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:47,046 - PlexClient   - INFO     -       📺 Série 'The Last Kingdom' [VM NAS Plex] : 5 Saison(s) | 46 Épisodes
+2026-01-10 02:04:47,053 - PlexClient   - INFO     -       📺 Série 'J'irai dormir chez vous' [PlexStation] : 4 Saison(s) | 16 Épisodes
+2026-01-10 02:04:47,084 - PlexClient   - INFO     -       📺 Série 'Je me fais isekai pour la deuxième fois…' [TACOS] : 1 Saison(s) | 11 Épisodes
+2026-01-10 02:04:47,118 - PlexClient   - INFO     -       📺 Série 'Avenue 5' [Swafflix] : 2 Saison(s) | 17 Épisodes
+2026-01-10 02:04:47,149 - PlexClient   - INFO     -       📺 Série 'The Last of Us' [VM NAS Plex] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:47,152 - PlexClient   - INFO     -       📺 Série 'Héros fragile' [aubeplex - Apple M4] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:47,193 - PlexClient   - INFO     -       📺 Série 'L'Egypte vue du ciel' [PlexStation] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:47,221 - PlexClient   - INFO     -       📺 Série 'Jeanne et Serge' [TACOS] : 1 Saison(s) | 58 Épisodes
+2026-01-10 02:04:47,270 - PlexClient   - INFO     -       📺 Série 'Last Samurai Standing' [VM NAS Plex] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:47,271 - PlexClient   - INFO     -       📺 Série 'Awake: The Million Dollar Game' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:47,294 - PlexClient   - INFO     -       📺 Série 'Hijack' [aubeplex - Apple M4] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:47,321 - PlexClient   - INFO     -       📺 Série 'Le Meilleur Pâtissier' [PlexStation] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:47,365 - PlexClient   - INFO     -       📺 Série 'Le Jeu de la mort' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:47,367 - PlexClient   - INFO     -       📺 Série 'Jiban' [TACOS] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:47,399 - PlexClient   - INFO     -       📺 Série 'Away' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:47,427 - PlexClient   - INFO     -       📺 Série 'His Dark Materials : À la croisée des mondes' [aubeplex - Apple M4] : 3 Saison(s) | 23 Épisodes
+2026-01-10 02:04:47,458 - PlexClient   - INFO     -       📺 Série 'Le Seigneur des anneaux : Les Anneaux de pouvoir' [VM NAS Plex] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:47,462 - PlexClient   - INFO     -       📺 Série 'Les Guignols de l'info' [PlexStation] : 1 Saison(s) | 27 Épisodes
+2026-01-10 02:04:47,540 - PlexClient   - INFO     -       📺 Série 'Axe Cop' [Swafflix] : 2 Saison(s) | 22 Épisodes
+2026-01-10 02:04:47,565 - PlexClient   - INFO     -       📺 Série 'Horimiya' [aubeplex - Apple M4] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:47,614 - PlexClient   - INFO     -       📺 Série 'Les 100' [VM NAS Plex] : 4 Saison(s) | 58 Épisodes
+2026-01-10 02:04:47,624 - PlexClient   - INFO     -       📺 Série 'Life, l'aventure de la vie' [PlexStation] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:47,658 - PlexClient   - INFO     -       📺 Série 'JoJo's Bizarre Adventure' [TACOS] : 5 Saison(s) | 190 Épisodes
+2026-01-10 02:04:47,718 - PlexClient   - INFO     -       📺 Série 'Azuro et la Brigade des Dragons' [Swafflix] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:47,744 - PlexClient   - INFO     -       📺 Série 'House of the Dragon' [aubeplex - Apple M4] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:47,781 - PlexClient   - INFO     -       📺 Série 'Les Boondocks' [VM NAS Plex] : 4 Saison(s) | 55 Épisodes
+2026-01-10 02:04:47,787 - PlexClient   - INFO     -       📺 Série 'Notre Planète' [PlexStation] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:47,816 - PlexClient   - INFO     -       📺 Série 'Jujutsu Kaisen' [TACOS] : 2 Saison(s) | 47 Épisodes
+2026-01-10 02:04:47,882 - PlexClient   - INFO     -       📺 Série 'B: The Beginning' [Swafflix] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:47,936 - PlexClient   - INFO     -       📺 Série 'A Hundred Memories' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:47,957 - PlexClient   - INFO     -       📺 Série 'Pacifique du sud' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:47,989 - PlexClient   - INFO     -       📺 Série 'Les Soprano' [VM NAS Plex] : 6 Saison(s) | 86 Épisodes
+2026-01-10 02:04:48,000 - PlexClient   - INFO     -       📺 Série 'B.R.I' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:48,038 - PlexClient   - INFO     -       📺 Série 'Juliette Je t'aime' [TACOS] : 1 Saison(s) | 96 Épisodes
+2026-01-10 02:04:48,071 - PlexClient   - INFO     -       📺 Série 'La Ligue des justiciers : Nouvelle génération' [VM NAS Plex] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:48,073 - PlexClient   - INFO     -       📺 Série 'B.R.I. : La série documentaire' [Swafflix] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:48,108 - PlexClient   - INFO     -       📺 Série 'Limitless' [VM NAS Plex] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:48,123 - PlexClient   - INFO     -       📺 Série 'Hunter x Hunter' [aubeplex - Apple M4] : 7 Saison(s) | 148 Épisodes
+2026-01-10 02:04:48,185 - PlexClient   - INFO     -       📺 Série 'Jurassic World : La Colo du Crétacé' [TACOS] : 4 Saison(s) | 37 Épisodes
+2026-01-10 02:04:48,218 - PlexClient   - INFO     -       📺 Série 'Loki' [VM NAS Plex] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:48,221 - PlexClient   - INFO     -       📺 Série 'Babar' [Swafflix] : 6 Saison(s) | 78 Épisodes
+2026-01-10 02:04:48,254 - PlexClient   - INFO     -       📺 Série 'Pékin Express' [PlexStation] : 17 Saison(s) | 172 Épisodes
+2026-01-10 02:04:48,316 - PlexClient   - INFO     -       📺 Série 'Hyper Knife' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:48,356 - PlexClient   - INFO     -       📺 Série 'The Mandalorian' [VM NAS Plex] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:48,360 - PlexClient   - INFO     -       📺 Série 'Kabaneri of the Iron Fortress' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:48,387 - PlexClient   - INFO     -       📺 Série 'Babar : Les Aventures de Badou' [Swafflix] : 3 Saison(s) | 65 Épisodes
+2026-01-10 02:04:48,424 - PlexClient   - INFO     -       📺 Série 'Planète Terre' [PlexStation] : 1 Saison(s) | 11 Épisodes
+2026-01-10 02:04:48,456 - PlexClient   - INFO     -       📺 Série 'Industry' [aubeplex - Apple M4] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:48,487 - PlexClient   - INFO     -       📺 Série 'Mayor of Kingstown' [VM NAS Plex] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:48,492 - PlexClient   - INFO     -       📺 Série 'Kaiju No. 8' [TACOS] : 2 Saison(s) | 23 Épisodes
+2026-01-10 02:04:48,523 - PlexClient   - INFO     -       📺 Série 'The Baby' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:48,548 - PlexClient   - INFO     -       📺 Série 'Planète Terre II' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:48,603 - PlexClient   - INFO     -       📺 Série 'Inoubliable Ollie' [aubeplex - Apple M4] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:48,632 - PlexClient   - INFO     -       📺 Série 'The Merchant: Gaekju' [VM NAS Plex] : 1 Saison(s) | 41 Épisodes
+2026-01-10 02:04:48,646 - PlexClient   - INFO     -       📺 Série 'La Télé des Inconnus' [PlexStation] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:48,694 - PlexClient   - INFO     -       📺 Série 'Baby Daddy' [Swafflix] : 6 Saison(s) | 100 Épisodes
+2026-01-10 02:04:48,757 - PlexClient   - INFO     -       📺 Série 'Inside Jamel Comedy Club' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:48,782 - PlexClient   - INFO     -       📺 Série 'Murderbot – Journal d’un AssaSynth' [VM NAS Plex] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:48,784 - PlexClient   - INFO     -       📺 Série 'Ken le survivant' [TACOS] : 2 Saison(s) | 138 Épisodes
+2026-01-10 02:04:48,827 - PlexClient   - INFO     -       📺 Série 'Un jour, un destin' [PlexStation] : 10 Saison(s) | 15 Épisodes
+2026-01-10 02:04:48,860 - PlexClient   - INFO     -       📺 Série 'Baby Shark : L'aventure sous l'eau' [Swafflix] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:48,887 - PlexClient   - INFO     -       📺 Série 'The Murky Stream' [VM NAS Plex] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:48,888 - PlexClient   - INFO     -       📺 Série 'Invasion' [aubeplex - Apple M4] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:48,930 - PlexClient   - INFO     -       📺 Série 'KENGAN ASHURA' [TACOS] : 2 Saison(s) | 52 Épisodes
+2026-01-10 02:04:48,965 - PlexClient   - INFO     -       📺 Série 'La Vie sur notre planète' [PlexStation] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:48,994 - PlexClient   - INFO     -    📖 [PlexStation] Scan Section 'Séries TV 📺' (show)...
+2026-01-10 02:04:48,994 - PlexClient   - INFO     -       📺 Série 'My Country: The New Age' [VM NAS Plex] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:48,999 - PlexClient   - INFO     -       📺 Série 'Babylon Berlin' [Swafflix] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:49,064 - PlexClient   - INFO     -       📺 Série 'Invincible' [aubeplex - Apple M4] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:49,099 - PlexClient   - INFO     -       📺 Série 'Kim Possible' [TACOS] : 4 Saison(s) | 86 Épisodes
+2026-01-10 02:04:49,146 - PlexClient   - INFO     -       📺 Série 'Narcos' [VM NAS Plex] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:49,153 - PlexClient   - INFO     -       📺 Série 'Baccano!' [Swafflix] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:49,193 - PlexClient   - INFO     -       📺 Série 'Iron Man - Armored Adventures' [aubeplex - Apple M4] : 2 Saison(s) | 52 Épisodes
+2026-01-10 02:04:49,228 - PlexClient   - INFO     -       📺 Série 'Omar ibn al-Khattab' [VM NAS Plex] : 1 Saison(s) | 31 Épisodes
+2026-01-10 02:04:49,234 - PlexClient   - INFO     -    └── 138 éléments trouvés dans 'Séries TV 📺' [PlexStation].
+2026-01-10 02:04:49,235 - PlexClient   - INFO     -       📺 Série 'Bad Boy' [Swafflix] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:49,267 - PlexClient   - INFO     -       📺 Série 'Ironheart' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:49,308 - PlexClient   - INFO     -       📺 Série '22.11.63' [PlexStation] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:49,338 - PlexClient   - INFO     -       📺 Série 'Oz' [VM NAS Plex] : 6 Saison(s) | 56 Épisodes
+2026-01-10 02:04:49,349 - PlexClient   - INFO     -       📺 Série 'Bad Sisters' [Swafflix] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:49,390 - PlexClient   - INFO     -       📺 Série 'It's Okay to Not Be Okay' [aubeplex - Apple M4] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:49,420 - PlexClient   - INFO     -       📺 Série 'Kingdom' [TACOS] : 4 Saison(s) | 127 Épisodes
+2026-01-10 02:04:49,492 - PlexClient   - INFO     -       📺 Série 'Ozark' [VM NAS Plex] : 4 Saison(s) | 44 Épisodes
+2026-01-10 02:04:49,498 - PlexClient   - INFO     -       📺 Série 'The Baker and the Beauty' [Swafflix] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:49,529 - PlexClient   - INFO     -       📺 Série 'jeen-yuhs: La trilogie Kanye West' [aubeplex - Apple M4] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:49,555 - PlexClient   - INFO     -       📺 Série 'Peacemaker' [VM NAS Plex] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:49,560 - PlexClient   - INFO     -       📺 Série 'The Kingdoms of Ruin' [TACOS] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:49,585 - PlexClient   - INFO     -       📺 Série 'Baki' [Swafflix] : 2 Saison(s) | 39 Épisodes
+2026-01-10 02:04:49,627 - PlexClient   - INFO     -       📺 Série 'Kizazi Moto : Génération Feu' [TACOS] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:49,673 - PlexClient   - INFO     -       📺 Série 'Peaky Blinders' [VM NAS Plex] : 6 Saison(s) | 36 Épisodes
+2026-01-10 02:04:49,690 - PlexClient   - INFO     -       📺 Série 'Baki Hanma' [Swafflix] : 2 Saison(s) | 39 Épisodes
+2026-01-10 02:04:49,723 - PlexClient   - INFO     -       📺 Série '24 heures chrono' [PlexStation] : 10 Saison(s) | 205 Épisodes
+2026-01-10 02:04:49,786 - PlexClient   - INFO     -       📺 Série 'The Penguin' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:49,787 - PlexClient   - INFO     -       📺 Série 'Koala Man' [TACOS] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:49,814 - PlexClient   - INFO     -       📺 Série 'JoJo's Bizarre Adventure' [aubeplex - Apple M4] : 4 Saison(s) | 164 Épisodes
+2026-01-10 02:04:49,916 - PlexClient   - INFO     -       📺 Série 'Baki the Grappler' [Swafflix] : 2 Saison(s) | 48 Épisodes
+2026-01-10 02:04:49,961 - PlexClient   - INFO     -       📺 Série '1883' [PlexStation] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:49,990 - PlexClient   - INFO     -       📺 Série 'Planète Terre' [VM NAS Plex] : 1 Saison(s) | 11 Épisodes
+2026-01-10 02:04:49,992 - PlexClient   - INFO     -       📺 Série 'Kung Fu Panda : Le Chevalier Dragon' [TACOS] : 3 Saison(s) | 42 Épisodes
+2026-01-10 02:04:50,023 - PlexClient   - INFO     -       📺 Série 'Jujutsu Kaisen' [aubeplex - Apple M4] : 2 Saison(s) | 47 Épisodes
+2026-01-10 02:04:50,090 - PlexClient   - INFO     -       📺 Série 'Présumé innocent' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:50,093 - PlexClient   - INFO     -       📺 Série '1923' [PlexStation] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:50,128 - PlexClient   - INFO     -       📺 Série 'L'Attaque des Titans' [TACOS] : 4 Saison(s) | 90 Épisodes
+2026-01-10 02:04:50,170 - PlexClient   - INFO     -       📺 Série 'Juvenile Justice' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:50,206 - PlexClient   - INFO     -       📺 Série 'Bakugan Battle Brawlers' [Swafflix] : 4 Saison(s) | 183 Épisodes
+2026-01-10 02:04:50,249 - PlexClient   - INFO     -       📺 Série 'ABC contre Poirot' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:50,274 - PlexClient   - INFO     -       📺 Série 'Prison Break' [VM NAS Plex] : 5 Saison(s) | 88 Épisodes
+2026-01-10 02:04:50,291 - PlexClient   - INFO     -       📺 Série 'Lady Oscar' [TACOS] : 1 Saison(s) | 39 Épisodes
+2026-01-10 02:04:50,352 - PlexClient   - INFO     -       📺 Série 'Bakuman' [Swafflix] : 3 Saison(s) | 75 Épisodes
+2026-01-10 02:04:50,387 - PlexClient   - INFO     -       📺 Série 'Agatha Christie : Dix petits nègres' [PlexStation] : 1 Saison(s) | 3 Épisodes
+2026-01-10 02:04:50,452 - PlexClient   - INFO     -       📺 Série 'The Queen Who Crowns' [VM NAS Plex] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:50,455 - PlexClient   - INFO     -       📺 Série 'Ballard' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:50,496 - PlexClient   - INFO     -       📺 Série 'Queen Woo' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:50,503 - PlexClient   - INFO     -       📺 Série 'Ahsoka' [PlexStation] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:50,534 - PlexClient   - INFO     -       📺 Série 'Le marsupilami' [TACOS] : 5 Saison(s) | 130 Épisodes
+2026-01-10 02:04:50,627 - PlexClient   - INFO     -       📺 Série 'Rebel: Thief Who Stole the People' [VM NAS Plex] : 1 Saison(s) | 30 Épisodes
+2026-01-10 02:04:50,633 - PlexClient   - INFO     -       📺 Série 'Ballers' [Swafflix] : 5 Saison(s) | 47 Épisodes
+2026-01-10 02:04:50,713 - PlexClient   - INFO     -       📺 Série 'The Secret River' [VM NAS Plex] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:50,786 - PlexClient   - INFO     -       📺 Série 'See' [VM NAS Plex] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:50,806 - PlexClient   - INFO     -       📺 Série 'Ally McBeal' [PlexStation] : 5 Saison(s) | 112 Épisodes
+2026-01-10 02:04:50,854 - PlexClient   - INFO     -       📺 Série 'Balthazar' [Swafflix] : 5 Saison(s) | 38 Épisodes
+2026-01-10 02:04:50,889 - PlexClient   - INFO     -       📺 Série 'Le Monde incroyable de Gumball' [TACOS] : 6 Saison(s) | 120 Épisodes
+2026-01-10 02:04:50,937 - PlexClient   - INFO     -       📺 Série 'Kaamelott' [aubeplex - Apple M4] : 6 Saison(s) | 416 Épisodes
+2026-01-10 02:04:51,022 - PlexClient   - INFO     -       📺 Série 'Servant' [VM NAS Plex] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:51,030 - PlexClient   - INFO     -       📺 Série 'And Just Like That' [PlexStation] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:51,085 - PlexClient   - INFO     -       📺 Série 'Banana Fish' [Swafflix] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:51,111 - PlexClient   - INFO     -       📺 Série 'Le Monde merveilleusement bizarre de Gumball' [TACOS] : 1 Saison(s) | 20 Épisodes
+2026-01-10 02:04:51,141 - PlexClient   - INFO     -       📺 Série 'Severance' [VM NAS Plex] : 2 Saison(s) | 19 Épisodes
+2026-01-10 02:04:51,148 - PlexClient   - INFO     -       📺 Série 'Kaiba' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:51,190 - PlexClient   - INFO     -       📺 Série 'Bardot' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:51,239 - PlexClient   - INFO     -       📺 Série 'La Bande à Dingo' [Swafflix] : 2 Saison(s) | 78 Épisodes
+2026-01-10 02:04:51,270 - PlexClient   - INFO     -       📺 Série 'Le Monde merveilleux de Mickey' [TACOS] : 1 Saison(s) | 20 Épisodes
+2026-01-10 02:04:51,319 - PlexClient   - INFO     -       📺 Série 'The Shield' [VM NAS Plex] : 7 Saison(s) | 88 Épisodes
+2026-01-10 02:04:51,330 - PlexClient   - INFO     -       📺 Série 'Kaiji' [aubeplex - Apple M4] : 1 Saison(s) | 9 Épisodes
+2026-01-10 02:04:51,495 - PlexClient   - INFO     -       📺 Série 'Battlestar Galactica' [PlexStation] : 5 Saison(s) | 75 Épisodes
+2026-01-10 02:04:51,544 - PlexClient   - INFO     -       📺 Série 'La Bande à Picsou' [Swafflix] : 3 Saison(s) | 69 Épisodes
+2026-01-10 02:04:51,584 - PlexClient   - INFO     -       📺 Série 'Shōgun' [VM NAS Plex] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:51,593 - PlexClient   - INFO     -       📺 Série 'Le Roi Loup' [TACOS] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:51,632 - PlexClient   - INFO     -       📺 Série 'Kaiju No. 8' [aubeplex - Apple M4] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:51,663 - PlexClient   - INFO     -       📺 Série 'Better Call Saul' [PlexStation] : 6 Saison(s) | 63 Épisodes
+2026-01-10 02:04:51,723 - PlexClient   - INFO     -       📺 Série 'A Shop for Killers' [VM NAS Plex] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:51,726 - PlexClient   - INFO     -       📺 Série 'Bandidos' [Swafflix] : 2 Saison(s) | 14 Épisodes
+2026-01-10 02:04:51,759 - PlexClient   - INFO     -       📺 Série 'Le village de Dany' [TACOS] : 1 Saison(s) | 40 Épisodes
+2026-01-10 02:04:51,794 - PlexClient   - INFO     -       📺 Série 'Kaos' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:51,825 - PlexClient   - INFO     -       📺 Série 'Six Flying Dragons' [VM NAS Plex] : 1 Saison(s) | 50 Épisodes
+2026-01-10 02:04:51,835 - PlexClient   - INFO     -       📺 Série 'Bandits, bandits' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:51,899 - PlexClient   - INFO     -       📺 Série 'Katla' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:51,934 - PlexClient   - INFO     -       📺 Série 'The Slave Hunters' [VM NAS Plex] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:51,940 - PlexClient   - INFO     -       📺 Série 'La légende de Korra' [TACOS] : 4 Saison(s) | 52 Épisodes
+2026-01-10 02:04:51,981 - PlexClient   - INFO     -       📺 Série 'Banshee' [Swafflix] : 4 Saison(s) | 38 Épisodes
+2026-01-10 02:04:52,032 - PlexClient   - INFO     -       📺 Série 'The Killing Vote' [aubeplex - Apple M4] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:52,083 - PlexClient   - INFO     -       📺 Série 'Spartacus' [VM NAS Plex] : 4 Saison(s) | 39 Épisodes
+2026-01-10 02:04:52,091 - PlexClient   - INFO     -       📺 Série 'La légende de Vox Machina' [TACOS] : 3 Saison(s) | 36 Épisodes
+2026-01-10 02:04:52,132 - PlexClient   - INFO     -       📺 Série 'Bapt&Gaël et Les Aventures de la Couille Cosmique' [Swafflix] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:52,171 - PlexClient   - INFO     -       📺 Série 'Spartacus: House of Ashur' [VM NAS Plex] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:52,173 - PlexClient   - INFO     -       📺 Série 'Kingdom' [aubeplex - Apple M4] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:52,200 - PlexClient   - INFO     -       📺 Série 'The Big Bang Theory' [PlexStation] : 12 Saison(s) | 278 Épisodes
+2026-01-10 02:04:52,291 - PlexClient   - INFO     -       📺 Série 'LEGO Bionicle - Le Voyage vers l'Unique' [TACOS] : 2 Saison(s) | 2 Épisodes
+2026-01-10 02:04:52,316 - PlexClient   - INFO     -       📺 Série 'Squid Game' [VM NAS Plex] : 3 Saison(s) | 22 Épisodes
+2026-01-10 02:04:52,318 - PlexClient   - INFO     -       📺 Série 'Baraki' [Swafflix] : 2 Saison(s) | 32 Épisodes
+2026-01-10 02:04:52,348 - PlexClient   - INFO     -       📺 Série 'The Knick' [aubeplex - Apple M4] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:52,416 - PlexClient   - INFO     -       📺 Série 'Black Mirror' [PlexStation] : 7 Saison(s) | 28 Épisodes
+2026-01-10 02:04:52,464 - PlexClient   - INFO     -       📺 Série 'Lego Friends : cinq filles en mission' [TACOS] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:52,495 - PlexClient   - INFO     -       📺 Série 'Star Trek : Discovery' [VM NAS Plex] : 5 Saison(s) | 65 Épisodes
+2026-01-10 02:04:52,504 - PlexClient   - INFO     -       📺 Série 'Barbares' [Swafflix] : 2 Saison(s) | 12 Épisodes
+2026-01-10 02:04:52,555 - PlexClient   - INFO     -       📺 Série 'Krapopolis' [aubeplex - Apple M4] : 2 Saison(s) | 45 Épisodes
+2026-01-10 02:04:52,600 - PlexClient   - INFO     -       📺 Série 'Breaking Bad' [PlexStation] : 6 Saison(s) | 63 Épisodes
+2026-01-10 02:04:52,647 - PlexClient   - INFO     -       📺 Série 'LEGO Jurassic World : La légende d'Isla Nublar' [TACOS] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:52,674 - PlexClient   - INFO     -       📺 Série 'The Strain' [VM NAS Plex] : 4 Saison(s) | 46 Épisodes
+2026-01-10 02:04:52,683 - PlexClient   - INFO     -       📺 Série 'Barbie : des vacances de rêve' [Swafflix] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:52,708 - PlexClient   - INFO     -       📺 Série 'Kuromukuro' [aubeplex - Apple M4] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:52,760 - PlexClient   - INFO     -       📺 Série 'Stranger Things' [VM NAS Plex] : 5 Saison(s) | 42 Épisodes
+2026-01-10 02:04:52,768 - PlexClient   - INFO     -       📺 Série 'Barbie : Dreamtopia' [Swafflix] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:52,811 - PlexClient   - INFO     -       📺 Série 'LEGO Ninjago : Le soulèvement des dragons' [TACOS] : 3 Saison(s) | 59 Épisodes
+2026-01-10 02:04:52,854 - PlexClient   - INFO     -       📺 Série 'L'Aliéniste' [aubeplex - Apple M4] : 2 Saison(s) | 18 Épisodes
+2026-01-10 02:04:52,887 - PlexClient   - INFO     -       📺 Série 'Caméra Café' [PlexStation] : 5 Saison(s) | 122 Épisodes
+2026-01-10 02:04:52,924 - PlexClient   - INFO     -       📺 Série 'Succession' [VM NAS Plex] : 4 Saison(s) | 39 Épisodes
+2026-01-10 02:04:52,930 - PlexClient   - INFO     -       📺 Série 'Barbie et l'Équipe de Rêve' [Swafflix] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:52,961 - PlexClient   - INFO     -       📺 Série 'Superman & Loïs' [VM NAS Plex] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:53,038 - PlexClient   - INFO     -       📺 Série 'L'Attaque des Titans' [aubeplex - Apple M4] : 4 Saison(s) | 89 Épisodes
+2026-01-10 02:04:53,077 - PlexClient   - INFO     -       📺 Série 'Caprica' [PlexStation] : 1 Saison(s) | 18 Épisodes
+2026-01-10 02:04:53,111 - PlexClient   - INFO     -       📺 Série 'Barbie Summer Adventure' [Swafflix] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:53,156 - PlexClient   - INFO     -       📺 Série 'SupraCell' [VM NAS Plex] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:53,159 - PlexClient   - INFO     -       📺 Série 'L'heure zéro, d'après Agatha Christie' [aubeplex - Apple M4] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:53,187 - PlexClient   - INFO     -       📺 Série 'La casa de papel' [PlexStation] : 3 Saison(s) | 48 Épisodes
+2026-01-10 02:04:53,240 - PlexClient   - INFO     -       📺 Série 'Barbie: A deux c'est mieux' [Swafflix] : 2 Saison(s) | 26 Épisodes
+2026-01-10 02:04:53,265 - PlexClient   - INFO     -       📺 Série 'L'Institut' [aubeplex - Apple M4] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:53,285 - PlexClient   - INFO     -       📺 Série 'Sur écoute' [VM NAS Plex] : 5 Saison(s) | 60 Épisodes
+2026-01-10 02:04:53,297 - PlexClient   - INFO     -       📺 Série 'LEGO Ninjago : Les maîtres du Spinjitzu' [TACOS] : 15 Saison(s) | 205 Épisodes
+2026-01-10 02:04:53,354 - PlexClient   - INFO     -       📺 Série 'Chernobyl' [PlexStation] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:53,398 - PlexClient   - INFO     -       📺 Série 'Bargain, le prix à payer' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:53,423 - PlexClient   - INFO     -       📺 Série 'L’Enfer du Pacifique' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:53,447 - PlexClient   - INFO     -       📺 Série 'Ted Lasso' [VM NAS Plex] : 3 Saison(s) | 34 Épisodes
+2026-01-10 02:04:53,454 - PlexClient   - INFO     -       📺 Série 'LEGO Star Wars Les Chroniques de Yoda' [TACOS] : 2 Saison(s) | 6 Épisodes
+2026-01-10 02:04:53,494 - PlexClient   - INFO     -       📺 Série 'Citadelle' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:53,528 - PlexClient   - INFO     -       📺 Série 'Baron Noir' [Swafflix] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:53,570 - PlexClient   - INFO     -       📺 Série 'Terminator : Les Chroniques de Sarah Connor' [VM NAS Plex] : 2 Saison(s) | 31 Épisodes
+2026-01-10 02:04:53,576 - PlexClient   - INFO     -       📺 Série 'Larry et son nombril' [aubeplex - Apple M4] : 6 Saison(s) | 60 Épisodes
+2026-01-10 02:04:53,641 - PlexClient   - INFO     -       📺 Série 'Les aventures du Chat Potté' [TACOS] : 6 Saison(s) | 77 Épisodes
+2026-01-10 02:04:53,677 - PlexClient   - INFO     -       📺 Série 'Code Quantum' [PlexStation] : 5 Saison(s) | 97 Épisodes
+2026-01-10 02:04:53,750 - PlexClient   - INFO     -       📺 Série 'Three Kingdoms' [VM NAS Plex] : 1 Saison(s) | 20 Épisodes
+2026-01-10 02:04:53,756 - PlexClient   - INFO     -       📺 Série 'Barry' [Swafflix] : 4 Saison(s) | 32 Épisodes
+2026-01-10 02:04:53,805 - PlexClient   - INFO     -       📺 Série 'The Last Kingdom' [aubeplex - Apple M4] : 5 Saison(s) | 46 Épisodes
+2026-01-10 02:04:53,833 - PlexClient   - INFO     -       📺 Série 'Les Barbapapa' [TACOS] : 1 Saison(s) | 45 Épisodes
+2026-01-10 02:04:53,863 - PlexClient   - INFO     -       📺 Série 'Titans' [VM NAS Plex] : 2 Saison(s) | 8 Épisodes
+2026-01-10 02:04:53,866 - PlexClient   - INFO     -       📺 Série 'Code Quantum' [PlexStation] : 1 Saison(s) | 18 Épisodes
+2026-01-10 02:04:53,906 - PlexClient   - INFO     -       📺 Série 'Baskets' [Swafflix] : 4 Saison(s) | 40 Épisodes
+2026-01-10 02:04:53,949 - PlexClient   - INFO     -       📺 Série 'The Last of Us' [aubeplex - Apple M4] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:53,980 - PlexClient   - INFO     -       📺 Série 'Tulsa King' [VM NAS Plex] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:53,986 - PlexClient   - INFO     -       📺 Série 'Les Carnets de l'apothicaire' [TACOS] : 2 Saison(s) | 48 Épisodes
+2026-01-10 02:04:54,023 - PlexClient   - INFO     -       📺 Série 'Crashing' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:54,048 - PlexClient   - INFO     -       📺 Série 'Bat-Fam' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:54,100 - PlexClient   - INFO     -       📺 Série 'Last Samurai Standing' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:54,123 - PlexClient   - INFO     -       📺 Série 'Les Contes les plus célèbres' [TACOS] : 1 Saison(s) | 24 Épisodes
+2026-01-10 02:04:54,154 - PlexClient   - INFO     -       📺 Série 'Vikings' [VM NAS Plex] : 6 Saison(s) | 89 Épisodes
+2026-01-10 02:04:54,167 - PlexClient   - INFO     -       📺 Série 'Culte' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:54,193 - PlexClient   - INFO     -       📺 Série 'La Bataille : La Malédiction de L'île' [Swafflix] : 1 Saison(s) | 1 Épisodes
+2026-01-10 02:04:54,221 - PlexClient   - INFO     -       📺 Série 'Lazaro' [aubeplex - Apple M4] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:54,252 - PlexClient   - INFO     -       📺 Série 'Vikings : Valhalla' [VM NAS Plex] : 3 Saison(s) | 24 Épisodes
+2026-01-10 02:04:54,256 - PlexClient   - INFO     -       📺 Série 'Bataille Navale' [Swafflix] : 1 Saison(s) | 2 Épisodes
+2026-01-10 02:04:54,282 - PlexClient   - INFO     -       📺 Série 'Dark' [PlexStation] : 3 Saison(s) | 26 Épisodes
+2026-01-10 02:04:54,330 - PlexClient   - INFO     -       📺 Série 'Le Bureau des légendes' [aubeplex - Apple M4] : 5 Saison(s) | 50 Épisodes
+2026-01-10 02:04:54,455 - PlexClient   - INFO     -       📺 Série 'Bates Motel' [Swafflix] : 5 Saison(s) | 50 Épisodes
+2026-01-10 02:04:54,532 - PlexClient   - INFO     -       📺 Série 'Le collège d'Etrangeville' [aubeplex - Apple M4] : 2 Saison(s) | 26 Épisodes
+2026-01-10 02:04:54,601 - PlexClient   - INFO     -       📺 Série 'Le Coucou de cristal' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:54,676 - PlexClient   - INFO     -       📺 Série 'Dawson' [PlexStation] : 6 Saison(s) | 128 Épisodes
+2026-01-10 02:04:54,726 - PlexClient   - INFO     -       📺 Série 'The Walking Dead' [VM NAS Plex] : 11 Saison(s) | 177 Épisodes
+2026-01-10 02:04:54,753 - PlexClient   - INFO     -       📺 Série 'Batman' [Swafflix] : 3 Saison(s) | 120 Épisodes
+2026-01-10 02:04:54,805 - PlexClient   - INFO     -       📺 Série 'Le Coup gagnant' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:54,833 - PlexClient   - INFO     -       📺 Série 'The Walking Dead : Daryl Dixon' [VM NAS Plex] : 3 Saison(s) | 19 Épisodes
+2026-01-10 02:04:54,837 - PlexClient   - INFO     -       📺 Série 'Degrassi : Les années collège' [PlexStation] : 3 Saison(s) | 42 Épisodes
+2026-01-10 02:04:54,869 - PlexClient   - INFO     -       📺 Série 'The War Between the Land and the Sea' [VM NAS Plex] : 1 Saison(s) | 5 Épisodes
+2026-01-10 02:04:54,898 - PlexClient   - INFO     -       📺 Série 'Batman' [Swafflix] : 5 Saison(s) | 65 Épisodes
+2026-01-10 02:04:54,937 - PlexClient   - INFO     -       📺 Série 'Le Cuphead show !' [aubeplex - Apple M4] : 3 Saison(s) | 36 Épisodes
+2026-01-10 02:04:55,003 - PlexClient   - INFO     -       📺 Série 'Degrassi : Les années lycée' [PlexStation] : 3 Saison(s) | 29 Épisodes
+2026-01-10 02:04:55,043 - PlexClient   - INFO     -       📺 Série 'Westworld' [VM NAS Plex] : 4 Saison(s) | 36 Épisodes
+2026-01-10 02:04:55,050 - PlexClient   - INFO     - ✅ [Scan] VM NAS Plex OK (105079.62ms)
+2026-01-10 02:04:55,054 - PlexClient   - INFO     -       📺 Série 'Les Griffin' [TACOS] : 20 Saison(s) | 386 Épisodes
+2026-01-10 02:04:55,161 - PlexClient   - INFO     -       📺 Série 'Batman - La relève' [Swafflix] : 3 Saison(s) | 52 Épisodes
+2026-01-10 02:04:55,202 - PlexClient   - INFO     -       📺 Série 'Le Guépard' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:55,286 - PlexClient   - INFO     -       📺 Série 'Batman : La Série animée' [Swafflix] : 4 Saison(s) | 85 Épisodes
+2026-01-10 02:04:55,336 - PlexClient   - INFO     -       📺 Série 'Le Jeu de la dame' [aubeplex - Apple M4] : 1 Saison(s) | 7 Épisodes
+2026-01-10 02:04:55,380 - PlexClient   - INFO     -       📺 Série 'Desperate Housewives' [PlexStation] : 8 Saison(s) | 180 Épisodes
+2026-01-10 02:04:55,444 - PlexClient   - INFO     -       📺 Série 'Les Histoires du Père Castor' [TACOS] : 3 Saison(s) | 150 Épisodes
+2026-01-10 02:04:55,499 - PlexClient   - INFO     -       📺 Série 'Batman, le justicier masqué' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:55,556 - PlexClient   - INFO     -       📺 Série 'Dix pour cent' [PlexStation] : 4 Saison(s) | 24 Épisodes
+2026-01-10 02:04:55,607 - PlexClient   - INFO     -       📺 Série 'Les Jeunes Titans' [TACOS] : 5 Saison(s) | 65 Épisodes
+2026-01-10 02:04:55,641 - PlexClient   - INFO     -       📺 Série 'Battle Camp' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:55,670 - PlexClient   - INFO     -       📺 Série 'Le Monde incroyable de Gumball' [aubeplex - Apple M4] : 6 Saison(s) | 241 Épisodes
+2026-01-10 02:04:55,726 - PlexClient   - INFO     -       📺 Série 'Les Minijusticiers' [TACOS] : 3 Saison(s) | 78 Épisodes
+2026-01-10 02:04:55,767 - PlexClient   - INFO     -       📺 Série 'Le Parcours des tyrans' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:55,794 - PlexClient   - INFO     -       📺 Série 'Battlestar Galactica' [Swafflix] : 5 Saison(s) | 74 Épisodes
+2026-01-10 02:04:55,864 - PlexClient   - INFO     -       📺 Série 'Le Péché Originel de Takopi' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:55,892 - PlexClient   - INFO     -       📺 Série 'Dr House' [PlexStation] : 8 Saison(s) | 177 Épisodes
+2026-01-10 02:04:55,962 - PlexClient   - INFO     -       📺 Série 'Batwheels' [Swafflix] : 3 Saison(s) | 25 Épisodes
+2026-01-10 02:04:55,994 - PlexClient   - INFO     -       📺 Série 'Les Mystérieuses Cités d'Or' [TACOS] : 4 Saison(s) | 117 Épisodes
+2026-01-10 02:04:56,034 - PlexClient   - INFO     -       📺 Série 'Le Prince des dragons' [aubeplex - Apple M4] : 7 Saison(s) | 63 Épisodes
+2026-01-10 02:04:56,097 - PlexClient   - INFO     -       📺 Série 'Batwoman' [Swafflix] : 3 Saison(s) | 51 Épisodes
+2026-01-10 02:04:56,166 - PlexClient   - INFO     -       📺 Série 'Les Octonauts' [TACOS] : 4 Saison(s) | 66 Épisodes
+2026-01-10 02:04:56,234 - PlexClient   - INFO     -       📺 Série 'Le Problème à 3 corps' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:56,261 - PlexClient   - INFO     -       📺 Série 'Elementary' [PlexStation] : 7 Saison(s) | 154 Épisodes
+2026-01-10 02:04:56,328 - PlexClient   - INFO     -       📺 Série 'Baymax !' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:56,352 - PlexClient   - INFO     -       📺 Série 'Les Octonauts : Mission Terre' [TACOS] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:56,381 - PlexClient   - INFO     -       📺 Série 'Le Rakugo ou la vie' [aubeplex - Apple M4] : 2 Saison(s) | 25 Épisodes
+2026-01-10 02:04:56,413 - PlexClient   - INFO     -       📺 Série 'Emily in Paris' [PlexStation] : 3 Saison(s) | 30 Épisodes
+2026-01-10 02:04:56,448 - PlexClient   - INFO     -       📺 Série 'Baymax et les nouveaux héros' [Swafflix] : 3 Saison(s) | 60 Épisodes
+2026-01-10 02:04:56,491 - PlexClient   - INFO     -       📺 Série 'Le Roi Loup' [aubeplex - Apple M4] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:56,545 - PlexClient   - INFO     -       📺 Série 'La Fabuleuse Mme. Maisel' [PlexStation] : 5 Saison(s) | 43 Épisodes
+2026-01-10 02:04:56,587 - PlexClient   - INFO     -       📺 Série 'The Bear' [Swafflix] : 4 Saison(s) | 38 Épisodes
+2026-01-10 02:04:56,628 - PlexClient   - INFO     -       📺 Série 'Le Seigneur des anneaux : Les Anneaux de pouvoir' [aubeplex - Apple M4] : 2 Saison(s) | 16 Épisodes
+2026-01-10 02:04:56,664 - PlexClient   - INFO     -       📺 Série 'Les Razmoket' [TACOS] : 9 Saison(s) | 181 Épisodes
+2026-01-10 02:04:56,734 - PlexClient   - INFO     -       📺 Série 'Falcon et le Soldat de l'hiver' [PlexStation] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:56,766 - PlexClient   - INFO     -       📺 Série 'Beast Games' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:56,797 - PlexClient   - INFO     -       📺 Série 'Le Surfer d'argent' [aubeplex - Apple M4] : 1 Saison(s) | 13 Épisodes
+2026-01-10 02:04:56,832 - PlexClient   - INFO     -       📺 Série 'Fargo' [PlexStation] : 4 Saison(s) | 41 Épisodes
+2026-01-10 02:04:56,877 - PlexClient   - INFO     -       📺 Série 'Beastars' [Swafflix] : 2 Saison(s) | 24 Épisodes
+2026-01-10 02:04:56,910 - PlexClient   - INFO     -       📺 Série 'The Leftovers' [aubeplex - Apple M4] : 3 Saison(s) | 28 Épisodes
+2026-01-10 02:04:56,962 - PlexClient   - INFO     -       📺 Série 'For All Mankind' [PlexStation] : 4 Saison(s) | 34 Épisodes
+2026-01-10 02:04:57,001 - PlexClient   - INFO     -       📺 Série 'Beauty and the Beast' [Swafflix] : 4 Saison(s) | 70 Épisodes
+2026-01-10 02:04:57,037 - PlexClient   - INFO     -       📺 Série 'Les Boondocks' [aubeplex - Apple M4] : 4 Saison(s) | 55 Épisodes
+2026-01-10 02:04:57,079 - PlexClient   - INFO     -       📺 Série 'Foundation' [PlexStation] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:57,113 - PlexClient   - INFO     -       📺 Série 'Beck' [Swafflix] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:57,184 - PlexClient   - INFO     -       📺 Série 'Les Carnets de l'apothicaire' [aubeplex - Apple M4] : 2 Saison(s) | 42 Épisodes
+2026-01-10 02:04:57,216 - PlexClient   - INFO     -       📺 Série 'Frères d'armes' [PlexStation] : 2 Saison(s) | 11 Épisodes
+2026-01-10 02:04:57,253 - PlexClient   - INFO     -       📺 Série 'Bee et PuppyCat' [Swafflix] : 1 Saison(s) | 16 Épisodes
+2026-01-10 02:04:57,309 - PlexClient   - INFO     -       📺 Série 'Les Disparues de la gare' [aubeplex - Apple M4] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:57,391 - PlexClient   - INFO     -       📺 Série 'Les Grands Mythes' [aubeplex - Apple M4] : 3 Saison(s) | 13 Épisodes
+2026-01-10 02:04:57,439 - PlexClient   - INFO     -       📺 Série 'Beelzebub' [Swafflix] : 1 Saison(s) | 60 Épisodes
+2026-01-10 02:04:57,495 - PlexClient   - INFO     -       📺 Série 'Before' [Swafflix] : 1 Saison(s) | 10 Épisodes
+2026-01-10 02:04:57,574 - PlexClient   - INFO     -       📺 Série 'The Beginning After the End' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:57,637 - PlexClient   - INFO     -       📺 Série 'Les Héros de la Galaxie' [aubeplex - Apple M4] : 8 Saison(s) | 154 Épisodes
+2026-01-10 02:04:57,704 - PlexClient   - INFO     -       📺 Série 'Beheneko: Réincarné en béhémoth de rang S, je deviens le chat d'une elfe !' [Swafflix] : 1 Saison(s) | 12 Épisodes
+2026-01-10 02:04:57,747 - PlexClient   - INFO     -       📺 Série 'Friends' [PlexStation] : 11 Saison(s) | 255 Épisodes
+2026-01-10 02:04:57,827 - PlexClient   - INFO     -       📺 Série 'Les Malheurs de Sophie' [aubeplex - Apple M4] : 1 Saison(s) | 26 Épisodes
+2026-01-10 02:04:57,849 - PlexClient   - INFO     -       📺 Série 'Bel-Air' [Swafflix] : 2 Saison(s) | 20 Épisodes
+2026-01-10 02:04:57,892 - PlexClient   - INFO     -       📺 Série 'Les Pouvoirs de l'Ombre' [aubeplex - Apple M4] : 1 Saison(s) | 20 Épisodes
+2026-01-10 02:04:57,938 - PlexClient   - INFO     -       📺 Série 'Belgravia' [Swafflix] : 1 Saison(s) | 6 Épisodes
+2026-01-10 02:04:57,970 - PlexClient   - INFO     -       📺 Série 'Fringe' [PlexStation] : 5 Saison(s) | 100 Épisodes
+2026-01-10 02:04:58,023 - PlexClient   - INFO     -       📺 Série 'La Belle et le Boulanger' [Swafflix] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:58,062 - PlexClient   - INFO     -       📺 Série 'Les routes de l'esclavage' [aubeplex - Apple M4] : 1 Saison(s) | 103 Épisodes
+2026-01-10 02:04:58,091 - PlexClient   - INFO     -       📺 Série 'Fubar' [PlexStation] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:58,136 - PlexClient   - INFO     -       📺 Série 'Les Sentinelles' [aubeplex - Apple M4] : 1 Saison(s) | 8 Épisodes
+2026-01-10 02:04:58,174 - PlexClient   - INFO     -       📺 Série 'Belle et Sébastien' [Swafflix] : 1 Saison(s) | 52 Épisodes
+2026-01-10 02:04:58,261 - PlexClient   - INFO     -       📺 Série 'Belle et Sébastien' [Swafflix] : 1 Saison(s) | 52 Épisodes
+2026-01-10 02:04:58,334 - PlexClient   - INFO     -       📺 Série 'Belphégor' [Swafflix] : 1 Saison(s) | 4 Épisodes
+2026-01-10 02:04:58,396 - PlexClient   - INFO     -       📺 Série 'Game of Thrones' [PlexStation] : 9 Saison(s) | 183 Épisodes
+2026-01-10 02:04:58,483 - PlexClient   - INFO     -       📺 Série 'Ben 10' [Swafflix] : 4 Saison(s) | 49 Épisodes
