@@ -13,6 +13,7 @@ from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse, JSO
 from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 # Imports locaux
 from app.config import settings
@@ -127,6 +128,17 @@ async def lifespan(app: FastAPI):
         await http_client.aclose()
 
 app = FastAPI(title="PlexHub Backend", lifespan=lifespan)
+# 1. Ajout du CORS pour vos 2 Frontends (Web & Android TV)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Autorise toutes les origines pour le dev multi-plateforme
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 2. Conservation de votre compression GZip
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 api_router = APIRouter(prefix="/api")
