@@ -171,7 +171,8 @@ async def get_movies(request: Request):
     Optimisé pour ton NAS Antec P183 et ses 4GB de RAM.
     """
     start_time = time.time()
-    base_url = str(request.base_url).rstrip('/')
+    #base_url = str(request.base_url).rstrip('/')
+    base_url = ""
     
     # Récupération depuis la base de données
     movies_dict = plex_client.get_all_media()
