@@ -36,7 +36,6 @@ class PlexClient:
         """Initialisation robuste de la base SQLite."""
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-           # timeout=20 laisse le temps au premier worker de finir l'init
             with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute("PRAGMA journal_mode=WAL")
                 conn.execute("PRAGMA synchronous=NORMAL") # Performance SSD NVMe
@@ -50,8 +49,6 @@ class PlexClient:
                         name TEXT PRIMARY KEY, data TEXT
                     )
                 """)
-               
-                # Un seul log pour confirmer
             if not hasattr(self, '_db_init_done'):
                 logger.info(f"📂 SQLite : {self.db_path.name} prête.")
                 self._db_init_done = True
@@ -75,30 +72,25 @@ class PlexClient:
             "Accept-Language": "fr"
         }
 
-    # --- PERSISTANCE SQLITE (Remplace JSON) ---
+    # --- PERSISTANCE SQLITE ---
     def _save_to_db(self, media_dict, servers_list):
         try:
             with sqlite3.connect(self.db_path) as conn:
-                # Mise à jour des serveurs
                 conn.execute("DELETE FROM servers")
                 for s in servers_list:
                     conn.execute("INSERT INTO servers (name, data) VALUES (?, ?)",
                                 (s.name, s.model_dump_json()))
                 
-                # Mise à jour des médias
                 ts = time.time()
                 for m_id, m_obj in media_dict.items():
                     conn.execute("INSERT OR REPLACE INTO media (id, type, data, timestamp) VALUES (?, ?, ?, ?)",
                                 (m_id, m_obj.type, m_obj.model_dump_json(), ts))
             
-            msg = f"💾 Sauvegarde SQLite réussie : {len(media_dict)} items synchronisés."
-            logger.info(msg)
-            print(msg)
+            logger.info(f"💾 Sauvegarde SQLite réussie : {len(media_dict)} items synchronisés.")
         except Exception as e:
             logger.error(f"❌ Erreur sauvegarde SQLite: {e}")
 
     def get_all_media(self):
-        """Lecture depuis SQLite pour main.py (Economie RAM)."""
         results = {}
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -111,7 +103,6 @@ class PlexClient:
         return results
 
     def get_connected_servers(self):
-        """Récupération des serveurs pour l'API."""
         servers = []
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -125,7 +116,7 @@ class PlexClient:
     async def refresh_library(self, force: bool = False):
         if self.is_scanning: return
         if not settings.PLEX_TOKEN:
-            logger.error("❌ Scan annulé : PLEX_TOKEN est vide. Vérifiez votre fichier .env")
+            logger.error("❌ Scan annulé : PLEX_TOKEN vide.")
             return
         self.is_scanning = True
         self.scan_status = "Scan Réseau..."
@@ -172,7 +163,6 @@ class PlexClient:
                 logger.info(f"   📖 [{resource.name}] Scan Section '{section.title}' ({section.type})...")
                 items = await asyncio.to_thread(section.all)
                 logger.info(f"   └── {len(items)} éléments trouvés dans '{section.title}' [{resource.name}].")
-
                 for item in items:
                     episodes_data = []
                     if section.type == "show":
@@ -190,6 +180,7 @@ class PlexClient:
                         except Exception as e:
                             logger.error(f"      ❌ Erreur scan série '{item.title}': {e}")
 
+
                     self._process_item(item, section.type, resource, server, episodes_data)
             
             logger.info(f"✅ [Scan] {resource.name} OK ({latency}ms)")
@@ -198,6 +189,7 @@ class PlexClient:
 
     def _process_item(self, item, section_type, resource, server, episodes_data=[]):
         try:
+            # ID IMDb
             imdb_id = None
             if item.guids:
                 for guid in item.guids:
@@ -207,6 +199,16 @@ class PlexClient:
                         break
             key = imdb_id if imdb_id else f"{item.title}-{item.year}"
 
+            # IMDb & Rotten Ratings (Sécurisé)
+            imdb_rating = None
+            rotten_rating = None
+            if hasattr(item, 'ratings') and item.ratings:
+                for r in item.ratings:
+                    img = getattr(r, 'image', '').lower()
+                    if 'imdb' in img: imdb_rating = float(r.value)
+                    elif 'tomato' in img: rotten_rating = int(float(r.value) * 100) if r.value <= 1 else int(r.value)
+
+            # Résolution
             resolution = "SD"
             if section_type == "movie" and item.media:
                 try:
@@ -214,27 +216,39 @@ class PlexClient:
                     resolution = res + "P" if res.isdigit() else res
                 except: pass
 
+            # Genres
             raw_genres = [g.tag for g in item.genres] if item.genres else []
-            normalized_genres = list(set([self._normalize_genre(g) for g in raw_genres]))
-            normalized_genres.sort()
+            normalized_genres = sorted(list(set([self._normalize_genre(g) for g in raw_genres])))
 
-            director = "Série TV"
-            if section_type == "movie" and item.directors:
-                director = item.directors[0].tag
-
+            # Directeur
+            director = item.directors[0].tag if section_type == "movie" and item.directors else "Série TV"
             rating_value = 0.0
             if item.rating is not None:
                 try: rating_value = round(float(item.rating), 1)
                 except: rating_value = 0.0
-
             self.raw_cache[key].append({
-                "play_id": str(uuid.uuid4()), "type": section_type, "title": item.title,
-                "year": item.year or 0, "thumb": item.thumb, "rating": rating_value,
-                "summary": item.summary or "", "server_name": resource.name,
-                "server_url": server._baseurl, "server_token": resource.accessToken,
-                "machine_id": server.machineIdentifier, "key": item.key,
-                "is_owned": resource.owned, "genres": normalized_genres,
-                "director": director, "resolution": resolution, "episodes": episodes_data
+                "play_id": str(uuid.uuid4()), 
+                "type": section_type, 
+                "title": item.title,
+                "year": item.year or 0, 
+                "added_at": item.addedAt.isoformat() if hasattr(item, 'addedAt') and item.addedAt else None,
+                "content_rating": getattr(item, 'contentRating', None),
+                "studio": getattr(item, 'studio', None),
+                "thumb": item.thumb, 
+                "rating": round(float(item.rating), 1) if item.rating else 0.0,
+                "imdb_rating": imdb_rating,
+                "rotten_rating": rotten_rating,
+                "summary": item.summary or "", 
+                "server_name": resource.name,
+                "server_url": server._baseurl, 
+                "server_token": resource.accessToken,
+                "machine_id": server.machineIdentifier, 
+                "key": item.key,
+                "is_owned": resource.owned, 
+                "genres": normalized_genres,
+                "director": director, 
+                "resolution": resolution, 
+                "episodes": episodes_data
             })
         except Exception as e:
             logger.warning(f"⚠️ Skip item '{item.title}' (Donnée invalide): {e}")
@@ -253,9 +267,20 @@ class PlexClient:
                 poster_link = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(main['thumb'])}&token={main['server_token']}"
 
             media_item = MediaDetail(
-                id=key, type=main['type'], title=main['title'], year=main['year'],
-                director=main['director'], genres=main['genres'], summary=main['summary'],
-                rating=max([i['rating'] for i in instances]), poster_url=poster_link
+                id=key, 
+                type=main['type'], 
+                title=main['title'], 
+                year=main['year'],
+                added_at=main['added_at'],
+                content_rating=main['content_rating'],
+                studio=main['studio'],
+                director=main['director'], 
+                genres=main['genres'], 
+                summary=main['summary'],
+                rating=main['rating'],
+                imdb_rating=main.get('imdb_rating'),
+                rotten_rating=main.get('rotten_rating'),
+                poster_url=poster_link
             )
 
             if main['type'] == 'movie':
@@ -263,7 +288,8 @@ class PlexClient:
                     params = self._build_url_params(inst)
                     media_item.sources.append(Source(
                         server_name=inst['server_name'], resolution=inst['resolution'],
-                        is_owned=inst['is_owned'], stream_url=f"/vlc-stream/{inst['play_id']}?{params}",
+                        is_owned=inst['is_owned'], 
+                        stream_url=f"/vlc-stream/{inst['play_id']}?{params}",
                         m3u_url=f"/playlist/{inst['play_id']}.m3u?{params}&title={urllib.parse.quote(inst['title'])}",
                         plex_deeplink=f"plex://preplay/?metadataKey={inst['key']}&server={inst['machine_id']}",
                         plex_web_url=f"https://app.plex.tv/desktop/#!/server/{inst['machine_id']}/details?key={urllib.parse.quote(inst['key'])}"
@@ -276,14 +302,11 @@ class PlexClient:
                         s_idx = ep['season'] if ep['season'] is not None else 0
                         e_idx = ep['index'] if ep['index'] is not None else 0
                         
-                        if not seasons_map[s_idx].get(e_idx):
-                            thumb_url = ""
-                            if ep['thumb']:
-                                thumb_url = f"/proxy-image?url={urllib.parse.quote(inst['server_url'])}&thumb={urllib.parse.quote(ep['thumb'])}&token={inst['server_token']}"
-                            
+                        if e_idx not in seasons_map[s_idx]:
+                            t_url = f"/proxy-image?url={urllib.parse.quote(inst['server_url'])}&thumb={urllib.parse.quote(ep['thumb'])}&token={inst['server_token']}" if ep['thumb'] else ""
                             seasons_map[s_idx][e_idx] = EpisodeDetail(
                                 id=f"S{s_idx:02d}E{e_idx:02d}", index=e_idx, title=ep['title'],
-                                summary=ep['summary'], thumb_url=thumb_url
+                                summary=ep['summary'], thumb_url=t_url
                             )
                         
                         res = "SD"
@@ -294,11 +317,11 @@ class PlexClient:
                         except: pass
 
                         play_id = str(uuid.uuid4())
-                        params = self._build_url_params(inst, key=ep['key'])
+                        eparams = self._build_url_params(inst, key=ep['key'])
                         seasons_map[s_idx][e_idx].sources.append(Source(
                             server_name=inst['server_name'], resolution=res, is_owned=inst['is_owned'],
-                            stream_url=f"/vlc-stream/{play_id}?{params}",
-                            m3u_url=f"/playlist/{play_id}.m3u?{params}&title={urllib.parse.quote(inst['title'] + ' ' + ep['title'])}",
+                            stream_url=f"/vlc-stream/{play_id}?{eparams}",
+                            m3u_url=f"/playlist/{play_id}.m3u?{eparams}&title={urllib.parse.quote(inst['title'] + ' ' + ep['title'])}",
                             plex_deeplink=f"plex://preplay/?metadataKey={ep['key']}&server={inst['machine_id']}",
                             plex_web_url=f"https://app.plex.tv/desktop/#!/server/{inst['machine_id']}/details?key={urllib.parse.quote(ep['key'])}"
                         ))

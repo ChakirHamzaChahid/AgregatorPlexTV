@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
+from datetime import datetime
 
 class Source(BaseModel):
     """Source de lecture (Fichier sur un serveur précis)."""
@@ -33,10 +34,15 @@ class MediaDetail(BaseModel):
     type: str           # 'movie' ou 'show'
     title: str
     year: int
-    director: str
+    added_at: datetime  # <-- Nouvelle : Date d'ajout
+    studio: Optional[str] = None # <-- Nouveau : Studio
+    content_rating: Optional[str] = None # <-- Nouveau : Classification
+    director: Optional[str] = None
     genres: List[str] = Field(default_factory=list)
     summary: str
-    rating: float
+    rating: float = 0.0 # Note générale Plex
+    imdb_rating: Optional[float] = None # <-- Nouveau
+    rotten_rating: Optional[int] = None # <-- Nouveau (souvent un pourcentage)
     poster_url: str
     
     # Pour les films :
