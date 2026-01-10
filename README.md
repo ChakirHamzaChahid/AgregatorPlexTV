@@ -43,26 +43,19 @@ Voici la configuration recommandée pour votre `docker-compose.yml`:
 
 ```yaml
 services:
- 
-
-  # ====================================================================
-  # PLEXHUB BACKEND - Votre agrégateur Python
-  # ====================================================================
   plexhub:
-    image: ghcr.io/chakirhamzachahid/agregatorplextv:latest
-    container_name: plexhub-backend
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - PLEX_TOKEN=${PLEX_TOKEN}
-      - TZ=${TZ}
-    volumes:
-      - /mnt/app-config/plexhub:/app/cache_assets
-      - /mnt/app-config/plexhub/logs/server.log:/app/server.log
-    depends_on:
-      - plex
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-          cpus: '2.0'
+      image: ghcr.io/chakirhamzachahid/agregatorplextv:feature_serie
+      container_name: plexhub-backend
+      restart: unless-stopped
+      network_mode: host
+      environment:
+        - PLEX_TOKEN=*********VOTRE TOKEN*********
+        - TZ=Europe/Paris
+      volumes:
+        - /mnt/app-config/plexhub:/app/cache_assets
+        - /mnt/app-config/plexhub/logs:/app/logs
+      deploy:
+        resources:
+          limits:
+            memory: 4G
+            cpus: '2.0'
