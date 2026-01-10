@@ -24,19 +24,7 @@
 * Un compte Plex et un Token valide
 * Docker & Docker Compose
 
-### Configuration
-1.  **Clonez le dépôt** :
-    ```bash
-    git clone [https://github.com/ChakirHamzaChahid/AgregatorPlexTV.git](https://github.com/ChakirHamzaChahid/AgregatorPlexTV.git)
-    cd AgregatorPlexTV
-    ```
-2.  **Créez un fichier `.env`** à la racine (ne pas commiter) :
-    ```env
-    PLEX_TOKEN=votre_token_plex
-    TZ=Europe/Paris
-    PUID=1000
-    PGID=1000
-    ```
+
 
 ### 🐳 Stack Docker de Production
 Voici la configuration recommandée pour votre `docker-compose.yml`:
