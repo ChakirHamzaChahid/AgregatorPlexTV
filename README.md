@@ -53,9 +53,7 @@ app/models.py : Schémas de données Pydantic.
 
 cache_assets/ : Stockage de la base library.db et des images optimisées.
 
-# ====================================================================
-  # PLEXHUB BACKEND - Votre agrégateur Python
-  # ====================================================================
+
   plexhub:
     build: .
     container_name: plexhub-backend
