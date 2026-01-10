@@ -18,3 +18,4 @@ app/imdb_ratings_cache.json
 
 # Environnement et Secrets
 .env
+server.log
