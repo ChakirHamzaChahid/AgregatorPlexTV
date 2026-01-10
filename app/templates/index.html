@@ -23,6 +23,11 @@
         ::-webkit-scrollbar-track { background: #0f1115; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #e5a00d; }
+
+        /* Style pour le scroll interne de la modale */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #2a2d35; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #e5a00d; }
     </style>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -166,13 +171,13 @@
          x-transition:leave-end="opacity-0"
          @click.self="closeModal()">
 
-        <div class="bg-cardbg w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden border border-gray-700 flex flex-col md:flex-row max-h-[90vh] relative" 
+        <div class="bg-cardbg w-full max-w-5xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden border border-gray-700 flex flex-col md:flex-row relative" 
              x-show="modalOpen"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 scale-95 translate-y-4"
              x-transition:enter-end="opacity-100 scale-100 translate-y-0">
 
-            <div class="md:w-1/3 h-64 md:h-auto relative shrink-0 bg-black">
+            <div class="md:w-1/3 h-64 md:h-full relative shrink-0 bg-black">
                 <img :src="selectedItem?.poster_url" class="w-full h-full object-contain md:object-cover opacity-80">
                 <div class="absolute inset-0 bg-gradient-to-t from-cardbg to-transparent md:bg-gradient-to-r"></div>
             </div>
@@ -224,7 +229,9 @@
                                         </div>
                                         
                                         <div class="flex gap-2 w-full sm:w-auto justify-end">
-                                            <a :href="source.m3u_url" class="px-3 py-2 bg-gray-700 hover:bg-orange-600 text-gray-300 hover:text-white rounded-lg text-[10px] font-bold uppercase transition-all flex items-center gap-1">
+                                            <a :href="source.plex_web_url" target="_blank" class="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-[9px] font-bold uppercase transition-all">WEB</a>
+                                            <a :href="source.plex_deeplink" class="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-plex rounded-lg text-[9px] font-bold uppercase transition-all">APP</a>
+                                            <a :href="source.m3u_url" class="px-3 py-2 bg-gray-700 hover:bg-orange-600 text-gray-300 hover:text-white rounded-lg text-[9px] font-bold uppercase transition-all flex items-center gap-1">
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
                                                 M3U
                                             </a>
@@ -261,7 +268,7 @@
                                     <h3 class="text-xl font-black text-white uppercase italic">Saison <span class="text-plex" x-text="currentSeason?.index"></span></h3>
                                 </div>
                                 
-                                <div class="space-y-3">
+                                <div class="space-y-3 pb-8">
                                     <template x-for="ep in currentSeason?.episodes" :key="ep.id">
                                         <div x-data="{ showSources: false }" class="bg-darkbg rounded-xl border border-gray-800 overflow-hidden transition-all hover:border-gray-600">
                                             
@@ -292,6 +299,8 @@
                                                             <span class="text-[9px] bg-gray-700 text-gray-300 px-1.5 rounded border border-gray-600" x-text="source.resolution"></span>
                                                         </div>
                                                         <div class="flex gap-2">
+                                                            <a :href="source.plex_web_url" target="_blank" class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-[9px] font-bold">WEB</a>
+                                                            <a :href="source.plex_deeplink" class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-plex rounded text-[9px] font-bold">APP</a>
                                                             <a :href="source.m3u_url" class="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-[9px] font-bold transition-colors">M3U</a>
                                                             <a :href="source.stream_url" class="px-3 py-1 bg-plex hover:bg-yellow-400 text-black rounded text-[9px] font-bold transition-colors shadow-lg">JOUER</a>
                                                         </div>
@@ -329,7 +338,6 @@
                 init() {
                     console.log("PlexHub Initialized");
                     this.fetchLibrary();
-                    // Auto-refresh silencieux toutes les 30s
                     setInterval(() => this.fetchLibrary(true), 30000);
                 },
 
@@ -362,7 +370,6 @@
                     }
                 },
 
-                // --- CALCULS DYNAMIQUES (DASHBOARD) ---
                 get stats() {
                     return {
                         movies: this.rawMedia.filter(m => m.type === 'movie').length,
@@ -400,13 +407,10 @@
                     });
                 },
 
-                // --- UTILITAIRES UI ---
                 getQualityBadge(item) {
-                    // Pour les séries, on affiche le nombre de saisons
                     if (item.type === 'show') {
                         return item.seasons ? item.seasons.length + ' S' : 'TV';
                     }
-                    // Pour les films, on cherche la meilleure résolution
                     if (!item.sources || item.sources.length === 0) return 'SD';
                     const resList = item.sources.map(s => s.resolution);
                     if (resList.includes('4K')) return '4K';

@@ -54,32 +54,39 @@ class PlexClient:
     # --- PERSISTANCE ---
     def _save_cache_to_disk(self):
         try:
+            # S'assurer que le dossier existe
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            
             data_to_save = {
                 "timestamp": time.time(),
                 "servers": [s.model_dump() for s in self.connected_servers],
                 "movies": [m.model_dump() for m in self.movies_cache.values()]
             }
             with open(self.db_path, "w", encoding="utf-8") as f:
-                json.dump(data_to_save, f, ensure_ascii=False)
+                json.dump(data_to_save, f, ensure_ascii=False, indent=4)
+            
+            msg = f"💾 Sauvegarde réussie : {self.db_path} ({len(self.movies_cache)} items)"
+            logger.info(msg)
+            print(msg) # Trace console garantie
         except Exception as e:
             logger.error(f"❌ Erreur sauvegarde cache: {e}")
 
     def _load_cache_from_disk(self):
         if not self.db_path.exists(): 
-            logger.info("📂 Aucun cache sur le disque. Démarrage à vide.")
+            msg = f"📂 Aucun cache trouvé à : {self.db_path}"
+            logger.info(msg)
+            print(msg)
             return
 
         try:
-            # Calcul de la taille du fichier
             size_bytes = self.db_path.stat().st_size
-            size_str = f"{size_bytes / 1024:.2f} KB"
-            if size_bytes > 1024 * 1024:
-                size_str = f"{size_bytes / (1024 * 1024):.2f} MB"
-
+            size_str = f"{size_bytes / (1024 * 1024):.2f} MB"
+            
             with open(self.db_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             
             self.connected_servers = [ServerInfo(**s) for s in data.get("servers", [])]
+            
             loaded_movies = {}
             for m_data in data.get("movies", []):
                 movie = MediaDetail(**m_data)
@@ -88,11 +95,12 @@ class PlexClient:
             self.movies_cache = loaded_movies
             self.last_scan_time = data.get("timestamp", 0)
             
-            count = len(self.movies_cache)
-            self.scan_status = f"Restauré ({count} items)"
-            logger.info(f"📂 Cache chargé depuis le disque : {size_str} | {count} médias récupérés.")
+            msg = f"📂 Cache chargé : {size_str} | {len(self.movies_cache)} items trouvés sur disque."
+            logger.info(msg)
+            print(msg) # Trace console garantie
         except Exception as e:
-            logger.error(f"❌ Cache corrompu ou illisible : {e}")
+            logger.error(f"❌ Erreur au chargement du cache : {e}")
+            print(f"❌ Erreur au chargement du cache : {e}")
             self.movies_cache = {}
 
     # --- LOGIQUE DE SCAN ---
@@ -108,27 +116,32 @@ class PlexClient:
             ))
 
             sections = await asyncio.to_thread(server.library.sections)
-            total_items_server = 0
             
             for section in sections:
                 if section.type not in ["movie", "show"]: continue
                 
-                # LOG DÉTAILLÉ : On indique quelle librairie on scanne
-                logger.info(f"   📖 Scan Section '{section.title}' ({section.type}) sur {resource.name}...")
-                
+                logger.info(f"   📖 [{resource.name}] Scan Section '{section.title}' ({section.type})...")
                 items = await asyncio.to_thread(section.all)
-                count_section = len(items)
-                total_items_server += count_section
-                
-                # LOG TAILLE : Nombre d'éléments trouvés dans cette section
-                logger.info(f"   └── {count_section} éléments trouvés dans '{section.title}'")
+                logger.info(f"   └── {len(items)} éléments trouvés dans '{section.title}' [{resource.name}].")
 
                 for item in items:
-                    # (Logique épisodes inchangée...)
                     episodes_data = []
+                    
+                    # --- RECUPERATION EPISODES ---
                     if section.type == "show":
                         try:
+                            # Récupération optimisée
                             all_eps = await asyncio.to_thread(item.episodes)
+                            
+                            seasons_found = set(ep.seasonNumber for ep in all_eps if ep.seasonNumber is not None)
+                            nb_seasons = len(seasons_found)
+                            nb_eps = len(all_eps)
+
+                            if nb_eps > 0:
+                                logger.info(f"      📺 Série '{item.title}' [{resource.name}] : {nb_seasons} Saison(s) | {nb_eps} Épisodes")
+                            else:
+                                logger.warning(f"      ⚠️ Série '{item.title}' [{resource.name}] : Aucun épisode trouvé !")
+
                             for ep in all_eps:
                                 episodes_data.append({
                                     "season": ep.seasonNumber,
@@ -139,17 +152,18 @@ class PlexClient:
                                     "key": ep.key,
                                     "media": ep.media
                                 })
-                        except: pass
+                        except Exception as e:
+                            logger.error(f"      ❌ Erreur scan série '{item.title}': {e}")
 
                     self._process_item(item, section.type, resource, server, episodes_data)
                     
-            logger.info(f"✅ [Scan] {resource.name} Terminé en {latency}ms - Total: {total_items_server} médias ajoutés.")
+            logger.info(f"✅ [Scan] {resource.name} OK ({latency}ms)")
         except Exception as e:
             logger.warning(f"⚠️ [Scan] Échec {resource.name}: {str(e)}")
 
     def _process_item(self, item, section_type, resource, server, episodes_data=[]):
         try:
-            # ID Unique (IMDb ou Titre-Année)
+            # ID Unique
             imdb_id = None
             if item.guids:
                 for guid in item.guids:
@@ -159,7 +173,7 @@ class PlexClient:
                         break
             key = imdb_id if imdb_id else f"{item.title}-{item.year}"
 
-            # Extraction Resolution (Pour Films)
+            # Resolution (Films uniquement)
             resolution = "SD"
             if section_type == "movie" and item.media:
                 try:
@@ -175,14 +189,21 @@ class PlexClient:
             if section_type == "movie" and item.directors:
                 director = item.directors[0].tag
 
-            # Construction de l'objet brut
-            entry = {
+            # --- SÉCURISATION RATING ---
+            rating_value = 0.0
+            if item.rating is not None:
+                try:
+                    rating_value = round(float(item.rating), 1)
+                except: 
+                    rating_value = 0.0
+
+            self.raw_cache[key].append({
                 "play_id": str(uuid.uuid4()),
                 "type": section_type, 
                 "title": item.title,
                 "year": item.year or 0,
                 "thumb": item.thumb,
-                "rating": float(f"{item.rating:.1f}") if item.rating else 0.0,
+                "rating": rating_value,
                 "summary": item.summary or "",
                 "server_name": resource.name,
                 "server_url": server._baseurl,
@@ -193,11 +214,10 @@ class PlexClient:
                 "genres": normalized_genres,
                 "director": director,
                 "resolution": resolution,
-                "episodes": episodes_data # Liste des épisodes bruts pour cette instance
-            }
-            
-            self.raw_cache[key].append(entry)
-        except Exception: pass
+                "episodes": episodes_data
+            })
+        except Exception as e:
+            logger.warning(f"⚠️ Skip item '{item.title}' (Donnée invalide): {e}")
 
     async def refresh_library(self, force: bool = False):
         if self.is_scanning: return
@@ -241,7 +261,6 @@ class PlexClient:
     def _build_api_cache(self):
         new_cache = {}
         for key, instances in self.raw_cache.items():
-            # Instance principale (Priorité au propriétaire)
             main = next((i for i in instances if i['is_owned']), instances[0])
             
             poster_link = ""
@@ -256,11 +275,11 @@ class PlexClient:
                 director=main['director'],
                 genres=main['genres'],
                 summary=main['summary'],
-                rating=max([i['rating'] for i in instances]), # Meilleure note trouvée
+                rating=max([i['rating'] for i in instances]),
                 poster_url=poster_link,
             )
 
-            # --- LOGIQUE FILMS ---
+            # --- FILMS ---
             if main['type'] == 'movie':
                 for inst in instances:
                     params = self._build_url_params(inst)
@@ -274,32 +293,29 @@ class PlexClient:
                         plex_web_url=f"https://app.plex.tv/desktop/#!/server/{inst['machine_id']}/details?key={urllib.parse.quote(inst['key'])}"
                     ))
 
-            # --- LOGIQUE SÉRIES (Agrégation Complexe) ---
+            # --- SÉRIES ---
             elif main['type'] == 'show':
-                # On utilise un dictionnaire temporaire pour fusionner les épisodes de tous les serveurs
-                # Structure : seasons[s_num][e_num] = EpisodeDetail
                 seasons_map = defaultdict(lambda: defaultdict(dict)) 
                 
                 for inst in instances:
                     for ep in inst['episodes']:
-                        s_idx = ep['season']
-                        e_idx = ep['index']
+                        # --- SÉCURISATION EPISODES (Index None = 0) ---
+                        s_idx = ep['season'] if ep['season'] is not None else 0
+                        e_idx = ep['index'] if ep['index'] is not None else 0
                         
-                        # Si l'épisode n'existe pas encore dans notre carte, on le crée
                         if not seasons_map[s_idx].get(e_idx):
                             thumb_url = ""
                             if ep['thumb']:
                                 thumb_url = f"/proxy-image?url={urllib.parse.quote(inst['server_url'])}&thumb={urllib.parse.quote(ep['thumb'])}&token={inst['server_token']}"
                             
                             seasons_map[s_idx][e_idx] = EpisodeDetail(
-                                id=f"S{s_idx:02d}E{e_idx:02d}",
+                                id=f"S{s_idx:02d}E{e_idx:02d}", 
                                 index=e_idx,
                                 title=ep['title'],
                                 summary=ep['summary'],
                                 thumb_url=thumb_url
                             )
                         
-                        # Calcul Résolution Épisode
                         res = "SD"
                         try:
                             if ep['media']:
@@ -307,8 +323,7 @@ class PlexClient:
                                 res = r + "P" if r.isdigit() else r
                         except: pass
 
-                        # Ajout de la source à l'épisode existant
-                        play_id = str(uuid.uuid4()) # Nouvel ID pour ce flux spécifique
+                        play_id = str(uuid.uuid4())
                         params = self._build_url_params(inst, key=ep['key'])
                         
                         seasons_map[s_idx][e_idx].sources.append(Source(
@@ -321,7 +336,6 @@ class PlexClient:
                             plex_web_url=f"https://app.plex.tv/desktop/#!/server/{inst['machine_id']}/details?key={urllib.parse.quote(ep['key'])}"
                         ))
 
-                # Conversion du Map en Liste triée
                 for s_num in sorted(seasons_map.keys()):
                     eps_list = [seasons_map[s_num][e] for e in sorted(seasons_map[s_num].keys())]
                     if eps_list:
