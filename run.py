@@ -19,7 +19,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "app.main:app", 
         host="0.0.0.0", 
-        port=8000, 
+        port=8186, 
         workers=nb_workers,  # Active le multi-processing
         reload=False,        # Doit être False pour utiliser les workers
         access_log=True      # Garde les logs d'accès pour server.log
