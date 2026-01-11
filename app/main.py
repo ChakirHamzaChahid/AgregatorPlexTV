@@ -168,12 +168,17 @@ async def get_servers():
 @api_router.get("/movies", response_model=list[MovieDetail])
 async def get_movies(
     request: Request,
-    page: Optional[int] = None, 
-    size: Optional[int] = None
+    page: Optional[int] = None,  # Optionnel : Si None, on renvoie tout (Mode Web)
+    size: Optional[int] = None,  # Optionnel : Si None, on renvoie tout (Mode Web)
+    type: Optional[str] = None,
+    sort: str = "added_at",
+    order: str = "desc",
+    search: Optional[str] = None
 ):
     """
-    API Principale : Récupère les données via SQLite.
-    Dual-mode : Bible complète pour Web, Allégé/Paginé pour Android TV.
+    API Hybride :
+    - Si page/size présents : Pagination SQL optimisée + Mode "Léger" (Pour Android TV).
+    - Si page/size absents : Renvoie TOUT le catalogue + Mode "Complet" (Pour Web App existante).
     """
     start_time = time.time()
     base_url = ""
@@ -184,69 +189,103 @@ async def get_movies(
     # On détermine si on est en mode Android (pagination active)
     is_android_mode = page is not None and size is not None
 
-    results = []
-    for m in movies:
-        m_copy = m.model_copy()
-        
-        # --- LOGIQUE DE RÉDUCTION DE CHARGE (POUR ANDROID) ---
-        # Si on pagine, on ne traite pas les détails lourds pour gagner du temps et de la RAM
-        if is_android_mode:
-            m_copy.seasons = []
-            m_copy.sources = []
-            # On ne traite que le strict nécessaire pour la grille (Poster)
-            if m_copy.poster_url.startswith("/"):
-                m_copy.poster_url = base_url + m_copy.poster_url
-        else:
-            # --- LOGIQUE ORIGINALE (POUR WEB / BIBLE COMPLÈTE) ---
-            # Injection URL Poster
-            if m_copy.poster_url.startswith("/"):
-                m_copy.poster_url = base_url + m_copy.poster_url
-            
-            # Injection URLs Sources Film
-            new_sources = []
-            for s in m_copy.sources:
-                s_copy = s.model_copy()
-                if s_copy.stream_url.startswith("/"):
-                    s_copy.stream_url = base_url + s_copy.stream_url
-                if s_copy.m3u_url and s_copy.m3u_url.startswith("/"):
-                    s_copy.m3u_url = base_url + s_copy.m3u_url
-                new_sources.append(s_copy)
-            m_copy.sources = new_sources
-            
-            # Injection URLs Séries / Saisons / Épisodes
-            if m_copy.type == 'show':
-                for season in m_copy.seasons:
-                    for ep in season.episodes:
-                        if ep.thumb_url and ep.thumb_url.startswith("/"):
-                            ep.thumb_url = base_url + ep.thumb_url
-                        
-                        new_ep_sources = []
-                        for s in ep.sources:
-                            s_ep_copy = s.model_copy()
-                            if s_ep_copy.stream_url.startswith("/"):
-                                s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
-                            if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
-                                s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
-                            new_ep_sources.append(s_ep_copy)
-                        ep.sources = new_ep_sources
+    # 1. Construction de la requête SQL
+    query = "SELECT data FROM media_v2 WHERE 1=1"
+    params = []
+    
+    # Filtres (Type et Recherche s'appliquent aux deux modes)
+    if type:
+        query += " AND type = ?"
+        params.append(type)
+    
+    if search:
+        query += " AND title LIKE ?"
+        params.append(f"%{search}%")
 
-        results.append(m_copy)
+    # Tri SQL
+    valid_sorts = {"added_at": "added_at", "title": "title", "year": "year", "rating": "rating"}
+    sort_col = valid_sorts.get(sort, "added_at")
+    sort_dir = "ASC" if order.lower() == "asc" else "DESC"
+    
+    query += f" ORDER BY {sort_col} {sort_dir}"
 
-    # --- ÉTAPE DE PAGINATION OPTIONNELLE ---
-    final_output = results
-    mode = "WEB (Bible complète)"
-
+    # PAGINATION CONDITIONNELLE
+    # On n'ajoute LIMIT que si c'est demandé (Android TV)
     if is_android_mode:
-        # On s'assure que page commence à 1
-        start = (page - 1) * size
-        end = start + size
-        final_output = results[start:end]
-        mode = f"ANDROID (Page {page}, Taille {size})"
+        offset = (page - 1) * size
+        query += " LIMIT ? OFFSET ?"
+        params.extend([size, offset])
+
+    results = []
+    
+    try:
+        with sqlite3.connect(plex_client.db_path) as conn:
+            cursor = conn.execute(query, params)
+            
+            for row in cursor:
+                # Désérialisation rapide
+                m_copy = MovieDetail.model_validate_json(row[0])
+                
+                # --- LOGIQUE DE RETOUR ---
+                
+                # A. Injection URL Poster (Commun)
+                if m_copy.poster_url and m_copy.poster_url.startswith("/"):
+                    m_copy.poster_url = base_url + m_copy.poster_url
+                
+                # B. Gestion de la charge utile (Hybride)
+                if is_android_mode:
+                    # MODE ANDROID : On allège l'objet au maximum pour la RAM de la TV
+                    m_copy.seasons = []
+                    m_copy.sources = []
+                    # On ne traite que le strict nécessaire pour la grille (Poster)
+                    if m_copy.poster_url.startswith("/"):
+                         m_copy.poster_url = base_url + m_copy.poster_url
+                
+                else:
+                    # MODE WEB (Legacy) : On garde tout et on injecte les URLs complètes
+                    # C'est la logique originale de votre main.py pour l'app Web
+                    # Injection URL Poster
+                    if m_copy.poster_url.startswith("/"):
+                        m_copy.poster_url = base_url + m_copy.poster_url
+                    # URLs Sources Film
+                    new_sources = []
+                    for s in m_copy.sources:
+                        s_copy = s.model_copy()
+                        if s_copy.stream_url.startswith("/"):
+                            s_copy.stream_url = base_url + s_copy.stream_url
+                        if s_copy.m3u_url and s_copy.m3u_url.startswith("/"):
+                            s_copy.m3u_url = base_url + s_copy.m3u_url
+                        new_sources.append(s_copy)
+                    m_copy.sources = new_sources
+                    
+                    # URLs Séries / Saisons / Épisodes
+                    if m_copy.type == 'show':
+                        for season in m_copy.seasons:
+                            for ep in season.episodes:
+                                if ep.thumb_url and ep.thumb_url.startswith("/"):
+                                    ep.thumb_url = base_url + ep.thumb_url
+                                
+                                new_ep_sources = []
+                                for s in ep.sources:
+                                    s_ep_copy = s.model_copy()
+                                    if s_ep_copy.stream_url.startswith("/"):
+                                        s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
+                                    if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
+                                        s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
+                                    new_ep_sources.append(s_ep_copy)
+                                ep.sources = new_ep_sources
+
+                results.append(m_copy)
+                
+    except Exception as e:
+        logger.error(f"❌ Erreur SQL get_movies: {e}")
+        return []
 
     duration = time.time() - start_time
-    logger.info(f"📊 [Worker {os.getpid()}] {mode} servi en {duration:.4f}s ({len(final_output)} items)")
+    mode_label = "ANDROID (Paginé)" if is_android_mode else "WEB (Complet)"
+    logger.info(f"🚀 [{mode_label}] {len(results)} items | ⏱️ {duration:.4f}s")
     
-    return final_output
+    return results
 
 @api_router.get("/movies/{movie_id}", response_model=MovieDetail)
 async def get_movie_detail(movie_id: str, request: Request):

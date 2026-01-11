@@ -39,18 +39,31 @@ class PlexClient:
             with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute("PRAGMA journal_mode=WAL")
                 conn.execute("PRAGMA synchronous=NORMAL") # Performance SSD NVMe
+                # NOUVELLE TABLE : media_v2
+                # On stocke les champs critiques en colonnes pour le tri/filtre SQL
                 conn.execute("""
-                    CREATE TABLE IF NOT EXISTS media (
-                        id TEXT PRIMARY KEY, type TEXT, data TEXT, timestamp REAL
+                    CREATE TABLE IF NOT EXISTS media_v2 (
+                        id TEXT PRIMARY KEY,
+                        title TEXT,
+                        year INTEGER,
+                        added_at TEXT, 
+                        rating REAL,
+                        type TEXT,
+                        data TEXT -- Le JSON complet reste ici
                     )
                 """)
+                # INDEXATION : Crucial pour la vitesse des tris
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_added ON media_v2(added_at)")
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_title ON media_v2(title)")
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_type ON media_v2(type)")
+                
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS servers (
                         name TEXT PRIMARY KEY, data TEXT
                     )
                 """)
             if not hasattr(self, '_db_init_done'):
-                logger.info(f"📂 SQLite : {self.db_path.name} prête.")
+                logger.info(f"📂 SQLite Optimisée : {self.db_path.name} prête.")
                 self._db_init_done = True
         except Exception as e:
             logger.error(f"❌ Erreur Init SQLite: {e}")
@@ -81,27 +94,83 @@ class PlexClient:
                     conn.execute("INSERT INTO servers (name, data) VALUES (?, ?)",
                                 (s.name, s.model_dump_json()))
                 
-                ts = time.time()
-                for m_id, m_obj in media_dict.items():
-                    conn.execute("INSERT OR REPLACE INTO media (id, type, data, timestamp) VALUES (?, ?, ?, ?)",
-                                (m_id, m_obj.type, m_obj.model_dump_json(), ts))
-            
-            logger.info(f"💾 Sauvegarde SQLite réussie : {len(media_dict)} items synchronisés.")
-        except Exception as e:
-            logger.error(f"❌ Erreur sauvegarde SQLite: {e}")
+              # --- ÉTAPE A : PRÉPARATION DES DONNÉES ---
+                # On prépare la liste des tuples pour l'insertion
+                upsert_data = []
+                # On garde un set des IDs actuels du scan pour savoir quoi supprimer plus tard
+                scanned_ids = set()
 
+                for m_id, m_obj in media_dict.items():
+                    scanned_ids.add(m_id)
+                    date_str = m_obj.added_at.isoformat() if m_obj.added_at else "1970-01-01"
+                    
+                    upsert_data.append((
+                        m_obj.id,
+                        m_obj.title,
+                        m_obj.year,
+                        date_str,
+                        m_obj.rating,
+                        m_obj.type,
+                        m_obj.model_dump_json()
+                    ))
+
+                # --- ÉTAPE B : UPSERT (Update or Insert) ---
+                # "ON CONFLICT(id) DO UPDATE" est la méthode PRO pour mettre à jour sans détruire la ligne
+                # Cela préserve l'ID interne de SQLite (ROWID) et est plus performant.
+                query_upsert = """
+                    INSERT INTO media_v2 (id, title, year, added_at, rating, type, data)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                        title = excluded.title,
+                        year = excluded.year,
+                        added_at = excluded.added_at,
+                        rating = excluded.rating,
+                        type = excluded.type,
+                        data = excluded.data
+                """
+                conn.executemany(query_upsert, upsert_data)
+
+                # --- ÉTAPE C : GARBAGE COLLECTION (Suppression des obsolètes) ---
+                # On récupère tous les IDs qui sont actuellement en base
+                cursor = conn.execute("SELECT id FROM media_v2")
+                existing_ids = {row[0] for row in cursor}
+                
+                # Mathématique des ensembles : Ce qui est en base - Ce qu'on vient de scanner = Ce qu'il faut supprimer
+                ids_to_delete = list(existing_ids - scanned_ids)
+                
+                if ids_to_delete:
+                    logger.info(f"🧹 Nettoyage : Suppression de {len(ids_to_delete)} items obsolètes.")
+                    # Suppression par lots pour ne pas surcharger SQLite (limite de variables)
+                    batch_size = 900 
+                    for i in range(0, len(ids_to_delete), batch_size):
+                        batch = ids_to_delete[i:i + batch_size]
+                        placeholders = ','.join(['?'] * len(batch))
+                        conn.execute(f"DELETE FROM media_v2 WHERE id IN ({placeholders})", batch)
+
+            logger.info(f"💾 Sync SQLite Prod Terminée : {len(upsert_data)} items mis à jour/insérés.")
+
+        except Exception as e:
+            logger.error(f"❌ Erreur critique sauvegarde SQLite: {e}")
+            import traceback
+            traceback.print_exc()
+
+    # IMPORTANT : Modifiez aussi get_all_media pour lire la nouvelle table si nécessaire,
+    # MAIS get_movies dans main.py va maintenant faire ses propres requêtes.
+    # On garde get_all_media pour la rétrocompatibilité ou get_movie_detail.
     def get_all_media(self):
         results = {}
         try:
             with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.execute("SELECT data FROM media")
+                # Fallback : on lit media_v2
+                cursor = conn.execute("SELECT data FROM media_v2")
                 for row in cursor:
                     m_data = json.loads(row[0])
                     results[m_data['id']] = MediaDetail(**m_data)
         except Exception as e:
-            logger.error(f"❌ Erreur lecture media SQLite: {e}")
+            # Fallback si l'ancienne table existe encore
+            pass 
         return results
-
+    
     def get_connected_servers(self):
         servers = []
         try:
