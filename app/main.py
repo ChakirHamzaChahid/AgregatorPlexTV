@@ -173,50 +173,62 @@ async def get_movies(
 ):
     """
     API Principale : Récupère les données via SQLite.
-    Optimisé pour ton NAS Antec P183.
+    Dual-mode : Bible complète pour Web, Allégé/Paginé pour Android TV.
     """
     start_time = time.time()
     base_url = ""
     
-    # 1. Récupération et traitement habituel (ta bible de 12 000 items)
     movies_dict = plex_client.get_all_media()
     movies = list(movies_dict.values())
     
+    # On détermine si on est en mode Android (pagination active)
+    is_android_mode = page is not None and size is not None
+
     results = []
     for m in movies:
         m_copy = m.model_copy()
         
-        # Injection URL Poster
-        if m_copy.poster_url.startswith("/"):
-            m_copy.poster_url = base_url + m_copy.poster_url
-        
-        # Injection URLs Sources Film
-        new_sources = []
-        for s in m_copy.sources:
-            s_copy = s.model_copy()
-            if s_copy.stream_url.startswith("/"):
-                s_copy.stream_url = base_url + s_copy.stream_url
-            if s_copy.m3u_url and s_copy.m3u_url.startswith("/"):
-                s_copy.m3u_url = base_url + s_copy.m3u_url
-            new_sources.append(s_copy)
-        m_copy.sources = new_sources
-        
-        # Injection URLs Séries / Saisons / Épisodes
-        if m_copy.type == 'show':
-            for season in m_copy.seasons:
-                for ep in season.episodes:
-                    if ep.thumb_url and ep.thumb_url.startswith("/"):
-                        ep.thumb_url = base_url + ep.thumb_url
-                    
-                    new_ep_sources = []
-                    for s in ep.sources:
-                        s_ep_copy = s.model_copy()
-                        if s_ep_copy.stream_url.startswith("/"):
-                            s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
-                        if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
-                            s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
-                        new_ep_sources.append(s_ep_copy)
-                    ep.sources = new_ep_sources
+        # --- LOGIQUE DE RÉDUCTION DE CHARGE (POUR ANDROID) ---
+        # Si on pagine, on ne traite pas les détails lourds pour gagner du temps et de la RAM
+        if is_android_mode:
+            m_copy.seasons = []
+            m_copy.sources = []
+            # On ne traite que le strict nécessaire pour la grille (Poster)
+            if m_copy.poster_url.startswith("/"):
+                m_copy.poster_url = base_url + m_copy.poster_url
+        else:
+            # --- LOGIQUE ORIGINALE (POUR WEB / BIBLE COMPLÈTE) ---
+            # Injection URL Poster
+            if m_copy.poster_url.startswith("/"):
+                m_copy.poster_url = base_url + m_copy.poster_url
+            
+            # Injection URLs Sources Film
+            new_sources = []
+            for s in m_copy.sources:
+                s_copy = s.model_copy()
+                if s_copy.stream_url.startswith("/"):
+                    s_copy.stream_url = base_url + s_copy.stream_url
+                if s_copy.m3u_url and s_copy.m3u_url.startswith("/"):
+                    s_copy.m3u_url = base_url + s_copy.m3u_url
+                new_sources.append(s_copy)
+            m_copy.sources = new_sources
+            
+            # Injection URLs Séries / Saisons / Épisodes
+            if m_copy.type == 'show':
+                for season in m_copy.seasons:
+                    for ep in season.episodes:
+                        if ep.thumb_url and ep.thumb_url.startswith("/"):
+                            ep.thumb_url = base_url + ep.thumb_url
+                        
+                        new_ep_sources = []
+                        for s in ep.sources:
+                            s_ep_copy = s.model_copy()
+                            if s_ep_copy.stream_url.startswith("/"):
+                                s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
+                            if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
+                                s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
+                            new_ep_sources.append(s_ep_copy)
+                        ep.sources = new_ep_sources
 
         results.append(m_copy)
 
@@ -224,7 +236,7 @@ async def get_movies(
     final_output = results
     mode = "WEB (Bible complète)"
 
-    if page is not None and size is not None:
+    if is_android_mode:
         # On s'assure que page commence à 1
         start = (page - 1) * size
         end = start + size
