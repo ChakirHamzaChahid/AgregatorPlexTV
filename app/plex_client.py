@@ -39,8 +39,8 @@ class PlexClient:
             with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute("PRAGMA journal_mode=WAL")
                 conn.execute("PRAGMA synchronous=NORMAL") # Performance SSD NVMe
-                # NOUVELLE TABLE : media_v2
-                # On stocke les champs critiques en colonnes pour le tri/filtre SQL
+                
+                # Table principale : media_v2
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS media_v2 (
                         id TEXT PRIMARY KEY,
@@ -57,11 +57,13 @@ class PlexClient:
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_title ON media_v2(title)")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_type ON media_v2(type)")
                 
+                # Table serveurs
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS servers (
                         name TEXT PRIMARY KEY, data TEXT
                     )
                 """)
+            
             if not hasattr(self, '_db_init_done'):
                 logger.info(f"📂 SQLite Optimisée : {self.db_path.name} prête.")
                 self._db_init_done = True
@@ -85,89 +87,103 @@ class PlexClient:
             "Accept-Language": "fr"
         }
 
-    # --- PERSISTANCE SQLITE ---
+    # =========================================================================
+    #  PERSISTANCE MODULAIRE (Refactoring Clean Code)
+    # =========================================================================
+
+    def _save_servers_tx(self, conn, servers_list):
+        """Sauvegarde la liste des serveurs connectés."""
+        conn.execute("DELETE FROM servers")
+        for s in servers_list:
+            conn.execute("INSERT INTO servers (name, data) VALUES (?, ?)",
+                         (s.name, s.model_dump_json()))
+
+    def _prepare_upsert_batch(self, media_dict):
+        """Transforme le dictionnaire d'objets en liste de tuples pour SQLite."""
+        upsert_data = []
+        for m_obj in media_dict.values():
+            date_str = m_obj.added_at.isoformat() if m_obj.added_at else "1970-01-01"
+            upsert_data.append((
+                m_obj.id,
+                m_obj.title,
+                m_obj.year,
+                date_str,
+                m_obj.rating,
+                m_obj.type,
+                m_obj.model_dump_json()
+            ))
+        return upsert_data
+
+    def _perform_upsert_tx(self, conn, upsert_data):
+        """Exécute l'UPSERT massif."""
+        query_upsert = """
+            INSERT INTO media_v2 (id, title, year, added_at, rating, type, data)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                title = excluded.title,
+                year = excluded.year,
+                added_at = excluded.added_at,
+                rating = excluded.rating,
+                type = excluded.type,
+                data = excluded.data
+        """
+        conn.executemany(query_upsert, upsert_data)
+
+    def _perform_cleanup_tx(self, conn, current_scanned_ids):
+        """Garbage Collection : Supprime les éléments qui ne sont plus dans le scan."""
+        cursor = conn.execute("SELECT id FROM media_v2")
+        existing_ids = {row[0] for row in cursor}
+        
+        # Ce qui est en base MAIS PAS dans le scan actuel = À supprimer
+        ids_to_delete = list(existing_ids - set(current_scanned_ids))
+        
+        if ids_to_delete:
+            logger.info(f"🧹 Nettoyage : Suppression de {len(ids_to_delete)} items obsolètes.")
+            batch_size = 900 
+            for i in range(0, len(ids_to_delete), batch_size):
+                batch = ids_to_delete[i:i + batch_size]
+                placeholders = ','.join(['?'] * len(batch))
+                conn.execute(f"DELETE FROM media_v2 WHERE id IN ({placeholders})", batch)
+
     def _save_to_db(self, media_dict, servers_list):
+        """Fonction Orchestrateur : Coordonne la sauvegarde."""
         try:
             with sqlite3.connect(self.db_path) as conn:
-                conn.execute("DELETE FROM servers")
-                for s in servers_list:
-                    conn.execute("INSERT INTO servers (name, data) VALUES (?, ?)",
-                                (s.name, s.model_dump_json()))
+                # 1. Sauvegarde des serveurs
+                self._save_servers_tx(conn, servers_list)
                 
-              # --- ÉTAPE A : PRÉPARATION DES DONNÉES ---
-                # On prépare la liste des tuples pour l'insertion
-                upsert_data = []
-                # On garde un set des IDs actuels du scan pour savoir quoi supprimer plus tard
-                scanned_ids = set()
-
-                for m_id, m_obj in media_dict.items():
-                    scanned_ids.add(m_id)
-                    date_str = m_obj.added_at.isoformat() if m_obj.added_at else "1970-01-01"
-                    
-                    upsert_data.append((
-                        m_obj.id,
-                        m_obj.title,
-                        m_obj.year,
-                        date_str,
-                        m_obj.rating,
-                        m_obj.type,
-                        m_obj.model_dump_json()
-                    ))
-
-                # --- ÉTAPE B : UPSERT (Update or Insert) ---
-                # "ON CONFLICT(id) DO UPDATE" est la méthode PRO pour mettre à jour sans détruire la ligne
-                # Cela préserve l'ID interne de SQLite (ROWID) et est plus performant.
-                query_upsert = """
-                    INSERT INTO media_v2 (id, title, year, added_at, rating, type, data)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    ON CONFLICT(id) DO UPDATE SET
-                        title = excluded.title,
-                        year = excluded.year,
-                        added_at = excluded.added_at,
-                        rating = excluded.rating,
-                        type = excluded.type,
-                        data = excluded.data
-                """
-                conn.executemany(query_upsert, upsert_data)
-
-                # --- ÉTAPE C : GARBAGE COLLECTION (Suppression des obsolètes) ---
-                # On récupère tous les IDs qui sont actuellement en base
-                cursor = conn.execute("SELECT id FROM media_v2")
-                existing_ids = {row[0] for row in cursor}
+                # 2. Préparation des données
+                upsert_data = self._prepare_upsert_batch(media_dict)
                 
-                # Mathématique des ensembles : Ce qui est en base - Ce qu'on vient de scanner = Ce qu'il faut supprimer
-                ids_to_delete = list(existing_ids - scanned_ids)
+                # 3. Upsert Massif
+                self._perform_upsert_tx(conn, upsert_data)
                 
-                if ids_to_delete:
-                    logger.info(f"🧹 Nettoyage : Suppression de {len(ids_to_delete)} items obsolètes.")
-                    # Suppression par lots pour ne pas surcharger SQLite (limite de variables)
-                    batch_size = 900 
-                    for i in range(0, len(ids_to_delete), batch_size):
-                        batch = ids_to_delete[i:i + batch_size]
-                        placeholders = ','.join(['?'] * len(batch))
-                        conn.execute(f"DELETE FROM media_v2 WHERE id IN ({placeholders})", batch)
-
-            logger.info(f"💾 Sync SQLite Prod Terminée : {len(upsert_data)} items mis à jour/insérés.")
+                # 4. Nettoyage
+                self._perform_cleanup_tx(conn, media_dict.keys())
+                
+                logger.info(f"💾 Sync SQLite Terminée : {len(upsert_data)} items traités.")
 
         except Exception as e:
             logger.error(f"❌ Erreur critique sauvegarde SQLite: {e}")
             import traceback
             traceback.print_exc()
 
-    # IMPORTANT : Modifiez aussi get_all_media pour lire la nouvelle table si nécessaire,
-    # MAIS get_movies dans main.py va maintenant faire ses propres requêtes.
-    # On garde get_all_media pour la rétrocompatibilité ou get_movie_detail.
+    # =========================================================================
+    #  LECTURE & SCAN
+    # =========================================================================
+
     def get_all_media(self):
+        """Récupère tout le cache (utilisé pour le détail item)."""
         results = {}
         try:
             with sqlite3.connect(self.db_path) as conn:
-                # Fallback : on lit media_v2
                 cursor = conn.execute("SELECT data FROM media_v2")
                 for row in cursor:
-                    m_data = json.loads(row[0])
-                    results[m_data['id']] = MediaDetail(**m_data)
-        except Exception as e:
-            # Fallback si l'ancienne table existe encore
+                    try:
+                        m_data = json.loads(row[0])
+                        results[m_data['id']] = MediaDetail(**m_data)
+                    except: pass
+        except Exception:
             pass 
         return results
     
@@ -187,6 +203,7 @@ class PlexClient:
         if not settings.PLEX_TOKEN:
             logger.error("❌ Scan annulé : PLEX_TOKEN vide.")
             return
+        
         self.is_scanning = True
         self.scan_status = "Scan Réseau..."
         self.raw_cache = defaultdict(list)
@@ -201,16 +218,21 @@ class PlexClient:
             if settings.ONLY_OWNED:
                 target_resources = [r for r in target_resources if r.owned]
 
+            # Scan parallèle
             await asyncio.gather(*(self._connect_and_scan(res, connected_servers_temp) for res in target_resources))
             
+            # Transformation Raw -> MediaDetail
             new_cache = self._build_api_cache()
+            
+            # Sauvegarde modulaire
             self._save_to_db(new_cache, connected_servers_temp)
             
             self.scan_status = "Terminé"
             logger.info(f"✨ Scan Terminé: {len(new_cache)} items en base.")
+            
         except Exception as e:
             self.scan_status = f"Erreur: {e}"
-            logger.error(f"❌ Erreur Scan: {e}")
+            logger.error(f"❌ Erreur Scan Global: {e}")
         finally:
             self.is_scanning = False
 
@@ -236,6 +258,9 @@ class PlexClient:
                     episodes_data = []
                     if section.type == "show":
                         try:
+                            # Optimisation : On ne charge pas les épisodes si pas nécessaire pour la liste
+                            # Mais nécessaire pour le détail complet. 
+                            # On pourrait optimiser ici plus tard.
                             all_eps = await asyncio.to_thread(item.episodes)
                             if len(all_eps) > 0:
                                 logger.info(f"      📺 Série '{item.title}' [{resource.name}] : {len(all_eps)} Épisodes")
@@ -247,8 +272,7 @@ class PlexClient:
                                     "thumb": ep.thumb, "key": ep.key, "media": ep.media
                                 })
                         except Exception as e:
-                            logger.error(f"      ❌ Erreur scan série '{item.title}': {e}")
-
+                            logger.error(f"❌ Erreur scan série '{item.title}': {e}")
 
                     self._process_item(item, section.type, resource, server, episodes_data)
             
@@ -258,7 +282,7 @@ class PlexClient:
 
     def _process_item(self, item, section_type, resource, server, episodes_data=[]):
         try:
-            # ID IMDb
+            # ID IMDb ou calculé
             imdb_id = None
             if item.guids:
                 for guid in item.guids:
@@ -268,14 +292,18 @@ class PlexClient:
                         break
             key = imdb_id if imdb_id else f"{item.title}-{item.year}"
 
-            # IMDb & Rotten Ratings (Sécurisé)
+            # Ratings
             imdb_rating = None
             rotten_rating = None
             if hasattr(item, 'ratings') and item.ratings:
                 for r in item.ratings:
                     img = getattr(r, 'image', '').lower()
-                    if 'imdb' in img: imdb_rating = float(r.value)
-                    elif 'tomato' in img: rotten_rating = int(float(r.value) * 100) if r.value <= 1 else int(r.value)
+                    if 'imdb' in img: 
+                        try: imdb_rating = float(r.value)
+                        except: pass
+                    elif 'tomato' in img: 
+                        try: rotten_rating = int(float(r.value) * 100) if r.value <= 1 else int(r.value)
+                        except: pass
 
             # Résolution
             resolution = "SD"
@@ -285,16 +313,15 @@ class PlexClient:
                     resolution = res + "P" if res.isdigit() else res
                 except: pass
 
-            # Genres
+            # Genres & Director
             raw_genres = [g.tag for g in item.genres] if item.genres else []
             normalized_genres = sorted(list(set([self._normalize_genre(g) for g in raw_genres])))
+            
+            director = "Inconnu"
+            if section_type == "movie" and hasattr(item, 'directors') and item.directors:
+                director = item.directors[0].tag
 
-            # Directeur
-            director = item.directors[0].tag if section_type == "movie" and item.directors else "Série TV"
-            rating_value = 0.0
-            if item.rating is not None:
-                try: rating_value = round(float(item.rating), 1)
-                except: rating_value = 0.0
+            # Ajout au cache brut
             self.raw_cache[key].append({
                 "play_id": str(uuid.uuid4()), 
                 "type": section_type, 
@@ -329,6 +356,7 @@ class PlexClient:
     def _build_api_cache(self):
         new_cache = {}
         for key, instances in self.raw_cache.items():
+            # Priorité au serveur propriétaire, sinon le premier
             main = next((i for i in instances if i['is_owned']), instances[0])
             
             poster_link = ""

@@ -15,7 +15,8 @@ from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional, List # Assure-toi d'avoir ces imports en haut
+from typing import Optional, List, Dict, Any
+from datetime import datetime, timedelta
 
 # Imports locaux
 from app.config import settings
@@ -27,10 +28,45 @@ from app.discovery import discovery_service
 # 1. HARDENING : SÉCURITÉ & LOGGING AVANCÉ
 # =============================================================================
 
+# ===== SIMPLE MEMORY CACHE =====
+class SimpleMemoryCache:
+    def __init__(self):
+        self.cache: Dict[str, Any] = {}
+        self.ttl: Dict[str, datetime] = {}
+    
+    def get(self, key: str) -> Optional[Any]:
+        if key not in self.cache:
+            return None
+        
+        # Check TTL
+        if datetime.now() > self.ttl.get(key, datetime.min):
+            del self.cache[key]
+            if key in self.ttl:
+                del self.ttl[key]
+            return None
+        
+        return self.cache[key]
+    
+    def set(self, key: str, value: Any, ttl_seconds: int = 300) -> None:
+        self.cache[key] = value
+        self.ttl[key] = datetime.now() + timedelta(seconds=ttl_seconds)
+    
+    def clear(self) -> None:
+        self.cache.clear()
+        self.ttl.clear()
+    
+    def stats(self) -> Dict[str, int]:
+        return {
+            "cached_keys": len(self.cache),
+            "ttl_keys": len(self.ttl)
+        }
+
+# Singleton global
+_api_cache = SimpleMemoryCache()
+
 class TokenFilter(logging.Filter):
     def filter(self, record):
         msg = record.getMessage()
-        # On ne filtre que si le token est configuré et fait plus de 5 caractères
         if settings.PLEX_TOKEN and len(settings.PLEX_TOKEN) > 5 and settings.PLEX_TOKEN in msg:
             record.msg = msg.replace(settings.PLEX_TOKEN, "HIDDEN_TOKEN")
             record.args = ()
@@ -83,34 +119,26 @@ stream_semaphore = asyncio.Semaphore(settings.MAX_STREAMS)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Cycle de vie : Gestion du worker Maître avec verrouillage atomique."""
-    # Petit délai aléatoire pour éviter que les workers ne frappent le port/fichier en même temps
-    # Indispensable pour éviter WinError 10022
     await asyncio.sleep(0.1 * (os.getpid() % 10))
     lock_file = settings.CACHE_DIR / "server_start.lock"
     is_master_worker = False
 
     try:
-        # Tentative d'ouverture exclusive ('x') : atomique au niveau OS
         try:
             settings.CACHE_DIR.mkdir(parents=True, exist_ok=True)
-            # Si le fichier existe, cette ligne lève une FileExistsError immédiatement
             with open(lock_file, "x") as f:
                 f.write(str(os.getpid()))
             is_master_worker = True
         except FileExistsError:
-            # Le fichier existe déjà, un autre worker est déjà maître
-            # On vérifie si le verrou n'est pas périmé (plus de 5 min)
-            if time.time() - lock_file.stat().st_mtime > 300:
+            if time.time() - lock_file.stat().st_mtime > 1200:
                 try:
-                    lock_file.unlink() # On tente de supprimer le verrou mort
+                    lock_file.unlink()
                     logger.warning("🧹 Ancien verrou expiré supprimé.")
-                    # On ne se proclame pas maître tout de suite pour éviter un nouveau conflit
                 except: pass
             is_master_worker = False
 
         if is_master_worker:
             logger.info(f"🚀 [Worker {os.getpid()}] ÉLU MAÎTRE - Initialisation unique")
-            # Un seul démarrage de service
             asyncio.create_task(plex_client.refresh_library(force=True))
             discovery_service.start()
         else:
@@ -119,7 +147,6 @@ async def lifespan(app: FastAPI):
         yield
 
     finally:
-        # Seul le maître nettoie son verrou
         if is_master_worker:
             logger.info(f"🛑 Arrêt du Worker Maître ({os.getpid()})")
             if lock_file.exists():
@@ -130,23 +157,21 @@ async def lifespan(app: FastAPI):
         await http_client.aclose()
 
 app = FastAPI(title="PlexHub Backend", lifespan=lifespan)
-# 1. Ajout du CORS pour vos 2 Frontends (Web & Android TV)
+
+# Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Autorise toutes les origines pour le dev multi-plateforme
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# 2. Conservation de votre compression GZip
-app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 api_router = APIRouter(prefix="/api")
 
 # =============================================================================
-# 3. HARDENING : GESTIONNAIRE D'ERREURS GLOBAL
+# 3. ROUTES API REST (OPTIMISÉES)
 # =============================================================================
 
 @app.exception_handler(Exception)
@@ -157,10 +182,6 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Erreur interne critique du serveur. Consultez server.log."},
     )
 
-# =============================================================================
-# 4. ROUTES API REST (VERSION SQLITE + MONITORING)
-# =============================================================================
-
 @api_router.get("/servers", response_model=list[ServerInfo])
 async def get_servers():
     """Liste des serveurs connectés (via SQLite)."""
@@ -169,171 +190,197 @@ async def get_servers():
 @api_router.get("/movies", response_model=list[MovieDetail])
 async def get_movies(
     request: Request,
-    page: Optional[int] = None,  # Optionnel : Si None, on renvoie tout (Mode Web)
-    size: Optional[int] = None,  # Optionnel : Si None, on renvoie tout (Mode Web)
+    page: Optional[int] = None,
+    size: Optional[int] = None,
     type: Optional[str] = None,
     sort: str = "added_at",
     order: str = "desc",
     search: Optional[str] = None
 ):
     """
-    API Hybride :
-    - Si page/size présents : Pagination SQL optimisée + Mode "Léger" (Pour Android TV).
-    - Si page/size absents : Renvoie TOUT le catalogue + Mode "Complet" (Pour Web App existante).
+    Récupère les films avec :
+    1. Cache mémoire (Rapide)
+    2. Pagination SQL (Économe)
+    3. Injection URLs & Nettoyage (Logique Métier)
     """
     start_time = time.time()
-    base_url = ""
     
-    movies_dict = plex_client.get_all_media()
-    movies = list(movies_dict.values())
-    
-    # On détermine si on est en mode Android (pagination active)
+    # Mode Android si pagination demandée
     is_android_mode = page is not None and size is not None
+    
+    # 1. CACHE : Vérification
+    cache_key = f"movies_{page}_{size}_{type}_{sort}_{order}_{search}"
+    cached_result = _api_cache.get(cache_key)
+    
+    if cached_result is not None:
+        logger.info(f"✅ CACHE HIT: {cache_key}")
+        return cached_result
 
-    # 1. Construction de la requête SQL
+    logger.info(f"❌ CACHE MISS: {cache_key}")
+
+    # 2. SQL : Construction requête
     query = "SELECT data FROM media_v2 WHERE 1=1"
     params = []
     
-    # Filtres (Type et Recherche s'appliquent aux deux modes)
     if type:
         query += " AND type = ?"
         params.append(type)
     
-    if search:
-        query += " AND title LIKE ?"
-        params.append(f"%{search}%")
+    if search and search.strip():
+        query += " AND (title LIKE ? OR summary LIKE ?)"
+        search_param = f"%{search}%"
+        params.extend([search_param, search_param])
 
-    # Tri SQL
+    # Tri sécurisé
     valid_sorts = {"added_at": "added_at", "title": "title", "year": "year", "rating": "rating"}
     sort_col = valid_sorts.get(sort, "added_at")
     sort_dir = "ASC" if order.lower() == "asc" else "DESC"
     
-    query += f" ORDER BY {sort_col} {sort_dir}"
+    # Tri secondaire par titre pour stabiliser la pagination (Évite les doublons/sauts)
+    query += f" ORDER BY {sort_col} {sort_dir}, title ASC"
 
-    # PAGINATION CONDITIONNELLE
-    # On n'ajoute LIMIT que si c'est demandé (Android TV)
     if is_android_mode:
         offset = (page - 1) * size
         query += " LIMIT ? OFFSET ?"
         params.extend([size, offset])
 
     results = []
-    
+    base_url = "" # On garde vide pour compatibilité Docker/Localhost/Android
+
     try:
         with sqlite3.connect(plex_client.db_path) as conn:
+            conn.row_factory = sqlite3.Row
             cursor = conn.execute(query, params)
             
             for row in cursor:
-                # Désérialisation rapide
-                m_copy = MovieDetail.model_validate_json(row[0])
-                
-                # --- LOGIQUE DE RETOUR ---
-                
-                # A. Injection URL Poster (Commun)
-                if m_copy.poster_url and m_copy.poster_url.startswith("/"):
-                    m_copy.poster_url = base_url + m_copy.poster_url
-                
-                # B. Gestion de la charge utile (Hybride)
-                if is_android_mode:
-                    # MODE ANDROID : On allège l'objet au maximum pour la RAM de la TV
-                    m_copy.seasons = []
-                    m_copy.sources = []
-                    # On ne traite que le strict nécessaire pour la grille (Poster)
-                    if m_copy.poster_url.startswith("/"):
-                         m_copy.poster_url = base_url + m_copy.poster_url
-                
-                else:
-                    # MODE WEB (Legacy) : On garde tout et on injecte les URLs complètes
-                    # C'est la logique originale de votre main.py pour l'app Web
-                    # Injection URL Poster
-                    if m_copy.poster_url.startswith("/"):
-                        m_copy.poster_url = base_url + m_copy.poster_url
-                    # URLs Sources Film
-                    new_sources = []
-                    for s in m_copy.sources:
-                        s_copy = s.model_copy()
-                        if s_copy.stream_url.startswith("/"):
-                            s_copy.stream_url = base_url + s_copy.stream_url
-                        if s_copy.m3u_url and s_copy.m3u_url.startswith("/"):
-                            s_copy.m3u_url = base_url + s_copy.m3u_url
-                        new_sources.append(s_copy)
-                    m_copy.sources = new_sources
+                try:
+                    # A. Désérialisation
+                    m = MovieDetail.model_validate_json(row['data'])
                     
-                    # URLs Séries / Saisons / Épisodes
-                    if m_copy.type == 'show':
-                        for season in m_copy.seasons:
-                            for ep in season.episodes:
-                                if ep.thumb_url and ep.thumb_url.startswith("/"):
-                                    ep.thumb_url = base_url + ep.thumb_url
-                                
-                                new_ep_sources = []
-                                for s in ep.sources:
-                                    s_ep_copy = s.model_copy()
-                                    if s_ep_copy.stream_url.startswith("/"):
-                                        s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
-                                    if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
-                                        s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
-                                    new_ep_sources.append(s_ep_copy)
-                                ep.sources = new_ep_sources
+                    # B. Logique Métier (Injection & Nettoyage)
+                    
+                    # 1. Poster (Commun)
+                    if m.poster_url and m.poster_url.startswith("/"):
+                        m.poster_url = base_url + m.poster_url
+                    
+                    # 2. Spécifique Android vs Web
+                    if is_android_mode:
+                        # Android : On allège (pas de saisons/sources dans la liste)
+                        m.seasons = []
+                        m.sources = []
+                    else:
+                        # Web : On prépare les URLs complètes
+                        for s in m.sources:
+                            if s.stream_url.startswith("/"):
+                                s.stream_url = base_url + s.stream_url
+                            if s.m3u_url and s.m3u_url.startswith("/"):
+                                s.m3u_url = base_url + s.m3u_url
+                        
+                        if m.type == 'show':
+                            for season in m.seasons:
+                                for ep in season.episodes:
+                                    if ep.thumb_url and ep.thumb_url.startswith("/"):
+                                        ep.thumb_url = base_url + ep.thumb_url
+                                    for s_ep in ep.sources:
+                                        if s_ep.stream_url.startswith("/"):
+                                            s_ep.stream_url = base_url + s_ep.stream_url
+                                        if s_ep.m3u_url and s_ep.m3u_url.startswith("/"):
+                                            s_ep.m3u_url = base_url + s_ep.m3u_url
+                    
+                    results.append(m)
+                    
+                except Exception as e:
+                    logger.error(f"❌ Failed to process row: {e}")
+                    continue
 
-                results.append(m_copy)
-                
     except Exception as e:
-        logger.error(f"❌ Erreur SQL get_movies: {e}")
-        return []
-
+        logger.error(f"❌ SQL Error in get_movies: {e}")
+        raise HTTPException(status_code=500, detail="Database error")
+    
+    # 3. CACHE : Sauvegarde (5 minutes)
+    _api_cache.set(cache_key, results, ttl_seconds=300)
+    
     duration = time.time() - start_time
-    mode_label = "ANDROID (Paginé)" if is_android_mode else "WEB (Complet)"
-    logger.info(f"🚀 [{mode_label}] {len(results)} items | ⏱️ {duration:.4f}s")
+    mode_lbl = "ANDROID" if is_android_mode else "WEB"
+    logger.info(f"🚀 [{mode_lbl}] {len(results)} items | ⏱️ {duration:.4f}s")
     
     return results
 
 @api_router.get("/movies/{movie_id}", response_model=MovieDetail)
 async def get_movie_detail(movie_id: str, request: Request):
-    """Détail d'un élément spécifique via SQLite."""
-    movies = plex_client.get_all_media()
-    movie = movies.get(movie_id)
+    """
+    Détail d'un élément via SQL direct (Optimisé : ne charge pas tout en RAM).
+    """
+    base_url = "" # Compatible Docker
     
-    if not movie:
-        logger.warning(f"🔍 [Worker {os.getpid()}] Média {movie_id} non trouvé")
-        raise HTTPException(status_code=404, detail="Média introuvable")
-    
-    base_url = str(request.base_url).rstrip('/')
-    m_copy = movie.model_copy()
-    
-    if m_copy.poster_url.startswith("/"):
-        m_copy.poster_url = base_url + m_copy.poster_url
-        
-    new_sources = []
-    for s in m_copy.sources:
-        s_copy = s.model_copy()
-        if s_copy.stream_url.startswith("/"):
-            s_copy.stream_url = base_url + s_copy.stream_url
-        if s_copy.m3u_url and s_copy.m3u_url.startswith("/"):
-            s_copy.m3u_url = base_url + s_copy.m3u_url
-        new_sources.append(s_copy)
-    m_copy.sources = new_sources
-    
-    if m_copy.type == 'show':
-        for season in m_copy.seasons:
-            for ep in season.episodes:
-                if ep.thumb_url and ep.thumb_url.startswith("/"):
-                    ep.thumb_url = base_url + ep.thumb_url
-                new_ep_sources = []
-                for s in ep.sources:
-                    s_ep_copy = s.model_copy()
-                    if s_ep_copy.stream_url.startswith("/"):
-                        s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
-                    if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
-                        s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
-                    new_ep_sources.append(s_ep_copy)
-                ep.sources = new_ep_sources
-    
-    return m_copy
+    try:
+        with sqlite3.connect(plex_client.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute("SELECT data FROM media_v2 WHERE id = ?", (movie_id,))
+            row = cursor.fetchone()
+            
+            if not row:
+                logger.warning(f"🔍 Média {movie_id} non trouvé")
+                raise HTTPException(status_code=404, detail="Média introuvable")
+            
+            # A. Désérialisation
+            m = MovieDetail.model_validate_json(row['data'])
+            
+            # B. Injection URLs (Toujours complet pour le détail)
+            if m.poster_url and m.poster_url.startswith("/"):
+                m.poster_url = base_url + m.poster_url
+                
+            # Sources Film
+            new_sources = []
+            for s in m.sources:
+                s_copy = s.model_copy()
+                if s_copy.stream_url.startswith("/"):
+                    s_copy.stream_url = base_url + s_copy.stream_url
+                if s_copy.m3u_url and s_copy.m3u_url.startswith("/"):
+                    s_copy.m3u_url = base_url + s_copy.m3u_url
+                new_sources.append(s_copy)
+            m.sources = new_sources
+            
+            # Saisons / Épisodes
+            if m.type == 'show':
+                for season in m.seasons:
+                    for ep in season.episodes:
+                        if ep.thumb_url and ep.thumb_url.startswith("/"):
+                            ep.thumb_url = base_url + ep.thumb_url
+                        
+                        new_ep_sources = []
+                        for s in ep.sources:
+                            s_ep_copy = s.model_copy()
+                            if s_ep_copy.stream_url.startswith("/"):
+                                s_ep_copy.stream_url = base_url + s_ep_copy.stream_url
+                            if s_ep_copy.m3u_url and s_ep_copy.m3u_url.startswith("/"):
+                                s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
+                            new_ep_sources.append(s_ep_copy)
+                        ep.sources = new_ep_sources
+            
+            return m
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error getting detail for {movie_id}: {e}")
+        raise HTTPException(status_code=500, detail="Database error")
+
+@api_router.get("/cache/stats")
+async def get_cache_stats():
+    return {
+        "cache_stats": _api_cache.stats(),
+        "timestamp": datetime.now().isoformat()
+    }
+
+@api_router.post("/cache/clear")
+async def clear_cache():
+    _api_cache.clear()
+    logger.info("🗑️  Cache cleared")
+    return {"status": "Cache cleared"}
 
 @api_router.post("/refresh")
 async def trigger_refresh(background_tasks: BackgroundTasks):
-    """Déclenche un scan manuel (non-bloquant)."""
     if plex_client.is_scanning:
         return {"message": "Scan déjà en cours", "status": "busy"}
     
@@ -344,7 +391,7 @@ async def trigger_refresh(background_tasks: BackgroundTasks):
 app.include_router(api_router)
 
 # =============================================================================
-# 5. ROUTES FRONTEND & UTILS
+# 4. ROUTES FRONTEND & IMAGES
 # =============================================================================
 
 @app.get("/", response_class=HTMLResponse)
@@ -358,7 +405,6 @@ async def index(request: Request):
 @app.get("/proxy-image")
 async def proxy_image(url: str, thumb: str, token: str):
     if not thumb: return Response(status_code=404)
-    # Sécurité : On utilise le token de la config si celui fourni est vide
     token_to_use = token if token else settings.PLEX_TOKEN
 
     safe_name = thumb.strip("/").replace("/", "_").replace("\\", "_").replace(":", "") + ".webp"
@@ -374,13 +420,10 @@ async def proxy_image(url: str, thumb: str, token: str):
 
     try:
         full_url = f"{url}{thumb}?X-Plex-Token={token}"
-        # CORRECTION ICI : On utilise directement await sur le client
         resp = await http_client.get(full_url)
         
         if resp.status_code == 200:
-            img_content = resp.content # On récupère le contenu binaire
-            
-            # Optimisation Pillow avec conversion WebP
+            img_content = resp.content
             with Image.open(io.BytesIO(img_content)) as img:
                 if img.mode in ("RGBA", "P"):
                     img = img.convert("RGB")
@@ -402,7 +445,7 @@ async def proxy_image(url: str, thumb: str, token: str):
     return Response(status_code=404)
 
 # =============================================================================
-# 6. STREAMING ROBUSTE & PLAYLISTS
+# 5. STREAMING
 # =============================================================================
 
 @app.get("/playlist/{play_id}.m3u")
@@ -426,6 +469,7 @@ async def stream_video(play_id: str, server: str, path: str, token: str):
     
     if stream_semaphore.locked():
         logger.warning(f"⛔ [Worker {os.getpid()}] Rejet stream {play_id} : Slots pleins")
+       
         raise HTTPException(status_code=503, detail="Serveur saturé")
 
     params_opti = {
@@ -443,41 +487,40 @@ async def stream_video(play_id: str, server: str, path: str, token: str):
     }
 
     async def iter_file():
-        # Sécurité : Utilisation du token configuré si absent de l'URL
+         # Sécurité : Utilisation du token configuré si absent de l'URL
         token_to_use = token if token else settings.PLEX_TOKEN
-        
         
         try:
             await stream_semaphore.acquire()
-            logger.info(f"▶️ [Worker {os.getpid()}] START Stream {play_id}")
+            logger.info(f"▶️ START Stream {play_id}")
             use_fallback = False
-            # CORRECTION : Utilisation directe de stream() sans 'async with' manuel sur le client
-            # httpx.stream est lui-même un gestionnaire de contexte asynchrone
+            
             try:
                 async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", 
-                                            params=params_opti, headers=headers) as r:
+                                              params=params_opti, headers=headers) as r:
                     if r.status_code == 200:
                         async for chunk in r.aiter_bytes(chunk_size=settings.STREAM_CHUNK_SIZE):
                             yield chunk
                     else:
-                        logger.warning(f"⚠️ [Worker {os.getpid()}] Transcode 720p refusé (Code {r.status_code})")
+                        logger.warning(f"⚠️ Transcode 720p refusé ({r.status_code}) -> Fallback")
                         use_fallback = True
             except Exception as e:
                 logger.error(f"❌ Erreur stream opti: {e}")
                 use_fallback = True
 
             if use_fallback:
-                async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", params=params_fallback, headers=headers) as r:
+                async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", 
+                                              params=params_fallback, headers=headers) as r:
                     if r.status_code == 200:
-                        logger.info(f"✅ [Worker {os.getpid()}] Stream Direct Play OK")
+                        logger.info(f"✅ Stream Direct Play OK")
                         async for chunk in r.aiter_bytes(chunk_size=settings.STREAM_CHUNK_SIZE):
                             yield chunk
                         
         except Exception as e:
-            logger.error(f"❌ [Worker {os.getpid()}] Erreur Critique Stream {play_id}: {e}")
+            logger.error(f"❌ Erreur Critique Stream {play_id}: {e}")
         finally:
             stream_semaphore.release()
-            logger.info(f"⏹️ [Worker {os.getpid()}] END Stream {play_id}")
+            logger.info(f"⏹️ END Stream {play_id}")
 
     return StreamingResponse(
         iter_file(), 
