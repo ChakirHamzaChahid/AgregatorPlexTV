@@ -14,6 +14,7 @@ from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional, List # Assure-toi d'avoir ces imports en haut
 
 # Imports locaux
 from app.config import settings
@@ -165,16 +166,19 @@ async def get_servers():
     return plex_client.get_connected_servers()
 
 @api_router.get("/movies", response_model=list[MovieDetail])
-async def get_movies(request: Request):
+async def get_movies(
+    request: Request,
+    page: Optional[int] = None, 
+    size: Optional[int] = None
+):
     """
     API Principale : Récupère les données via SQLite.
-    Optimisé pour ton NAS Antec P183 et ses 4GB de RAM.
+    Optimisé pour ton NAS Antec P183.
     """
     start_time = time.time()
-    #base_url = str(request.base_url).rstrip('/')
     base_url = ""
     
-    # Récupération depuis la base de données
+    # 1. Récupération et traitement habituel (ta bible de 12 000 items)
     movies_dict = plex_client.get_all_media()
     movies = list(movies_dict.values())
     
@@ -215,10 +219,22 @@ async def get_movies(request: Request):
                     ep.sources = new_ep_sources
 
         results.append(m_copy)
-    
+
+    # --- ÉTAPE DE PAGINATION OPTIONNELLE ---
+    final_output = results
+    mode = "WEB (Bible complète)"
+
+    if page is not None and size is not None:
+        # On s'assure que page commence à 1
+        start = (page - 1) * size
+        end = start + size
+        final_output = results[start:end]
+        mode = f"ANDROID (Page {page}, Taille {size})"
+
     duration = time.time() - start_time
-    logger.info(f"📊 [Worker {os.getpid()}] /movies servi en {duration:.4f}s ({len(results)} items)")
-    return results
+    logger.info(f"📊 [Worker {os.getpid()}] {mode} servi en {duration:.4f}s ({len(final_output)} items)")
+    
+    return final_output
 
 @api_router.get("/movies/{movie_id}", response_model=MovieDetail)
 async def get_movie_detail(movie_id: str, request: Request):
