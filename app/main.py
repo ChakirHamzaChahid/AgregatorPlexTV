@@ -6,6 +6,7 @@ import sys
 import io 
 import os
 import time
+import sqlite3
 from PIL import Image 
 from logging.handlers import RotatingFileHandler
 from fastapi import FastAPI, Request, Response, HTTPException, APIRouter, BackgroundTasks
