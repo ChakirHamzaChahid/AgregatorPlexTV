@@ -66,7 +66,7 @@ class SharedSqliteCache:
     
     def set(self, key: str, value: List[Any], ttl_seconds: int = 300) -> None:
         try:
-            json_data = json.dumps([item.model_dump() for item in value])
+            json_data = json.dumps([item.model_dump(mode='json') for item in value])            
             expires = time.time() + ttl_seconds
             
             with sqlite3.connect(self.db_path, timeout=30) as conn:
@@ -75,7 +75,7 @@ class SharedSqliteCache:
                     (key, json_data, expires)
                 )
         except Exception as e:
-            print(f"Cache Set Error: {e}")
+            print(f"❌ Cache Set Error: {e}")
     
     def clear(self) -> None:
         try:
