@@ -37,8 +37,9 @@ class SharedSqliteCache:
 
     def _init_db(self):
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute("PRAGMA journal_mode=WAL")
+                conn.execute("PRAGMA synchronous=NORMAL")
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS api_cache (
                         key TEXT PRIMARY KEY,
@@ -51,7 +52,8 @@ class SharedSqliteCache:
 
     def get(self, key: str) -> Optional[List[Dict]]:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            # CORRECTION CRITIQUE : Mode Lecture Seule (RO) pour éviter les verrous
+            with sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True, timeout=5) as conn:
                 cursor = conn.execute(
                     "SELECT data FROM api_cache WHERE key = ? AND expires_at > ?", 
                     (key, time.time())
@@ -64,11 +66,10 @@ class SharedSqliteCache:
     
     def set(self, key: str, value: List[Any], ttl_seconds: int = 300) -> None:
         try:
-            # On convertit les modèles Pydantic en dict pour le JSON
             json_data = json.dumps([item.model_dump() for item in value])
             expires = time.time() + ttl_seconds
             
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute(
                     "INSERT OR REPLACE INTO api_cache (key, data, expires_at) VALUES (?, ?, ?)",
                     (key, json_data, expires)
@@ -78,18 +79,19 @@ class SharedSqliteCache:
     
     def clear(self) -> None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute("DELETE FROM api_cache")
         except: pass
     
     def stats(self) -> Dict[str, int]:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            # Lecture seule pour les stats aussi
+            with sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True) as conn:
                 count = conn.execute("SELECT COUNT(*) FROM api_cache").fetchone()[0]
                 return {"cached_keys": count}
         except: return {"error": "db_error"}
 
-# Initialisation du cache dans le dossier cache existant
+# Initialisation du cache
 _api_cache = SharedSqliteCache(settings.CACHE_DIR / "http_cache.db")
 
 class TokenFilter(logging.Filter):
@@ -130,7 +132,7 @@ logger = setup_logging()
 templates = Jinja2Templates(directory="app/templates")
 
 # =============================================================================
-# 2. CONFIGURATION HTTP & PERFORMANCE
+# 2. CONFIGURATION HTTP & LIFECYCLE
 # =============================================================================
 
 timeout_config = httpx.Timeout(60.0, connect=30.0)
@@ -167,9 +169,13 @@ async def lifespan(app: FastAPI):
 
         if is_master_worker:
             logger.info(f"🚀 [Worker {os.getpid()}] ÉLU MAÎTRE - Initialisation unique")
-            # Nettoyage du cache HTTP au démarrage pour éviter les données périmées
-            _api_cache.clear() 
-            asyncio.create_task(plex_client.refresh_library(force=True))
+            
+            # CORRECTION CRITIQUE : NE PAS VIDER LE CACHE AU DÉMARRAGE !
+            # _api_cache.clear() <--- Commenté pour garder la persistance après un crash/restart
+            
+            # CORRECTION CRITIQUE : force=False pour respecter le cooldown anti-spam
+            asyncio.create_task(plex_client.refresh_library(force=False))
+            
             discovery_service.start()
         else:
             logger.info(f"😴 [Worker {os.getpid()}] Worker Esclave - Mode passif")
@@ -327,7 +333,7 @@ async def get_movie_detail(movie_id: str, request: Request):
             
             if not row:
                 logger.warning(f"🔍 Média {movie_id} non trouvé")
-                raise HTTPException(status_code=440, detail="Média introuvable")
+                raise HTTPException(status_code=404, detail="Média introuvable")
             
             m = MovieDetail.model_validate_json(row['data'])
             
@@ -379,6 +385,7 @@ async def trigger_refresh(background_tasks: BackgroundTasks):
     if plex_client.is_scanning:
         return {"message": "Scan déjà en cours", "status": "busy"}
     logger.info(f"🔄 [Worker {os.getpid()}] Déclenchement scan manuel")
+    # Scan manuel = force=True
     background_tasks.add_task(plex_client.refresh_library, force=True)
     return {"message": "Scan démarré", "status": "accepted"}
 
