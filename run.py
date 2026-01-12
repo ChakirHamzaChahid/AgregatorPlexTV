@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # On calcule le nombre de workers idéal
     # Pour votre Ryzen 3600 (12 threads) et 4Go de RAM, 4 workers est le "sweet spot"
     # Chaque worker consommera entre 150 et 250 Mo de RAM.
-    nb_workers = 6 
+    nb_workers = 4 
     
     print(f"🚀 Démarrage de PlexHub en mode Multi-Workers ({nb_workers} workers)...")
     print(f"📦 Limite RAM estimée : ~1 Go (sur les 4 Go alloués au Docker)")

@@ -314,7 +314,7 @@ async def get_movies(
         raise HTTPException(status_code=500, detail="Database error")
     
     # 3. SAUVEGARDE CACHE
-    _api_cache.set(cache_key, results, ttl_seconds=300)
+    _api_cache.set(cache_key, results, ttl_seconds=3600)
     
     duration = time.time() - start_time
     mode_lbl = "ANDROID" if is_android_mode else "WEB"
