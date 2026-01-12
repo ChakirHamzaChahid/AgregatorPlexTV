@@ -9,11 +9,17 @@ if __name__ == "__main__":
     # On calcule le nombre de workers idéal
     # Pour votre Ryzen 3600 (12 threads) et 4Go de RAM, 4 workers est le "sweet spot"
     # Chaque worker consommera entre 150 et 250 Mo de RAM.
-    nb_workers = 4 
+    env_workers = os.getenv("NB_WORKERS")
+    
+    if env_workers:
+        nb_workers = int(env_workers)
+    else:
+        # Ton calcul par défaut si rien n'est spécifié
+        nb_workers = 4
     
     print(f"🚀 Démarrage de PlexHub en mode Multi-Workers ({nb_workers} workers)...")
-    print(f"📦 Limite RAM estimée : ~1 Go (sur les 4 Go alloués au Docker)")
-    print("👉 Interface disponible sur : http://localhost:8000")
+    print(f"📦 Limite RAM estimée : ~{(nb_workers * 250)} Mo")
+    print("👉 Interface provisoire disponible sur : http://IP:8000")
     
     # Lancement du serveur
     uvicorn.run(
