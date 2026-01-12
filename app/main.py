@@ -7,6 +7,7 @@ import io
 import os
 import time
 import sqlite3
+import json
 from PIL import Image 
 from logging.handlers import RotatingFileHandler
 from fastapi import FastAPI, Request, Response, HTTPException, APIRouter, BackgroundTasks
@@ -25,44 +26,71 @@ from app.plex_client import plex_client
 from app.discovery import discovery_service
 
 # =============================================================================
-# 1. HARDENING : SÉCURITÉ & LOGGING AVANCÉ
+# 1. HARDENING : CACHE PARTAGÉ & LOGGING
 # =============================================================================
 
-# ===== SIMPLE MEMORY CACHE =====
-class SimpleMemoryCache:
-    def __init__(self):
-        self.cache: Dict[str, Any] = {}
-        self.ttl: Dict[str, datetime] = {}
+# ===== SHARED SQLITE CACHE (Robust & Multi-Worker Safe) =====
+class SharedSqliteCache:
+    def __init__(self, db_path):
+        self.db_path = db_path
+        self._init_db()
+
+    def _init_db(self):
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute("PRAGMA journal_mode=WAL")
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS api_cache (
+                        key TEXT PRIMARY KEY,
+                        data TEXT,
+                        expires_at REAL
+                    )
+                """)
+        except Exception as e:
+            print(f"Cache DB Init Error: {e}")
+
+    def get(self, key: str) -> Optional[List[Dict]]:
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.execute(
+                    "SELECT data FROM api_cache WHERE key = ? AND expires_at > ?", 
+                    (key, time.time())
+                )
+                row = cursor.fetchone()
+                if row:
+                    return json.loads(row[0])
+        except: pass
+        return None
     
-    def get(self, key: str) -> Optional[Any]:
-        if key not in self.cache:
-            return None
-        
-        # Check TTL
-        if datetime.now() > self.ttl.get(key, datetime.min):
-            del self.cache[key]
-            if key in self.ttl:
-                del self.ttl[key]
-            return None
-        
-        return self.cache[key]
-    
-    def set(self, key: str, value: Any, ttl_seconds: int = 300) -> None:
-        self.cache[key] = value
-        self.ttl[key] = datetime.now() + timedelta(seconds=ttl_seconds)
+    def set(self, key: str, value: List[Any], ttl_seconds: int = 300) -> None:
+        try:
+            # On convertit les modèles Pydantic en dict pour le JSON
+            json_data = json.dumps([item.model_dump() for item in value])
+            expires = time.time() + ttl_seconds
+            
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute(
+                    "INSERT OR REPLACE INTO api_cache (key, data, expires_at) VALUES (?, ?, ?)",
+                    (key, json_data, expires)
+                )
+        except Exception as e:
+            print(f"Cache Set Error: {e}")
     
     def clear(self) -> None:
-        self.cache.clear()
-        self.ttl.clear()
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.execute("DELETE FROM api_cache")
+        except: pass
     
     def stats(self) -> Dict[str, int]:
-        return {
-            "cached_keys": len(self.cache),
-            "ttl_keys": len(self.ttl)
-        }
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                count = conn.execute("SELECT COUNT(*) FROM api_cache").fetchone()[0]
+                return {"cached_keys": count}
+        except: return {"error": "db_error"}
 
-# Singleton global
-_api_cache = SimpleMemoryCache()
+# Initialisation du cache dans le dossier cache existant
+_api_cache = SharedSqliteCache(settings.CACHE_DIR / "http_cache.db")
 
 class TokenFilter(logging.Filter):
     def filter(self, record):
@@ -139,6 +167,8 @@ async def lifespan(app: FastAPI):
 
         if is_master_worker:
             logger.info(f"🚀 [Worker {os.getpid()}] ÉLU MAÎTRE - Initialisation unique")
+            # Nettoyage du cache HTTP au démarrage pour éviter les données périmées
+            _api_cache.clear() 
             asyncio.create_task(plex_client.refresh_library(force=True))
             discovery_service.start()
         else:
@@ -158,7 +188,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="PlexHub Backend", lifespan=lifespan)
 
-# Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -184,7 +213,6 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @api_router.get("/servers", response_model=list[ServerInfo])
 async def get_servers():
-    """Liste des serveurs connectés (via SQLite)."""
     return plex_client.get_connected_servers()
 
 @api_router.get("/movies", response_model=list[MovieDetail])
@@ -197,24 +225,17 @@ async def get_movies(
     order: str = "desc",
     search: Optional[str] = None
 ):
-    """
-    Récupère les films avec :
-    1. Cache mémoire (Rapide)
-    2. Pagination SQL (Économe)
-    3. Injection URLs & Nettoyage (Logique Métier)
-    """
     start_time = time.time()
-    
-    # Mode Android si pagination demandée
     is_android_mode = page is not None and size is not None
     
-    # 1. CACHE : Vérification
+    # 1. CACHE PERSISTANT (SQLite)
     cache_key = f"movies_{page}_{size}_{type}_{sort}_{order}_{search}"
-    cached_result = _api_cache.get(cache_key)
+    cached_data = _api_cache.get(cache_key)
     
-    if cached_result is not None:
+    if cached_data is not None:
         logger.info(f"✅ CACHE HIT: {cache_key}")
-        return cached_result
+        # On reconstruit les objets Pydantic depuis les dicts du cache
+        return [MovieDetail(**item) for item in cached_data]
 
     logger.info(f"❌ CACHE MISS: {cache_key}")
 
@@ -231,12 +252,9 @@ async def get_movies(
         search_param = f"%{search}%"
         params.extend([search_param, search_param])
 
-    # Tri sécurisé
     valid_sorts = {"added_at": "added_at", "title": "title", "year": "year", "rating": "rating"}
     sort_col = valid_sorts.get(sort, "added_at")
     sort_dir = "ASC" if order.lower() == "asc" else "DESC"
-    
-    # Tri secondaire par titre pour stabiliser la pagination (Évite les doublons/sauts)
     query += f" ORDER BY {sort_col} {sort_dir}, title ASC"
 
     if is_android_mode:
@@ -245,7 +263,7 @@ async def get_movies(
         params.extend([size, offset])
 
     results = []
-    base_url = "" # On garde vide pour compatibilité Docker/Localhost/Android
+    base_url = "" 
 
     try:
         with sqlite3.connect(plex_client.db_path) as conn:
@@ -254,22 +272,16 @@ async def get_movies(
             
             for row in cursor:
                 try:
-                    # A. Désérialisation
                     m = MovieDetail.model_validate_json(row['data'])
                     
-                    # B. Logique Métier (Injection & Nettoyage)
-                    
-                    # 1. Poster (Commun)
+                    # Logique Métier
                     if m.poster_url and m.poster_url.startswith("/"):
                         m.poster_url = base_url + m.poster_url
                     
-                    # 2. Spécifique Android vs Web
                     if is_android_mode:
-                        # Android : On allège (pas de saisons/sources dans la liste)
                         m.seasons = []
                         m.sources = []
                     else:
-                        # Web : On prépare les URLs complètes
                         for s in m.sources:
                             if s.stream_url.startswith("/"):
                                 s.stream_url = base_url + s.stream_url
@@ -286,18 +298,16 @@ async def get_movies(
                                             s_ep.stream_url = base_url + s_ep.stream_url
                                         if s_ep.m3u_url and s_ep.m3u_url.startswith("/"):
                                             s_ep.m3u_url = base_url + s_ep.m3u_url
-                    
                     results.append(m)
-                    
                 except Exception as e:
                     logger.error(f"❌ Failed to process row: {e}")
                     continue
 
     except Exception as e:
-        logger.error(f"❌ SQL Error in get_movies: {e}")
+        logger.error(f"❌ SQL Error: {e}")
         raise HTTPException(status_code=500, detail="Database error")
     
-    # 3. CACHE : Sauvegarde (5 minutes)
+    # 3. SAUVEGARDE CACHE
     _api_cache.set(cache_key, results, ttl_seconds=300)
     
     duration = time.time() - start_time
@@ -308,11 +318,7 @@ async def get_movies(
 
 @api_router.get("/movies/{movie_id}", response_model=MovieDetail)
 async def get_movie_detail(movie_id: str, request: Request):
-    """
-    Détail d'un élément via SQL direct (Optimisé : ne charge pas tout en RAM).
-    """
-    base_url = "" # Compatible Docker
-    
+    base_url = ""
     try:
         with sqlite3.connect(plex_client.db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -321,16 +327,13 @@ async def get_movie_detail(movie_id: str, request: Request):
             
             if not row:
                 logger.warning(f"🔍 Média {movie_id} non trouvé")
-                raise HTTPException(status_code=404, detail="Média introuvable")
+                raise HTTPException(status_code=440, detail="Média introuvable")
             
-            # A. Désérialisation
             m = MovieDetail.model_validate_json(row['data'])
             
-            # B. Injection URLs (Toujours complet pour le détail)
             if m.poster_url and m.poster_url.startswith("/"):
                 m.poster_url = base_url + m.poster_url
                 
-            # Sources Film
             new_sources = []
             for s in m.sources:
                 s_copy = s.model_copy()
@@ -341,13 +344,11 @@ async def get_movie_detail(movie_id: str, request: Request):
                 new_sources.append(s_copy)
             m.sources = new_sources
             
-            # Saisons / Épisodes
             if m.type == 'show':
                 for season in m.seasons:
                     for ep in season.episodes:
                         if ep.thumb_url and ep.thumb_url.startswith("/"):
                             ep.thumb_url = base_url + ep.thumb_url
-                        
                         new_ep_sources = []
                         for s in ep.sources:
                             s_ep_copy = s.model_copy()
@@ -357,21 +358,15 @@ async def get_movie_detail(movie_id: str, request: Request):
                                 s_ep_copy.m3u_url = base_url + s_ep_copy.m3u_url
                             new_ep_sources.append(s_ep_copy)
                         ep.sources = new_ep_sources
-            
             return m
-
-    except HTTPException:
-        raise
+    except HTTPException: raise
     except Exception as e:
         logger.error(f"❌ Error getting detail for {movie_id}: {e}")
         raise HTTPException(status_code=500, detail="Database error")
 
 @api_router.get("/cache/stats")
 async def get_cache_stats():
-    return {
-        "cache_stats": _api_cache.stats(),
-        "timestamp": datetime.now().isoformat()
-    }
+    return {"cache_stats": _api_cache.stats(), "timestamp": datetime.now().isoformat()}
 
 @api_router.post("/cache/clear")
 async def clear_cache():
@@ -383,7 +378,6 @@ async def clear_cache():
 async def trigger_refresh(background_tasks: BackgroundTasks):
     if plex_client.is_scanning:
         return {"message": "Scan déjà en cours", "status": "busy"}
-    
     logger.info(f"🔄 [Worker {os.getpid()}] Déclenchement scan manuel")
     background_tasks.add_task(plex_client.refresh_library, force=True)
     return {"message": "Scan démarré", "status": "accepted"}
@@ -398,30 +392,25 @@ app.include_router(api_router)
 async def index(request: Request):
     try:
         return templates.TemplateResponse("index.html", {"request": request})
-    except Exception as e:
-        logger.error(f"Erreur Template: {e}")
-        return "<h1>Erreur : Template index.html manquant</h1>"
+    except Exception:
+        return "<h1>PlexHub Ready</h1>"
 
 @app.get("/proxy-image")
 async def proxy_image(url: str, thumb: str, token: str):
     if not thumb: return Response(status_code=404)
     token_to_use = token if token else settings.PLEX_TOKEN
-
     safe_name = thumb.strip("/").replace("/", "_").replace("\\", "_").replace(":", "") + ".webp"
     cache_path = settings.CACHE_DIR / safe_name
-    
     browser_cache_headers = {
         "Cache-Control": "public, max-age=31536000, immutable",
         "Access-Control-Allow-Origin": "*"
     }
-
     if cache_path.exists():
         return FileResponse(cache_path, headers=browser_cache_headers)
 
     try:
         full_url = f"{url}{thumb}?X-Plex-Token={token}"
         resp = await http_client.get(full_url)
-        
         if resp.status_code == 200:
             img_content = resp.content
             with Image.open(io.BytesIO(img_content)) as img:
@@ -441,7 +430,6 @@ async def proxy_image(url: str, thumb: str, token: str):
             
     except Exception as e:
         logger.error(f"❌ Erreur Proxy Image: {e}")
-        
     return Response(status_code=404)
 
 # =============================================================================
@@ -451,16 +439,8 @@ async def proxy_image(url: str, thumb: str, token: str):
 @app.get("/playlist/{play_id}.m3u")
 async def get_playlist(play_id: str, server: str, path: str, token: str, title: str = "Video", request: Request = None):
     base_url = str(request.base_url).rstrip('/') if request else ""
-    
-    stream_url = (
-        f"{base_url}/vlc-stream/{play_id}?"
-        f"server={urllib.parse.quote(server)}&"
-        f"path={urllib.parse.quote(path)}&"
-        f"token={token}"
-    )
-    
-    content = f"#EXTM3U\n#EXTINF:-1,{title}\n{stream_url}"
-    return Response(content=content, media_type="application/x-mpegurl")
+    stream_url = f"{base_url}/vlc-stream/{play_id}?server={urllib.parse.quote(server)}&path={urllib.parse.quote(path)}&token={token}"
+    return Response(content=f"#EXTM3U\n#EXTINF:-1,{title}\n{stream_url}", media_type="application/x-mpegurl")
 
 @app.get("/vlc-stream/{play_id}")
 async def stream_video(play_id: str, server: str, path: str, token: str):
@@ -469,7 +449,7 @@ async def stream_video(play_id: str, server: str, path: str, token: str):
     
     if stream_semaphore.locked():
         logger.warning(f"⛔ [Worker {os.getpid()}] Rejet stream {play_id} : Slots pleins")
-       
+
         raise HTTPException(status_code=503, detail="Serveur saturé")
 
     params_opti = {

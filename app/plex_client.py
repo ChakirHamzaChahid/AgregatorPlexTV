@@ -6,13 +6,28 @@ import logging
 import time
 import sqlite3
 import json
+import os
 from pathlib import Path
 from collections import defaultdict
+
+# --- IMPORT CRITIQUE ---
+import plexapi
 from plexapi.myplex import MyPlexAccount
+# -----------------------
+
 from app.config import settings
 from app.models import MediaDetail, Source, ServerInfo, SeasonDetail, EpisodeDetail
 
 logger = logging.getLogger("PlexClient")
+
+# =============================================================================
+# CORRECTION 1 : IDENTITÉ FIGÉE (Arrête les notifs "New Device")
+# =============================================================================
+plexapi.X_PLEX_CLIENT_IDENTIFIER = settings.CLIENT_ID
+plexapi.X_PLEX_PRODUCT = "PlexHub Backend"
+plexapi.X_PLEX_DEVICE = "PlexHub Server"
+plexapi.X_PLEX_VERSION = "1.0.0"
+plexapi.X_PLEX_PLATFORM = "Linux"
 
 class PlexClient:
     GENRE_MAPPING = {
@@ -30,6 +45,7 @@ class PlexClient:
         self.scan_status = "Initialisation"
         self.raw_cache = defaultdict(list)
         self.db_path = settings.CACHE_DIR / "library.db"
+        self.last_scan_time = 0
         self._init_db()
 
     def _init_db(self):
@@ -38,9 +54,9 @@ class PlexClient:
         try:
             with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute("PRAGMA journal_mode=WAL")
-                conn.execute("PRAGMA synchronous=NORMAL") # Performance SSD NVMe
+                conn.execute("PRAGMA synchronous=NORMAL") 
                 
-                # Table principale : media_v2
+                # Table principale
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS media_v2 (
                         id TEXT PRIMARY KEY,
@@ -49,10 +65,9 @@ class PlexClient:
                         added_at TEXT, 
                         rating REAL,
                         type TEXT,
-                        data TEXT -- Le JSON complet reste ici
+                        data TEXT
                     )
                 """)
-                # INDEXATION : Crucial pour la vitesse des tris
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_added ON media_v2(added_at)")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_title ON media_v2(title)")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_type ON media_v2(type)")
@@ -63,7 +78,21 @@ class PlexClient:
                         name TEXT PRIMARY KEY, data TEXT
                     )
                 """)
+                
+                # Table méta (pour le Cooldown Anti-Spam)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS metadata (
+                        key TEXT PRIMARY KEY, value TEXT
+                    )
+                """)
             
+            # Récupération de la dernière date de scan
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.execute("SELECT value FROM metadata WHERE key='last_scan'")
+                row = cursor.fetchone()
+                if row:
+                    self.last_scan_time = float(row[0])
+
             if not hasattr(self, '_db_init_done'):
                 logger.info(f"📂 SQLite Optimisée : {self.db_path.name} prête.")
                 self._db_init_done = True
@@ -78,7 +107,7 @@ class PlexClient:
     def get_chrome_headers(self, token: str, session_id: str = settings.CLIENT_ID):
         return {
             "X-Plex-Client-Identifier": session_id,
-            "X-Plex-Product": "Plex Web",
+            "X-Plex-Product": "PlexHub Web",
             "X-Plex-Version": "4.100.1",
             "X-Plex-Platform": "Chrome",
             "X-Plex-Device": "Android TV Backend",
@@ -92,51 +121,35 @@ class PlexClient:
     # =========================================================================
 
     def _save_servers_tx(self, conn, servers_list):
-        """Sauvegarde la liste des serveurs connectés."""
         conn.execute("DELETE FROM servers")
         for s in servers_list:
             conn.execute("INSERT INTO servers (name, data) VALUES (?, ?)",
                          (s.name, s.model_dump_json()))
 
     def _prepare_upsert_batch(self, media_dict):
-        """Transforme le dictionnaire d'objets en liste de tuples pour SQLite."""
         upsert_data = []
         for m_obj in media_dict.values():
             date_str = m_obj.added_at.isoformat() if m_obj.added_at else "1970-01-01"
             upsert_data.append((
-                m_obj.id,
-                m_obj.title,
-                m_obj.year,
-                date_str,
-                m_obj.rating,
-                m_obj.type,
-                m_obj.model_dump_json()
+                m_obj.id, m_obj.title, m_obj.year, date_str,
+                m_obj.rating, m_obj.type, m_obj.model_dump_json()
             ))
         return upsert_data
 
     def _perform_upsert_tx(self, conn, upsert_data):
-        """Exécute l'UPSERT massif."""
         query_upsert = """
             INSERT INTO media_v2 (id, title, year, added_at, rating, type, data)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
-                title = excluded.title,
-                year = excluded.year,
-                added_at = excluded.added_at,
-                rating = excluded.rating,
-                type = excluded.type,
-                data = excluded.data
+                title = excluded.title, year = excluded.year, added_at = excluded.added_at,
+                rating = excluded.rating, type = excluded.type, data = excluded.data
         """
         conn.executemany(query_upsert, upsert_data)
 
     def _perform_cleanup_tx(self, conn, current_scanned_ids):
-        """Garbage Collection : Supprime les éléments qui ne sont plus dans le scan."""
         cursor = conn.execute("SELECT id FROM media_v2")
         existing_ids = {row[0] for row in cursor}
-        
-        # Ce qui est en base MAIS PAS dans le scan actuel = À supprimer
         ids_to_delete = list(existing_ids - set(current_scanned_ids))
-        
         if ids_to_delete:
             logger.info(f"🧹 Nettoyage : Suppression de {len(ids_to_delete)} items obsolètes.")
             batch_size = 900 
@@ -146,23 +159,19 @@ class PlexClient:
                 conn.execute(f"DELETE FROM media_v2 WHERE id IN ({placeholders})", batch)
 
     def _save_to_db(self, media_dict, servers_list):
-        """Fonction Orchestrateur : Coordonne la sauvegarde."""
+        """Fonction Orchestrateur : Sauvegarde + Mise à jour Date Scan"""
         try:
             with sqlite3.connect(self.db_path) as conn:
-                # 1. Sauvegarde des serveurs
                 self._save_servers_tx(conn, servers_list)
-                
-                # 2. Préparation des données
                 upsert_data = self._prepare_upsert_batch(media_dict)
-                
-                # 3. Upsert Massif
                 self._perform_upsert_tx(conn, upsert_data)
-                
-                # 4. Nettoyage
                 self._perform_cleanup_tx(conn, media_dict.keys())
                 
+                # MISE À JOUR DATE DERNIER SCAN (Anti-Spam)
+                self.last_scan_time = time.time()
+                conn.execute("INSERT OR REPLACE INTO metadata (key, value) VALUES ('last_scan', ?)", (str(self.last_scan_time),))
+                
                 logger.info(f"💾 Sync SQLite Terminée : {len(upsert_data)} items traités.")
-
         except Exception as e:
             logger.error(f"❌ Erreur critique sauvegarde SQLite: {e}")
             import traceback
@@ -173,7 +182,6 @@ class PlexClient:
     # =========================================================================
 
     def get_all_media(self):
-        """Récupère tout le cache (utilisé pour le détail item)."""
         results = {}
         try:
             with sqlite3.connect(self.db_path) as conn:
@@ -183,8 +191,7 @@ class PlexClient:
                         m_data = json.loads(row[0])
                         results[m_data['id']] = MediaDetail(**m_data)
                     except: pass
-        except Exception:
-            pass 
+        except Exception: pass 
         return results
     
     def get_connected_servers(self):
@@ -204,6 +211,15 @@ class PlexClient:
             logger.error("❌ Scan annulé : PLEX_TOKEN vide.")
             return
         
+        # =====================================================================
+        # CORRECTION 2 : ANTI-SPAM (COOLDOWN 1 HEURE)
+        # =====================================================================
+        if not force:
+            time_since_last = time.time() - self.last_scan_time
+            if time_since_last < 3600: # 1 heure
+                logger.info(f"⏳ Scan ignoré (Dernier scan il y a {int(time_since_last/60)} min).")
+                return
+        
         self.is_scanning = True
         self.scan_status = "Scan Réseau..."
         self.raw_cache = defaultdict(list)
@@ -218,13 +234,9 @@ class PlexClient:
             if settings.ONLY_OWNED:
                 target_resources = [r for r in target_resources if r.owned]
 
-            # Scan parallèle
             await asyncio.gather(*(self._connect_and_scan(res, connected_servers_temp) for res in target_resources))
             
-            # Transformation Raw -> MediaDetail
             new_cache = self._build_api_cache()
-            
-            # Sauvegarde modulaire
             self._save_to_db(new_cache, connected_servers_temp)
             
             self.scan_status = "Terminé"
@@ -258,9 +270,9 @@ class PlexClient:
                     episodes_data = []
                     if section.type == "show":
                         try:
-                            # Optimisation : On ne charge pas les épisodes si pas nécessaire pour la liste
-                            # Mais nécessaire pour le détail complet. 
-                            # On pourrait optimiser ici plus tard.
+                            # Optimisation: On ne charge les épisodes que si la liste est vide
+                            # pour éviter les appels réseaux inutiles si on a déjà des infos
+                            # (Ajuster selon besoin de précision vs vitesse)
                             all_eps = await asyncio.to_thread(item.episodes)
                             if len(all_eps) > 0:
                                 logger.info(f"      📺 Série '{item.title}' [{resource.name}] : {len(all_eps)} Épisodes")
@@ -274,6 +286,7 @@ class PlexClient:
                         except Exception as e:
                             logger.error(f"❌ Erreur scan série '{item.title}': {e}")
 
+
                     self._process_item(item, section.type, resource, server, episodes_data)
             
             logger.info(f"✅ [Scan] {resource.name} OK ({latency}ms)")
@@ -282,7 +295,6 @@ class PlexClient:
 
     def _process_item(self, item, section_type, resource, server, episodes_data=[]):
         try:
-            # ID IMDb ou calculé
             imdb_id = None
             if item.guids:
                 for guid in item.guids:
@@ -292,7 +304,6 @@ class PlexClient:
                         break
             key = imdb_id if imdb_id else f"{item.title}-{item.year}"
 
-            # Ratings
             imdb_rating = None
             rotten_rating = None
             if hasattr(item, 'ratings') and item.ratings:
@@ -305,7 +316,6 @@ class PlexClient:
                         try: rotten_rating = int(float(r.value) * 100) if r.value <= 1 else int(r.value)
                         except: pass
 
-            # Résolution
             resolution = "SD"
             if section_type == "movie" and item.media:
                 try:
@@ -313,7 +323,6 @@ class PlexClient:
                     resolution = res + "P" if res.isdigit() else res
                 except: pass
 
-            # Genres & Director
             raw_genres = [g.tag for g in item.genres] if item.genres else []
             normalized_genres = sorted(list(set([self._normalize_genre(g) for g in raw_genres])))
             
@@ -321,7 +330,6 @@ class PlexClient:
             if section_type == "movie" and hasattr(item, 'directors') and item.directors:
                 director = item.directors[0].tag
 
-            # Ajout au cache brut
             self.raw_cache[key].append({
                 "play_id": str(uuid.uuid4()), 
                 "type": section_type, 
@@ -349,6 +357,7 @@ class PlexClient:
         except Exception as e:
             logger.warning(f"⚠️ Skip item '{item.title}' (Donnée invalide): {e}")
 
+
     def _build_url_params(self, inst, key=None):
         k = key if key else inst['key']
         return f"server={urllib.parse.quote(inst['server_url'])}&path={urllib.parse.quote(k)}&token={inst['server_token']}"
@@ -356,7 +365,6 @@ class PlexClient:
     def _build_api_cache(self):
         new_cache = {}
         for key, instances in self.raw_cache.items():
-            # Priorité au serveur propriétaire, sinon le premier
             main = next((i for i in instances if i['is_owned']), instances[0])
             
             poster_link = ""
@@ -364,19 +372,11 @@ class PlexClient:
                 poster_link = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(main['thumb'])}&token={main['server_token']}"
 
             media_item = MediaDetail(
-                id=key, 
-                type=main['type'], 
-                title=main['title'], 
-                year=main['year'],
-                added_at=main['added_at'],
-                content_rating=main['content_rating'],
-                studio=main['studio'],
-                director=main['director'], 
-                genres=main['genres'], 
-                summary=main['summary'],
-                rating=main['rating'],
-                imdb_rating=main.get('imdb_rating'),
-                rotten_rating=main.get('rotten_rating'),
+                id=key, type=main['type'], title=main['title'], year=main['year'],
+                added_at=main['added_at'], content_rating=main['content_rating'],
+                studio=main['studio'], director=main['director'], genres=main['genres'], 
+                summary=main['summary'], rating=main['rating'],
+                imdb_rating=main.get('imdb_rating'), rotten_rating=main.get('rotten_rating'),
                 poster_url=poster_link
             )
 
