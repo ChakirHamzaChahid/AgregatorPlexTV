@@ -16,7 +16,8 @@ from plexapi.myplex import MyPlexAccount
 # -----------------------
 
 from app.config import settings
-from app.models import MediaDetail, Source, ServerInfo, SeasonDetail, EpisodeDetail
+from app.models import MediaDetail, Source, ServerInfo, SeasonDetail, EpisodeDetail, AudioTrack, Subtitle, Chapter, Collection, Marker, SimilarItem
+from app.plex_extensions import PlexExtensions
 
 logger = logging.getLogger("PlexClient")
 
@@ -29,8 +30,18 @@ plexapi.X_PLEX_DEVICE = "PlexHub Server"
 plexapi.X_PLEX_VERSION = "1.0.0"
 plexapi.X_PLEX_PLATFORM = "Linux"
 
-class PlexClient:
+class PlexClient(PlexExtensions):
+    """
+    Client principal gérant l'interaction avec l'écosystème Plex.
+    
+    Responsabilités :
+    1. Authentification et découverte des serveurs via Plex.tv.
+    2. Agrégation des bibliothèques de multiples serveurs (Own & Shared).
+    3. Mise en cache locale (SQLite) des métadonnées pour la performance.
+    4. Construction d'une vue unifiée (Média UNIQUE avec SOURCES multiples).
+    """
     GENRE_MAPPING = {
+        # Standardisation des genres (Français/Anglais -> Français unifié)
         "action": "Action", "aventure": "Adventure", "animation": "Animation",
         "biographie": "Biography", "comédie": "Comedy", "comedie": "Comedy",
         "crime": "Crime", "documentaire": "Documentary", "drame": "Drama",
@@ -46,6 +57,7 @@ class PlexClient:
         self.raw_cache = defaultdict(list)
         self.db_path = settings.CACHE_DIR / "library.db"
         self.last_scan_time = 0
+        self.settings = settings  # Pour accès dans extensions
         self._init_db()
 
     def _init_db(self):
@@ -147,12 +159,16 @@ class PlexClient:
         conn.executemany(query_upsert, upsert_data)
 
     def _perform_cleanup_tx(self, conn, current_scanned_ids):
+        """
+        Nettoyage transactionnel : Supprime de la DB les médias qui ne sont plus présents
+        dans aucun des serveurs scannés (gestion des suppressions).
+        """
         cursor = conn.execute("SELECT id FROM media_v2")
         existing_ids = {row[0] for row in cursor}
-        ids_to_delete = list(existing_ids - set(current_scanned_ids))
+        ids_to_delete = list(existing_ids - set(current_scanned_ids)) # Différence d'ensembles
         if ids_to_delete:
             logger.info(f"🧹 Nettoyage : Suppression de {len(ids_to_delete)} items obsolètes.")
-            batch_size = 900 
+            batch_size = 900 # Limite SQLite pour 'IN (?...)'
             for i in range(0, len(ids_to_delete), batch_size):
                 batch = ids_to_delete[i:i + batch_size]
                 placeholders = ','.join(['?'] * len(batch))
@@ -194,6 +210,116 @@ class PlexClient:
         except Exception: pass 
         return results
     
+    async def get_collections(self):
+        """Récupère toutes les collections de tous les serveurs."""
+        all_collections = []
+        if not settings.PLEX_TOKEN: return []
+        
+        try:
+            account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
+            resources = await asyncio.to_thread(account.resources)
+            target_resources = [r for r in resources if "server" in r.provides]
+            if settings.ONLY_OWNED: target_resources = [r for r in target_resources if r.owned]
+            
+            async def fetch_srv_col(res):
+                cols = []
+                try:
+                    srv = await asyncio.to_thread(res.connect, timeout=10)
+                    sections = await asyncio.to_thread(srv.library.sections)
+                    for section in sections:
+                        if section.type != 'movie': continue # Collections principalement films
+                        
+                        s_cols = await asyncio.to_thread(section.collections)
+                        for c in s_cols:
+                            t_url = f"/proxy-image?url={urllib.parse.quote(srv._baseurl)}&thumb={urllib.parse.quote(c.thumb)}&token={res.accessToken}&width=400" if c.thumb else None
+                            cols.append(Collection(
+                                title=c.title, key=c.ratingKey, 
+                                thumb_url=t_url, child_count=c.childCount
+                            ))
+                except Exception as e:
+                    logger.warning(f"⚠️ Erreur Collections {res.name}: {e}")
+                return cols
+
+            results = await asyncio.gather(*(fetch_srv_col(r) for r in target_resources))
+            for res_list in results:
+                all_collections.extend(res_list)
+                
+        except Exception as e:
+            logger.error(f"❌ Erreur Get Collections: {e}")
+            
+        return all_collections
+
+    async def get_on_deck(self):
+        """
+        Récupère les éléments 'Continue Watching' (On Deck) de TOUS les serveurs.
+        Retourne des objets MediaDetail complets.
+        """
+        if not settings.PLEX_TOKEN: return []
+        on_deck_items = []
+        
+        try:
+            account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
+            resources = await asyncio.to_thread(account.resources)
+            target_resources = [r for r in resources if "server" in r.provides]
+            if settings.ONLY_OWNED: target_resources = [r for r in target_resources if r.owned]
+            
+            for resource in target_resources:
+                try:
+                    server = await asyncio.to_thread(resource.connect, timeout=10)
+                    items = await asyncio.to_thread(server.library.onDeck)
+                    
+                    for item in items:
+                        # Utilisation de la méthode helper de PlexExtensions
+                        # On détermine le type 'movie' ou 'show' (souvent absent sur onDeck item mix)
+                        m_type = item.type if hasattr(item, 'type') else 'movie'
+                        
+                        media_detail = await self._item_to_media_detail(
+                            item, m_type, resource, server
+                        )
+                        on_deck_items.append(media_detail)
+                        
+                except Exception as e:
+                    logger.warning(f"⚠️ Erreur On Deck {resource.name}: {e}")
+
+        except Exception as e:
+            logger.error(f"❌ Erreur Global On Deck: {e}")
+            
+        return on_deck_items
+
+    async def action_scrobble(self, key: str, action: str):
+        """Mark watched/unwatched."""
+        try:
+            # Note: Pour agir, il faut retrouver l'objet sur le bon serveur
+            # Simplification: On cherche sur le premier serveur connecté qui a cet item
+            # Dans une version avancée, faudrait stocker quel serveur a quel itemId
+            account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
+            resource = await asyncio.to_thread(account.resource, settings.SERVER_NAME)
+            server = await asyncio.to_thread(resource.connect)
+            
+            item = await asyncio.to_thread(server.fetchItem, key)
+            if action == 'watched':
+                await asyncio.to_thread(item.markWatched)
+            elif action == 'unwatched':
+                await asyncio.to_thread(item.markUnwatched)
+            return True
+        except Exception as e:
+            logger.error(f"❌ Erreur Scrobble {key}: {e}")
+            return False
+
+    async def action_progress(self, key: str, time_ms: int):
+        """Update progress."""
+        try:
+            account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
+            resource = await asyncio.to_thread(account.resource, settings.SERVER_NAME)
+            server = await asyncio.to_thread(resource.connect)
+            
+            item = await asyncio.to_thread(server.fetchItem, key)
+            await asyncio.to_thread(item.updateProgress, time_ms)
+            return True
+        except Exception as e:
+            logger.error(f"❌ Erreur Progress {key}: {e}")
+            return False
+
     def get_connected_servers(self):
         servers = []
         try:
@@ -205,7 +331,18 @@ class PlexClient:
         return servers
 
     # --- LOGIQUE DE SCAN ---
+    # --- LOGIQUE DE SCAN ---
     async def refresh_library(self, force: bool = False):
+        """
+        Lance le scan complet de tous les serveurs Plex connectés.
+        
+        Étapes :
+        1. Authentification MyPlex.
+        2. Récupération liste serveurs (Resource Discovery).
+        3. Scan PARALLÈLE de chaque serveur (Asyncio Gather).
+        4. Déduplication et Mérging des résultats (plusieurs sources pour un même film).
+        5. Sauvegarde atomique en base de données.
+        """
         if self.is_scanning: return
         if not settings.PLEX_TOKEN:
             logger.error("❌ Scan annulé : PLEX_TOKEN vide.")
@@ -227,6 +364,7 @@ class PlexClient:
 
         try:
             logger.info("🚀 Démarrage Scan Parallèle (Mode SQLite)...")
+            # Appel API MyPlex pour lister les ressources (serveurs)
             account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
             resources = await asyncio.to_thread(account.resources)
             target_resources = [r for r in resources if "server" in r.provides]
@@ -234,9 +372,13 @@ class PlexClient:
             if settings.ONLY_OWNED:
                 target_resources = [r for r in target_resources if r.owned]
 
+            # Exécution concurrente des scans de serveurs
             await asyncio.gather(*(self._connect_and_scan(res, connected_servers_temp) for res in target_resources))
             
+            # Construction du cache API final (Mérging)
             new_cache = self._build_api_cache()
+            
+            # Persistance
             self._save_to_db(new_cache, connected_servers_temp)
             
             self.scan_status = "Terminé"
@@ -255,8 +397,16 @@ class PlexClient:
             server = await asyncio.to_thread(resource.connect, timeout=60)
             latency = round((time.time() - start_time) * 1000, 2)
             
+            # Feature 11: Infos Serveur Détaillées
             servers_list.append(ServerInfo(
-                name=resource.name, url=server._baseurl, owned=resource.owned, latency=latency
+                name=resource.name,
+                url=server._baseurl,
+                owned=resource.owned,
+                latency=latency,
+                version=server.version,
+                plex_pass=server.myPlexSubscription,
+                transcoder_available=server.transcoderVideo,
+                active_activities=[a.type for a in server.activities] if server.activities else []
             ))
 
             sections = await asyncio.to_thread(server.library.sections)
@@ -294,7 +444,12 @@ class PlexClient:
             logger.warning(f"⚠️ [Scan] Échec {resource.name}: {str(e)}")
 
     def _process_item(self, item, section_type, resource, server, episodes_data=[]):
+        """
+        Normalise un élément brut Plex (Film/Série) en une structure intermédiaire.
+        Gère la détection IMDB pour la clé unique de fusion.
+        """
         try:
+            # --- 1. Tentative de récupération ID Unique (IMDB/TMDB) ---
             imdb_id = None
             if item.guids:
                 for guid in item.guids:
@@ -302,7 +457,29 @@ class PlexClient:
                         match = re.search(r'tt\d+', guid.id)
                         if match: imdb_id = match.group(0)
                         break
+            # Fallback : Titre + Année si pas d'ID fiable trouvé
             key = imdb_id if imdb_id else f"{item.title}-{item.year}"
+
+            # Extraction Labels (Feature 10)
+            labels = [l.tag for l in item.labels] if hasattr(item, 'labels') else []
+
+            # Extraction Trailers (Feature 9)
+            trailers_list = []
+            if hasattr(item, 'extras'):
+                 # Note: item.extras peut faire un appel réseau, attention à la perf
+                 # On suppose que lors d'un scan complet 'item' a déjà ces infos ou que c'est acceptable
+                 # Pour optimiser, on pourrait le faire en lazy loading, mais pour le cache on le veut direct
+                 try:
+                     # On ne peut pas appeler item.extras() en async ici facilement si c'est une méthode bloquante
+                     # Mais plexapi est synchrone (wrappé dans asyncio.to_thread pour les appels parents)
+                     # Ici on est DANS un thread pool via _process_item appelé par refresh_library ? 
+                     # Non refresh_library appelle _connect_and_scan -> _process_item
+                     # Et _process_item est synchrone. Donc on peut utiliser les méthodes synchrones de l'objet item.
+                     pass 
+                     # MAIS: item.extras force souvent un reload. 
+                     # On va tenter d'accéder à la propriété si chargée, sinon skip pour perf scan global
+                     # Si 'extras' n'est pas préchargé, ça va ralentir le scan énormément
+                 except: pass
 
             imdb_rating = None
             rotten_rating = None
@@ -330,6 +507,80 @@ class PlexClient:
             if section_type == "movie" and hasattr(item, 'directors') and item.directors:
                 director = item.directors[0].tag
 
+            # Extraction Cast
+            cast_list = []
+            # if hasattr(item, 'roles'):
+            #     for role in item.roles[:10]: # Limite à 10 acteurs
+            #         cast_list.append({
+            #             "name": role.tag,
+            #             "role": role.role or "",
+            #             "thumb": role.thumb
+            #         })
+
+            # Extraction Audio & Subtitles & Badges
+            audio_tracks = []
+            subtitles = []
+            badges = set()
+            
+            # Resolution Badge
+            if resolution != "SD": badges.add(resolution)
+            
+            if hasattr(item, 'media') and item.media:
+                media = item.media[0]
+                
+                # HDR Detection
+                if hasattr(media, 'videoProfile') and media.videoProfile == "main 10":
+                     badges.add("HDR")
+                
+                if hasattr(media, 'parts') and media.parts:
+                    part = media.parts[0]
+                    if hasattr(part, 'streams'):
+                        for stream in part.streams:
+                            if stream.streamType == 2: # Audio
+                                title_disp = stream.displayTitle or stream.title or "Unknown"
+                                codec = stream.codec or "unknown"
+                                if "atmos" in title_disp.lower() or "atmos" in codec.lower():
+                                    badges.add("Atmos")
+                                
+                                audio_tracks.append({
+                                    "display_title": title_disp,
+                                    "language": stream.languageCode or "und",
+                                    "codec": codec,
+                                    "channels": stream.channels or 2,
+                                    "forced": getattr(stream, 'forced', False)
+                                })
+                            elif stream.streamType == 3: # Subtitle
+                                subtitles.append({
+                                    "display_title": stream.displayTitle or stream.title or "Unknown",
+                                    "language": stream.languageCode or "und",
+                                    "codec": stream.codec or "unknown",
+                                    "forced": getattr(stream, 'forced', False)
+                                })
+
+            # Chapters & Markers
+            chapters_list = []
+            markers_list = []
+            
+            if hasattr(item, 'chapters') and item.chapters:
+                 for chap in item.chapters:
+                     chapters_list.append({
+                         "title": chap.title or f"Chapter {item.chapters.index(chap)+1}",
+                         "start_time": chap.start,
+                         "end_time": chap.end,
+                         "thumb": chap.thumb
+                     })
+            
+            if hasattr(item, 'markers') and item.markers:
+                for m in item.markers:
+                    markers_list.append({
+                        "title": m.type, "type": m.type, 
+                        "start_time": m.start, "end_time": m.end
+                    })
+
+            # View State
+            view_offset = item.viewOffset if hasattr(item, 'viewOffset') else 0
+            view_count = item.viewCount if hasattr(item, 'viewCount') else 0
+
             self.raw_cache[key].append({
                 "play_id": str(uuid.uuid4()), 
                 "type": section_type, 
@@ -339,6 +590,7 @@ class PlexClient:
                 "content_rating": getattr(item, 'contentRating', None),
                 "studio": getattr(item, 'studio', None),
                 "thumb": item.thumb, 
+                "art": item.art, # Backdrop
                 "rating": round(float(item.rating), 1) if item.rating else 0.0,
                 "imdb_rating": imdb_rating,
                 "rotten_rating": rotten_rating,
@@ -352,8 +604,21 @@ class PlexClient:
                 "genres": normalized_genres,
                 "director": director, 
                 "resolution": resolution, 
-                "episodes": episodes_data
+                "duration": item.duration or 0, # Runtime
+                # "cast": cast_list,
+                "badges": list(badges),
+                "audio_tracks": audio_tracks,
+                "subtitles": subtitles,
+                "chapters": chapters_list,
+                "markers": markers_list,
+                "view_offset": view_offset,
+                "view_count": view_count,
+                "episodes": episodes_data,
+                "labels": labels,
+                # "trailers": trailers_list # On évite de surcharger le scan global avec les trailers pour l'instant
+                # On les chargera à la demande via /movies/{id} ou on fera un update spécifique
             })
+            logger.info(f"Media Fetched '{item.title}' from {resource.name}")
         except Exception as e:
             logger.warning(f"⚠️ Skip item '{item.title}' (Donnée invalide): {e}")
 
@@ -363,6 +628,12 @@ class PlexClient:
         return f"server={urllib.parse.quote(inst['server_url'])}&path={urllib.parse.quote(k)}&token={inst['server_token']}"
 
     def _build_api_cache(self):
+        """
+        Transforme le cache brut (liste d'occurrences pour chaque clé) en objets API finaux (MediaDetail).
+        C'est ici que se fait la FUSION (Merging) des sources :
+        Un item (ex: 'Inception') peut avoir 3 sources (Serveur A, B, C).
+        On crée un seul MediaDetail avec une liste de 3 'sources'.
+        """
         new_cache = {}
         for key, instances in self.raw_cache.items():
             main = next((i for i in instances if i['is_owned']), instances[0])
@@ -371,17 +642,61 @@ class PlexClient:
             if main['thumb']:
                 poster_link = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(main['thumb'])}&token={main['server_token']}"
 
+            backdrop_link = ""
+            if main['art']:
+                 backdrop_link = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(main['art'])}&token={main['server_token']}&width=1280"
+
+            # Construction Objets Cast
+            cast_objs = []
+            # for c in main['cast']:
+            #     c_thumb = ""
+            #     if c['thumb']:
+            #          c_thumb = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(c['thumb'])}&token={main['server_token']}&width=300"
+            #     cast_objs.append(CastMember(name=c['name'], role=c['role'], thumb_url=c_thumb))
+
+            # Construction Objets Chapters
+            chapter_objs = []
+            for chap in main['chapters']:
+                chap_thumb = ""
+                if chap['thumb']:
+                     chap_thumb = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(chap['thumb'])}&token={main['server_token']}&width=400"
+                chapter_objs.append(Chapter(
+                    title=chap['title'], start_time=chap['start_time'], 
+                    end_time=chap['end_time'], thumb_url=chap_thumb
+                ))
+
+            # Construction Markers
+            marker_objs = []
+            if 'markers' in main:
+                for m in main['markers']:
+                    marker_objs.append(Marker(
+                        title=m['title'], type=m['type'], 
+                        start_time=m['start_time'], end_time=m['end_time']
+                    ))
+
             media_item = MediaDetail(
                 id=key, type=main['type'], title=main['title'], year=main['year'],
                 added_at=main['added_at'], content_rating=main['content_rating'],
                 studio=main['studio'], director=main['director'], genres=main['genres'], 
                 summary=main['summary'], rating=main['rating'],
                 imdb_rating=main.get('imdb_rating'), rotten_rating=main.get('rotten_rating'),
-                poster_url=poster_link
+                poster_url=poster_link,
+                backdrop_url=backdrop_link,
+                runtime=main['duration'], badges=main['badges'],
+                chapters=chapter_objs,
+                markers=marker_objs,
+                view_offset=main.get('view_offset', 0),
+                view_count=main.get('view_count', 0),
+                audio_tracks=[AudioTrack(**a) for a in main['audio_tracks']],
+                subtitles=[Subtitle(**s) for s in main['subtitles']],
+                labels=main.get('labels', [])
             )
 
             if main['type'] == 'movie':
                 for inst in instances:
+                    # Merge Badges (4K from one source, HDR from another...)
+                    # (Simplification: on prend ceux du main pour l'instant, ou on pourrait merger)
+                    
                     params = self._build_url_params(inst)
                     media_item.sources.append(Source(
                         server_name=inst['server_name'], resolution=inst['resolution'],

@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 
 # Imports locaux
 from app.config import settings
-from app.models import MovieDetail, ServerInfo
+from app.models import MovieDetail, ServerInfo, Collection, BaseModel
 from app.plex_client import plex_client
 from app.discovery import discovery_service
 
@@ -31,11 +31,16 @@ from app.discovery import discovery_service
 
 # ===== SHARED SQLITE CACHE (Robust & Multi-Worker Safe) =====
 class SharedSqliteCache:
+    """
+    Gestionnaire de cache SQLite optimisé pour un environnement multi-processus (Uvicorn workers).
+    Utilise le mode WAL (Write-Ahead Logging) pour permettre des lectures concurrentes non bloquantes.
+    """
     def __init__(self, db_path):
         self.db_path = db_path
         self._init_db()
 
     def _init_db(self):
+        """Initialise la DB avec le mode WAL pour la performance et la concurrence."""
         try:
             with sqlite3.connect(self.db_path, timeout=30) as conn:
                 conn.execute("PRAGMA journal_mode=WAL")
@@ -51,6 +56,10 @@ class SharedSqliteCache:
             print(f"Cache DB Init Error: {e}")
 
     def get(self, key: str) -> Optional[List[Dict]]:
+        """
+        Récupère une entrée du cache si elle existe et n'a pas expiré.
+        Utilise une connexion en lecture seule (mode=ro) pour éviter tout verrouillage.
+        """
         try:
             # CORRECTION CRITIQUE : Mode Lecture Seule (RO) pour éviter les verrous
             with sqlite3.connect(f"file:{self.db_path}?mode=ro", uri=True, timeout=5) as conn:
@@ -65,6 +74,10 @@ class SharedSqliteCache:
         return None
     
     def set(self, key: str, value: List[Any], ttl_seconds: int = 300) -> None:
+        """
+        Stocke ou met à jour une entrée dans le cache.
+        Sérialise les objets Pydantic en JSON avant stockage.
+        """
         try:
             json_data = json.dumps([item.model_dump(mode='json') for item in value])            
             expires = time.time() + ttl_seconds
@@ -116,7 +129,7 @@ def setup_logging():
     console_handler.addFilter(TokenFilter())
     root_logger.addHandler(console_handler)
     
-    file_handler = RotatingFileHandler("server.log", maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
+    file_handler = RotatingFileHandler(settings.LOG_DIR / "server.log", maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
     file_handler.setFormatter(formatter)
     file_handler.addFilter(TokenFilter())
     root_logger.addHandler(file_handler)
@@ -148,6 +161,13 @@ stream_semaphore = asyncio.Semaphore(settings.MAX_STREAMS)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Gestionnaire de cycle de vie de l'application (Startup/Shutdown).
+    
+    Implémente un système d'élection de 'Master Worker' via un fichier verrou (lock file)
+    pour s'assurer que certaines tâches lourdes (scan de bibliothèque, initialisation DB)
+    ne soient exécutées que par un seul processus worker au démarrage.
+    """
     """Cycle de vie : Gestion du worker Maître avec verrouillage atomique."""
     await asyncio.sleep(0.1 * (os.getpid() % 10))
     lock_file = settings.CACHE_DIR / "server_start.lock"
@@ -221,6 +241,263 @@ async def global_exception_handler(request: Request, exc: Exception):
 async def get_servers():
     return plex_client.get_connected_servers()
 
+@api_router.get("/collections", response_model=list[Collection])
+async def get_collections():
+    """Liste toutes les collections trouvées sur les serveurs."""
+    # TODO: Ajouter du cache ici aussi
+    return await plex_client.get_collections()
+
+@api_router.get("/continue_watching")
+async def get_continue_watching():
+    """Récupère la liste des médias en cours de lecture (On Deck)."""
+    return await plex_client.get_on_deck()
+
+class ActionPayload(BaseModel):
+    key: str # RatingKey Plex
+    action: Optional[str] = None # 'watched' / 'unwatched'
+    time_ms: Optional[int] = None # Pour update progress
+
+@api_router.post("/actions/scrobble")
+async def scrobble_media(payload: ActionPayload):
+    """Marque un média comme vu ou non vu."""
+    if not payload.action: raise HTTPException(400, "Action required")
+    success = await plex_client.action_scrobble(payload.key, payload.action)
+    if not success: raise HTTPException(500, "Failed to update status")
+    return {"status": "ok"}
+
+@api_router.post("/actions/progress")
+async def update_progress(payload: ActionPayload):
+    """Met à jour la progression de lecture."""
+    if payload.time_ms is None: raise HTTPException(400, "Time required")
+    success = await plex_client.action_progress(payload.key, payload.time_ms)
+    if not success: raise HTTPException(500, "Failed to update progress")
+    return {"status": "ok"}
+
+# ============================================================================
+# NOUVEAUX ENDPOINTS - FEATURES ADDITIONNELLES
+# ============================================================================
+
+@api_router.get("/recently-added")
+async def get_recently_added(limit: int = 50):
+    """Récupère les médias récemment ajoutés"""
+    try:
+        recently_added = await plex_client.get_recently_added(limit=limit)
+        result = [
+            {
+                "id": v.id,
+                "title": v.title,
+                "year": v.year,
+                "type": v.type,
+                "poster_url": v.poster_url,
+                "backdrop_url": v.backdrop_url,
+                "added_at": v.added_at.isoformat(),
+                "summary": v.summary[:200] + "..." if len(v.summary) > 200 else v.summary
+            }
+            for v in recently_added.values()
+        ]
+        return result
+    except Exception as e:
+        logger.error(f"❌ Erreur recently_added: {e}")
+        return []
+
+
+@api_router.get("/watch-history")
+async def get_watch_history(limit: int = 100, days_back: int = 30):
+    """Récupère l'historique de lecture"""
+    try:
+        history = await plex_client.get_watch_history(limit=limit, days_back=days_back)
+        result = [
+            {
+                "id": entry.id,
+                "title": entry.title,
+                "type": entry.type,
+                "watched_at": entry.watched_at.isoformat(),
+                "progress": int((entry.view_offset / max(entry.duration, 1)) * 100) if entry.duration else 0,
+                "thumb_url": entry.thumb_url
+            }
+            for entry in history
+        ]
+        return result
+    except Exception as e:
+        logger.error(f"❌ Erreur watch_history: {e}")
+        return []
+
+
+@api_router.get("/now-playing")
+async def get_now_playing():
+    """Récupère les sessions actives (qui regarde quoi)"""
+    try:
+        sessions = await plex_client.get_active_sessions()
+        result = [
+            {
+                "user": session.user,
+                "media_title": session.media_title,
+                "media_type": session.media_type,
+                "progress": int(session.progress_percent),
+                "client": session.client_name
+            }
+            for session in sessions
+        ]
+        return result
+    except Exception as e:
+        logger.error(f"❌ Erreur now_playing: {e}")
+        return []
+
+
+@api_router.get("/clients")
+async def get_clients():
+    """Récupère les clients connectés"""
+    try:
+        clients = await plex_client.get_connected_clients()
+        result = [
+            {
+                "name": client.name,
+                "device_class": client.device_class,
+                "platform": client.platform,
+                "is_available": client.is_available
+            }
+            for client in clients
+        ]
+        return result
+    except Exception as e:
+        logger.error(f"❌ Erreur clients: {e}")
+        return []
+
+
+@api_router.get("/hubs")
+async def get_hubs(limit: int = 10):
+    """Récupère les hubs de découverte (algorithme Plex)"""
+    try:
+        hubs = await plex_client.get_discovery_hubs(limit=limit)
+        result = {}
+        for hub_title, items in hubs.items():
+            result[hub_title] = [
+                {
+                    "id": item.id,
+                    "title": item.title,
+                    "year": item.year,
+                    "poster_url": item.poster_url,
+                    "rating": item.rating
+                }
+                for item in items[:limit]
+            ]
+        return result
+    except Exception as e:
+        logger.error(f"❌ Erreur hubs: {e}")
+        return {}
+
+
+@api_router.get("/search")
+async def advanced_search(
+    title: Optional[str] = None,
+    year: Optional[int] = None,
+    unwatched: Optional[bool] = None,
+    sort: str = 'rating:desc',
+    limit: int = 50
+):
+    """Recherche avancée dans les médias"""
+    try:
+        filters = {}
+        if year:
+            filters['year'] = year
+        
+        results = await plex_client.advanced_search(
+            title=title,
+            year=year,
+            unwatched=unwatched,
+            sort=sort,
+            filters=filters if filters else None,
+            limit=limit
+        )
+        
+        result = [
+            {
+                "id": v.id,
+                "title": v.title,
+                "year": v.year,
+                "type": v.type,
+                "rating": v.rating,
+                "poster_url": v.poster_url
+            }
+            for v in results.values()
+        ]
+        return result
+    except Exception as e:
+        logger.error(f"❌ Erreur search: {e}")
+        return []
+
+
+@api_router.post("/favorite/{media_id}")
+async def toggle_favorite(media_id: str):
+    """Marquer/dé-marquer comme favori"""
+    try:
+        success = await plex_client.mark_as_favorite(media_id)
+        if success:
+            return {"status": "ok", "message": "Ajouté aux favoris"}
+        else:
+            return {"status": "error", "message": "Erreur lors de l'ajout aux favoris"}
+    except Exception as e:
+        logger.error(f"❌ Erreur favorite: {e}")
+        return {"status": "error", "message": str(e)}
+
+
+@api_router.post("/rate/{media_id}/{rating}")
+async def rate_media(media_id: str, rating: float):
+    """Noter un média (0-10)"""
+    try:
+        if rating < 0 or rating > 10:
+            return {"status": "error", "message": "Rating doit être entre 0 et 10"}
+        
+        success = await plex_client.rate_media(media_id, rating)
+        if success:
+            return {"status": "ok", "message": f"Note {rating}/10 enregistrée"}
+        else:
+            return {"status": "error", "message": "Erreur lors de la notation"}
+    except Exception as e:
+        logger.error(f"❌ Erreur rate: {e}")
+        return {"status": "error", "message": str(e)}
+
+
+@api_router.post("/label/{media_id}/{label}")
+async def add_label_to_media(media_id: str, label: str):
+    """Ajouter un label (tag) à un média"""
+    try:
+        success = await plex_client.add_label(media_id, label)
+        if success:
+            return {"status": "ok", "message": f"Label '{label}' ajouté"}
+        else:
+            return {"status": "error", "message": "Erreur lors de l'ajout du label"}
+    except Exception as e:
+        logger.error(f"❌ Erreur add_label: {e}")
+        return {"status": "error", "message": str(e)}
+
+
+@api_router.delete("/label/{media_id}/{label}")
+async def remove_label_from_media(media_id: str, label: str):
+    """Retirer un label d'un média"""
+    try:
+        success = await plex_client.remove_label(media_id, label)
+        if success:
+            return {"status": "ok", "message": f"Label '{label}' retiré"}
+        else:
+            return {"status": "error", "message": "Erreur lors de la suppression du label"}
+    except Exception as e:
+        logger.error(f"❌ Erreur remove_label: {e}")
+        return {"status": "error", "message": str(e)}
+
+@api_router.post("/optimize/{media_id}")
+async def optimize_media(media_id: str, target: str = "mobile"):
+    """Lancer l'optimisation (transcodage) d'un média"""
+    try:
+        success = await plex_client.optimize_media(media_id, target=target)
+        if success:
+            return {"status": "ok", "message": f"Optimisation lancée pour {target}"}
+        else:
+            return {"status": "error", "message": "Erreur lors du lancement de l'optimisation"}
+    except Exception as e:
+        logger.error(f"❌ Erreur optimize: {e}")
+        return {"status": "error", "message": str(e)}
+
 @api_router.get("/movies", response_model=list[MovieDetail])
 async def get_movies(
     request: Request,
@@ -231,6 +508,18 @@ async def get_movies(
     order: str = "desc",
     search: Optional[str] = None
 ):
+    """
+    Récupère la liste des films/séries avec filtrage, tri et pagination.
+    
+    Modes de fonctionnement :
+    1. Mode Android (page & size présents) : Pagination stricte pour l'app mobile.
+    2. Mode Web (page/size absents) : Renvoie tout ou filtre différemment.
+    
+    Optimisations :
+    - Utilise le cache SQLite partagé pour éviter de requêter la DB principale trop souvent.
+    - Construit une requête SQL dynamique basée sur les filtres.
+    - Gère les URLs relatives/absolues pour les images selon le client.
+    """
     start_time = time.time()
     is_android_mode = page is not None and size is not None
     
@@ -283,6 +572,17 @@ async def get_movies(
                     # Logique Métier
                     if m.poster_url and m.poster_url.startswith("/"):
                         m.poster_url = base_url + m.poster_url
+                    if m.backdrop_url and m.backdrop_url.startswith("/"):
+                        m.backdrop_url = base_url + m.backdrop_url
+
+                    # Fix Absolute URLs for Cast & Chapters
+                    # for c in m.cast:
+                    #     if c.thumb_url and c.thumb_url.startswith("/"):
+                    #         c.thumb_url = base_url + c.thumb_url
+                    
+                    for chap in m.chapters:
+                        if chap.thumb_url and chap.thumb_url.startswith("/"):
+                            chap.thumb_url = base_url + chap.thumb_url
                     
                     if is_android_mode:
                         m.seasons = []
@@ -324,6 +624,10 @@ async def get_movies(
 
 @api_router.get("/movies/{movie_id}", response_model=MovieDetail)
 async def get_movie_detail(movie_id: str, request: Request):
+    """
+    Récupère les détails complets d'un média (Film ou Série) par son ID.
+    Reconstruit les URLs absolues pour les images et les flux si nécessaire.
+    """
     base_url = ""
     try:
         with sqlite3.connect(plex_client.db_path) as conn:
@@ -339,6 +643,16 @@ async def get_movie_detail(movie_id: str, request: Request):
             
             if m.poster_url and m.poster_url.startswith("/"):
                 m.poster_url = base_url + m.poster_url
+            if m.backdrop_url and m.backdrop_url.startswith("/"):
+                m.backdrop_url = base_url + m.backdrop_url
+
+            # for c in m.cast:
+            #     if c.thumb_url and c.thumb_url.startswith("/"):
+            #         c.thumb_url = base_url + c.thumb_url
+            
+            for chap in m.chapters:
+                if chap.thumb_url and chap.thumb_url.startswith("/"):
+                    chap.thumb_url = base_url + chap.thumb_url
                 
             new_sources = []
             for s in m.sources:
@@ -403,10 +717,17 @@ async def index(request: Request):
         return "<h1>PlexHub Ready</h1>"
 
 @app.get("/proxy-image")
-async def proxy_image(url: str, thumb: str, token: str):
+async def proxy_image(url: str, thumb: str, token: str, width: int = 400):
+    """
+    Proxy et redimensionne les images provenant de Plex.
+    Supporte un paramètre 'width' (défaut 400) pour ajuster la qualité (ex: 1280 pour backdrop).
+    """
     if not thumb: return Response(status_code=404)
     token_to_use = token if token else settings.PLEX_TOKEN
-    safe_name = thumb.strip("/").replace("/", "_").replace("\\", "_").replace(":", "") + ".webp"
+    
+    # Invalidation cache si largeur change : on inclut width dans le nom
+    safe_name = thumb.strip("/").replace("/", "_").replace("\\", "_").replace(":", "") + f"_w{width}.webp"
+    
     cache_path = settings.CACHE_DIR / safe_name
     browser_cache_headers = {
         "Cache-Control": "public, max-age=31536000, immutable",
@@ -424,7 +745,8 @@ async def proxy_image(url: str, thumb: str, token: str):
                 if img.mode in ("RGBA", "P"):
                     img = img.convert("RGB")
                 
-                target_width = 400
+                # Redimensionnement intelligent
+                target_width = width
                 if img.width > target_width:
                     ratio = target_width / float(img.width)
                     target_height = int(float(img.height) * float(ratio))
@@ -432,7 +754,7 @@ async def proxy_image(url: str, thumb: str, token: str):
                 
                 img.save(cache_path, "WEBP", quality=80, method=6)
             
-            logger.info(f"🖼️ [Worker {os.getpid()}] Image optimisée : {safe_name}")
+            logger.info(f"🖼️ [Worker {os.getpid()}] Image optimisée ({width}px) : {safe_name}")
             return FileResponse(cache_path, headers=browser_cache_headers)
             
     except Exception as e:
@@ -451,6 +773,14 @@ async def get_playlist(play_id: str, server: str, path: str, token: str, title: 
 
 @app.get("/vlc-stream/{play_id}")
 async def stream_video(play_id: str, server: str, path: str, token: str):
+    """
+    Gère le streaming vidéo relayé depuis Plex vers le client (VLC/Player).
+    
+    Fonctionnement :
+    1. Tente d'initier un transcodage "léger" (remux) ou universel via l'API Plex.
+    2. Si le transcodage échoue ou est refusé, bascule (fallback) sur le Direct Stream/Direct Play.
+    3. Utilise un sémaphore pour limiter le nombre de streams concurrents globaux.
+    """
     base_plex = server.rstrip('/')
     headers = plex_client.get_chrome_headers(token, play_id)
     

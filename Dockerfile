@@ -19,8 +19,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copie de l'intégralité du code source
 COPY . .
 
-# Création du dossier de cache pour éviter les erreurs de droits au premier lancement
-RUN mkdir -p /app/cache_assets
+
+# Désactiver le buffering Python pour que les logs apparaissent immédiatement dans Docker
+ENV PYTHONUNBUFFERED=1
+
+# Création des dossiers cache et logs
+RUN mkdir -p /app/cache_assets /app/logs
 
 # L'application écoute sur le port 8000
 EXPOSE 8000
