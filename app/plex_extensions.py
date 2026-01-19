@@ -39,41 +39,50 @@ class PlexExtensions:
         recently_added = {}
         try:
             from plexapi.myplex import MyPlexAccount
+            logger.info(f"🔍 [Recently Added] Authentification MyPlexAccount...")
             account = await asyncio.to_thread(MyPlexAccount, token=self.settings.PLEX_TOKEN)
             resources = await asyncio.to_thread(account.resources)
             target_resources = [r for r in resources if "server" in r.provides]
+            logger.info(f"📊 [Recently Added] {len(target_resources)} serveurs trouvés")
             
             if self.settings.ONLY_OWNED:
                 target_resources = [r for r in target_resources if r.owned]
+                logger.info(f"📊 [Recently Added] Filtré à {len(target_resources)} serveurs possédés")
             
             for resource in target_resources:
                 try:
+                    logger.info(f"🔌 [Recently Added] Connexion à {resource.name}...")
                     server = await asyncio.to_thread(resource.connect, timeout=10)
                     sections = await asyncio.to_thread(server.library.sections)
+                    logger.debug(f"📚 [Recently Added] {len(sections)} sections trouvées sur {resource.name}")
                     
                     for section in sections:
                         if section.type not in ["movie", "show"]:
                             continue
                         
+                        logger.info(f"   🎬 [Recently Added] Récupération {limit} items de '{section.title}' ({section.type})...")
                         items = await asyncio.to_thread(
                             section.recentlyAdded, 
                             maxresults=limit
                         )
+                        logger.info(f"   ✅ [Recently Added] {len(items)} items récupérés de '{section.title}'")
                         
                         for item in items:
                             key = f"{item.title}-{item.year}" if not item.ratingKey else str(item.ratingKey)
                             if key not in recently_added:
+                                logger.debug(f"   📝 [Recently Added] Traitement: {item.title} ({item.year})")
                                 media_detail = await self._item_to_media_detail(
                                     item, section.type, resource, server
                                 )
                                 recently_added[key] = media_detail
                                 
                 except Exception as e:
-                    logger.warning(f"⚠️ Erreur récemment ajouté {resource.name}: {e}")
+                    logger.warning(f"⚠️ [Recently Added] Erreur sur {resource.name}: {e}")
                     
         except Exception as e:
-            logger.error(f"❌ Erreur récemment ajouté: {e}")
-            
+            logger.error(f"❌ [Recently Added] Erreur globale: {e}")
+        
+        logger.info(f"✨ [Recently Added] Total: {len(recently_added)} médias uniques")
         return recently_added
     
     # =========================================================================
