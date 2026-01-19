@@ -353,6 +353,60 @@ class PlexClient(PlexExtensions):
                         media_detail = await self._item_to_media_detail(
                             item, m_type, resource, server
                         )
+
+                        # --- ENRICHISSEMENT VIA CACHE ---
+                        # On remplace l'objet partiel par l'objet complet du cache si dispo
+                        try:
+                            key = None
+                            cached = None
+                            
+                            if m_type == 'movie':
+                                key, _ = self._get_unique_key(item)
+                                if key:
+                                    cached = self._enrich_media_with_cache(key, None)
+                                    
+                            elif m_type == 'episode':
+                                # Pour un épisode, on cherche la SÉRIE parente pour récupérer
+                                # genres, studo, cast, rating du show, backdrop, etc.
+                                show_title = getattr(item, 'grandparentTitle', None)
+                                if show_title:
+                                    # Recherche "Best Effort" par titre de série (Exact Match)
+                                    # Car on n'a pas facilement l'ID IMDB de la série depuis l'épisode
+                                    with sqlite3.connect(self.db_path) as conn:
+                                        cursor = conn.execute(
+                                            "SELECT data FROM media_v2 WHERE title = ? AND type = 'show' LIMIT 1",
+                                            (show_title,)
+                                        )
+                                        row = cursor.fetchone()
+                                        if row:
+                                            show_data = json.loads(row[0])
+                                            cached_show = MediaDetail(**show_data)
+                                            
+                                            # On enrichit l'épisode avec les datas du Show
+                                            media_detail.genres = cached_show.genres
+                                            media_detail.studio = cached_show.studio
+                                            # media_detail.content_rating = cached_show.content_rating # Garder celui de l'ep ou show ?
+                                            if not media_detail.backdrop_url and cached_show.backdrop_url:
+                                                media_detail.backdrop_url = cached_show.backdrop_url
+                                                
+                                            # On pourrait aussi préfixer le titre ? "Show - Episode"
+                                            # media_detail.title = f"{show_title} - {media_detail.title}"
+                                            
+                                            logger.debug(f"   ✨ [OnDeck] Episode enrichi via Show: {show_title}")
+
+                            if cached and m_type == 'movie':
+                                # On fusionne l'état Live (plus frais) sur l'objet Cache (plus riche)
+                                cached.view_offset = media_detail.view_offset
+                                cached.view_count = media_detail.view_count
+                                cached.last_viewed_at = media_detail.last_viewed_at
+                                cached.id = media_detail.id # Garder l'ID extrait initialement (souvent ratingKey ou imdb)
+                                
+                                media_detail = cached
+                                logger.debug(f"   ✨ [OnDeck] Film enrichi via cache: {media_detail.title}")
+
+                        except Exception as e:
+                            logger.warning(f"   ⚠️ [OnDeck] Erreur enrichissement {media_detail.title}: {e}")
+
                         on_deck_items.append(media_detail)
                         
                 except Exception as e:

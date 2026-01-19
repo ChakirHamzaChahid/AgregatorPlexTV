@@ -284,23 +284,7 @@ async def get_recently_added(limit: int = 50):
     try:
         recently_added = await plex_client.get_recently_added(limit=limit)
         logger.info(f"   ✅ {len(recently_added)} médias récupérés")
-        result = [
-            {
-                "id": v.id,
-                "title": v.title,
-                "year": v.year,
-                "type": v.type,
-                "poster_url": v.poster_url,
-                "backdrop_url": v.backdrop_url,
-                "added_at": v.added_at.isoformat(),
-                "summary": v.summary[:200] + "..." if len(v.summary) > 200 else v.summary
-            }
-            for v in recently_added.values()
-        ]
-        logger.info(f"   📤 Renvoi {len(result)} résultats")
-        for item in result[:3]:
-            logger.debug(f"      - {item['title']} (ID: {item['id']})")
-        return result
+        return list(recently_added.values())
         return result
     except Exception as e:
         logger.error(f"❌ [API] Erreur recently_added: {e}")

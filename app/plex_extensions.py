@@ -136,6 +136,52 @@ class PlexExtensions:
                                 media_detail = await self._item_to_media_detail(
                                     item, section.type, resource, server
                                 )
+                                
+                                # --- ENRICHISSEMENT ---
+                                try:
+                                    import sqlite3
+                                    import json
+                                    from app.models import MediaDetail
+                                    
+                                    if section.type == 'movie':
+                                        cache_key = None
+                                        # Recalculer la clé unique robuste (IMDB/TMDB)
+                                        # On utilise la méthode de PlexClient (self est instance de PlexClient)
+                                        if hasattr(self, '_get_unique_key'):
+                                             cache_key, _ = self._get_unique_key(item)
+                                        
+                                        if cache_key:
+                                            # Utilisation de la méthode existante
+                                            enriched = self._enrich_media_with_cache(cache_key, None)
+                                            if enriched:
+                                                # Fusion
+                                                enriched.id = media_detail.id
+                                                enriched.added_at = media_detail.added_at
+                                                media_detail = enriched
+
+                                    elif section.type == 'show':
+                                        # Si c'est un épisode (souvent le cas dans recentlyAdded pour les séries)
+                                        if getattr(item, 'type', '') == 'episode':
+                                            show_title = getattr(item, 'grandparentTitle', None)
+                                            if show_title:
+                                                with sqlite3.connect(self.db_path) as conn:
+                                                    cursor = conn.execute(
+                                                        "SELECT data FROM media_v2 WHERE title = ? AND type = 'show' LIMIT 1",
+                                                        (show_title,)
+                                                    )
+                                                    row = cursor.fetchone()
+                                                    if row:
+                                                        show_data = json.loads(row[0])
+                                                        cached_show = MediaDetail(**show_data)
+                                                        media_detail.genres = cached_show.genres
+                                                        media_detail.studio = cached_show.studio
+                                                        if not media_detail.backdrop_url and cached_show.backdrop_url:
+                                                            media_detail.backdrop_url = cached_show.backdrop_url
+                                                        logger.debug(f"      ✨ Episode enrichi via Show: {show_title}")
+
+                                except Exception as e:
+                                    logger.warning(f"   ⚠️ [Recently Added] Erreur enrichissement: {e}")
+
                                 recently_added[key] = media_detail
                                 
                 except Exception as e:
@@ -144,20 +190,8 @@ class PlexExtensions:
         except Exception as e:
             logger.error(f"❌ [Recently Added] Erreur globale: {e}")
         
-        # Enrichir avec les données du cache principal
-        logger.info(f"📈 [Recently Added] Enrichissement des {len(recently_added)} médias avec cache...")
-        enriched_result = {}
-        for media_id, media in recently_added.items():
-            try:
-                # Chercher l'ID dans le cache
-                enriched = self._enrich_media_with_cache(media_id, media)
-                enriched_result[enriched.id] = enriched
-            except Exception as e:
-                logger.debug(f"   ⚠️ [Recently Added] Enrichissement échoué pour {media_id}: {e}")
-                enriched_result[media_id] = media
-        
-        logger.info(f"✨ [Recently Added] Total: {len(enriched_result)} médias enrichis")
-        return enriched_result
+        logger.info(f"✨ [Recently Added] Total: {len(recently_added)} médias enrichis")
+        return recently_added
     
     # =========================================================================
     # 2. WATCH HISTORY - Historique de Lecture
