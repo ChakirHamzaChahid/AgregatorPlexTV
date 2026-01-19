@@ -7,6 +7,7 @@ import time
 import sqlite3
 import json
 import os
+import unicodedata
 from pathlib import Path
 from collections import defaultdict
 
@@ -50,6 +51,82 @@ class PlexClient(PlexExtensions):
         "mystère": "Mystery", "romance": "Romance", "science-fiction": "Sci-Fi",
         "sci-fi": "Sci-Fi", "thriller": "Thriller", "guerre": "War", "western": "Western"
     }
+
+    @staticmethod
+    def _normalize_title(title: str) -> str:
+        """
+        Normalise un titre pour la déduplication robuste.
+        - Minuscules
+        - Supprime les accents
+        - Supprime caractères spéciaux
+        - Trim whitespace
+        """
+        if not title:
+            return ""
+        
+        # Minuscules et trim
+        title = title.lower().strip()
+        
+        # Supprimer accents (é→e, ç→c, etc.)
+        title = ''.join(
+            c for c in unicodedata.normalize('NFD', title)
+            if unicodedata.category(c) != 'Mn'
+        )
+        
+        # Supprimer caractères spéciaux, garder alphanumérique + espaces
+        title = ''.join(c if c.isalnum() or c == ' ' else '' for c in title)
+        
+        # Supprimer espaces multiples
+        title = ' '.join(title.split())
+        
+        return title
+
+    def _get_unique_key(self, item) -> tuple[str, str]:
+        """
+        Extrait une clé unique pour déduplication avec fallback progressif.
+        
+        Priority 1: IMDB ID (tt1234567)
+        Priority 2: TMDB ID (tmdb-12345)
+        Priority 3: Titre normalisé + Année
+        
+        Returns:
+            (key, source_type) 
+            ex: ("tt1375666", "imdb") ou ("tmdb-87654", "tmdb") ou ("inception-2010", "title-year")
+        """
+        # Priority 1: IMDB ID
+        if hasattr(item, 'guids') and item.guids:
+            for guid in item.guids:
+                if 'imdb' in guid.id:
+                    match = re.search(r'tt\d+', guid.id)
+                    if match:
+                        imdb_id = match.group(0)
+                        logger.debug(f"   ✅ [IMDB] {item.title} → {imdb_id}")
+                        return (imdb_id, "imdb")
+        
+        # Priority 2: TMDB ID (fallback secondaire)
+        if hasattr(item, 'guids') and item.guids:
+            for guid in item.guids:
+                if 'tmdb' in guid.id:
+                    match = re.search(r'\d+', guid.id)
+                    if match:
+                        tmdb_id = f"tmdb-{match.group(0)}"
+                        logger.debug(f"   🎬 [TMDB] {item.title} → {tmdb_id}")
+                        if hasattr(item, 'guids'):
+                            guids_info = ", ".join([g.id for g in item.guids])
+                            logger.debug(f"      GUIDs: {guids_info}")
+                        return (tmdb_id, "tmdb")
+        
+        # Priority 3: Titre normalisé + Année (fallback final)
+        title_normalized = self._normalize_title(item.title)
+        year = item.year if item.year else "unknown"
+        key = f"{title_normalized}-{year}"
+        
+        logger.warning(f"   ⚠️  [FALLBACK] {item.title} → {key}")
+        if hasattr(item, 'guids') and item.guids:
+            guids_info = ", ".join([g.id for g in item.guids])
+            logger.debug(f"      Available GUIDs: {guids_info}")
+        
+        return (key, "title-year")
 
     def __init__(self):
         self.is_scanning = False
@@ -446,19 +523,11 @@ class PlexClient(PlexExtensions):
     def _process_item(self, item, section_type, resource, server, episodes_data=[]):
         """
         Normalise un élément brut Plex (Film/Série) en une structure intermédiaire.
-        Gère la détection IMDB pour la clé unique de fusion.
+        Gère la détection IMDB pour la clé unique de fusion avec fallbacks progressifs.
         """
         try:
-            # --- 1. Tentative de récupération ID Unique (IMDB/TMDB) ---
-            imdb_id = None
-            if item.guids:
-                for guid in item.guids:
-                    if 'imdb' in guid.id:
-                        match = re.search(r'tt\d+', guid.id)
-                        if match: imdb_id = match.group(0)
-                        break
-            # Fallback : Titre + Année si pas d'ID fiable trouvé
-            key = imdb_id if imdb_id else f"{item.title}-{item.year}"
+            # --- 1. Extraction de la clé unique (IMDB > TMDB > Titre-Année) ---
+            key, key_source = self._get_unique_key(item)
 
             # Extraction Labels (Feature 10)
             labels = [l.tag for l in item.labels] if hasattr(item, 'labels') else []

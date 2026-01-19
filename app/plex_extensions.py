@@ -19,6 +19,44 @@ logger = logging.getLogger("PlexExtensions")
 class PlexExtensions:
     """Extensions des fonctionnalités PlexClient"""
     
+    def _enrich_media_with_cache(self, media_id: str, partial_media: MediaDetail) -> MediaDetail:
+        """
+        Enrichit un MediaDetail partiel avec les données complètes du cache SQLite.
+        
+        Args:
+            media_id: ID du média (IMDB ou clé)
+            partial_media: MediaDetail obtenu de l'API Plex (peut être incomplet)
+            
+        Returns:
+            MediaDetail enrichi avec données du cache principal
+        """
+        try:
+            import sqlite3
+            import json
+            from app.models import MediaDetail
+            
+            logger.debug(f"   🔍 [Enrich] Cherchant {media_id} dans le cache...")
+            
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.execute(
+                    "SELECT data FROM media_v2 WHERE id = ?",
+                    (media_id,)
+                )
+                row = cursor.fetchone()
+                
+                if row:
+                    cached_data = json.loads(row[0])
+                    enriched = MediaDetail(**cached_data)
+                    logger.debug(f"   ✅ [Enrich] Données enrichies: {enriched.title} avec {len(enriched.sources)} source(s)")
+                    return enriched
+                else:
+                    logger.debug(f"   ℹ️ [Enrich] {media_id} pas trouvé dans cache, utilisation données Plex")
+                    return partial_media
+                    
+        except Exception as e:
+            logger.warning(f"   ⚠️ [Enrich] Erreur enrichissement: {e}")
+            return partial_media
+    
     def _extract_imdb_id(self, item) -> Optional[str]:
         """
         Extrait l'ID IMDB du GUID Plex.
@@ -106,8 +144,20 @@ class PlexExtensions:
         except Exception as e:
             logger.error(f"❌ [Recently Added] Erreur globale: {e}")
         
-        logger.info(f"✨ [Recently Added] Total: {len(recently_added)} médias uniques")
-        return recently_added
+        # Enrichir avec les données du cache principal
+        logger.info(f"📈 [Recently Added] Enrichissement des {len(recently_added)} médias avec cache...")
+        enriched_result = {}
+        for media_id, media in recently_added.items():
+            try:
+                # Chercher l'ID dans le cache
+                enriched = self._enrich_media_with_cache(media_id, media)
+                enriched_result[enriched.id] = enriched
+            except Exception as e:
+                logger.debug(f"   ⚠️ [Recently Added] Enrichissement échoué pour {media_id}: {e}")
+                enriched_result[media_id] = media
+        
+        logger.info(f"✨ [Recently Added] Total: {len(enriched_result)} médias enrichis")
+        return enriched_result
     
     # =========================================================================
     # 2. WATCH HISTORY - Historique de Lecture
@@ -117,16 +167,16 @@ class PlexExtensions:
         self, 
         limit: int = 100, 
         days_back: int = 30
-    ) -> List[HistoryEntry]:
+    ) -> Dict[str, MediaDetail]:
         """
-        Récupère l'historique de lecture.
+        Récupère l'historique de lecture enrichi avec données complètes du cache.
         
         Args:
             limit: Nombre d'entrées à retourner
             days_back: Nombre de jours à consulter
             
         Returns:
-            Liste des HistoryEntry triée par date récente
+            Dict[id -> MediaDetail enrichi] trié par date récente
         """
         history_entries = []
         logger.info(f"🔍 [Watch History] Récupération sur les {days_back} derniers jours, limit={limit}")
@@ -188,7 +238,39 @@ class PlexExtensions:
         
         # Trier par date décroissante (plus récent en premier)
         history_entries.sort(key=lambda x: x.watched_at, reverse=True)
-        return history_entries[:limit]
+        history_entries = history_entries[:limit]
+        
+        # Enrichir avec les données du cache principal
+        logger.info(f"📈 [Watch History] Enrichissement des {len(history_entries)} entrées avec cache...")
+        enriched_result = {}
+        for entry in history_entries:
+            try:
+                # Créer un MediaDetail temporaire pour enrichissement
+                temp_media = MediaDetail(
+                    id=entry.id,
+                    title=entry.title,
+                    type=entry.type,
+                    poster_url=entry.thumb_url,
+                    view_offset=entry.view_offset
+                )
+                # Chercher l'ID dans le cache
+                enriched = self._enrich_media_with_cache(entry.id, temp_media)
+                enriched_result[enriched.id] = enriched
+                logger.debug(f"   📝 Enrichi: {enriched.title} avec {len(enriched.sources)} source(s)")
+            except Exception as e:
+                logger.debug(f"   ⚠️ [Watch History] Enrichissement échoué pour {entry.id}: {e}")
+                # Fallback: créer un MediaDetail simple sans cache
+                fallback = MediaDetail(
+                    id=entry.id,
+                    title=entry.title,
+                    type=entry.type,
+                    poster_url=entry.thumb_url,
+                    view_offset=entry.view_offset
+                )
+                enriched_result[entry.id] = fallback
+        
+        logger.info(f"✨ [Watch History] Total: {len(enriched_result)} entrées enrichies")
+        return enriched_result
     
     # =========================================================================
     # 3. ACTIVE SESSIONS - Sessions Actives (Qui regarde quoi)

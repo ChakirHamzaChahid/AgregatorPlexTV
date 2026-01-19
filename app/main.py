@@ -309,28 +309,42 @@ async def get_recently_added(limit: int = 50):
 
 @api_router.get("/watch-history")
 async def get_watch_history(limit: int = 100, days_back: int = 30):
-    """Récupère l'historique de lecture"""
+    """Récupère l'historique de lecture enrichi avec métadonnées complètes"""
     logger.info(f"📡 [API] GET /watch-history (limit={limit}, days_back={days_back})")
     try:
-        history = await plex_client.get_watch_history(limit=limit, days_back=days_back)
-        logger.info(f"   ✅ {len(history)} entrées récupérées")
+        history_dict = await plex_client.get_watch_history(limit=limit, days_back=days_back)
+        logger.info(f"   ✅ {len(history_dict)} entrées récupérées et enrichies")
+        
+        # Convertir les MediaDetail en dict pour JSON
         result = [
             {
-                "id": entry.id,
-                "title": entry.title,
-                "type": entry.type,
-                "watched_at": entry.watched_at.isoformat(),
-                "progress": int((entry.view_offset / max(entry.duration, 1)) * 100) if entry.duration else 0,
-                "thumb_url": entry.thumb_url
+                "id": v.id,
+                "title": v.title,
+                "type": v.type,
+                "year": v.year,
+                "rating": v.rating,
+                "poster_url": v.poster_url,
+                "backdrop_url": v.backdrop_url,
+                "sources": [
+                    {
+                        "server_name": src.server_name,
+                        "resolution": src.resolution,
+                        "is_owned": src.is_owned
+                    }
+                    for src in v.sources
+                ],
+                "summary": v.summary[:200] + "..." if v.summary and len(v.summary) > 200 else v.summary
             }
-            for entry in history
+            for v in history_dict.values()
         ]
-        logger.info(f"   📤 Renvoi {len(result)} résultats")
+        logger.info(f"   📤 Renvoi {len(result)} résultats enrichis")
         for item in result[:3]:
-            logger.debug(f"      - {item['title']} (ID: {item['id']})")
+            logger.debug(f"      - {item['title']} ({len(item['sources'])} source(s))")
         return result
     except Exception as e:
         logger.error(f"❌ [API] Erreur watch_history: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 
