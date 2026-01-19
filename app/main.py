@@ -465,45 +465,56 @@ async def toggle_favorite(media_id: str):
 @api_router.post("/rate/{media_id}/{rating}")
 async def rate_media(media_id: str, rating: float):
     """Noter un média (0-10)"""
+    logger.info(f"📡 [API] POST /rate/{media_id}/{rating}")
     try:
         if rating < 0 or rating > 10:
+            logger.warning(f"   ⚠️ Rating invalide: {rating}")
             return {"status": "error", "message": "Rating doit être entre 0 et 10"}
         
         success = await plex_client.rate_media(media_id, rating)
         if success:
+            logger.info(f"   ✅ Note {rating}/10 enregistrée")
             return {"status": "ok", "message": f"Note {rating}/10 enregistrée"}
         else:
+            logger.warning(f"   ⚠️ Échec de la notation")
             return {"status": "error", "message": "Erreur lors de la notation"}
     except Exception as e:
-        logger.error(f"❌ Erreur rate: {e}")
+        logger.error(f"❌ [API] Erreur rate: {e}")
         return {"status": "error", "message": str(e)}
 
 
 @api_router.post("/label/{media_id}/{label}")
 async def add_label_to_media(media_id: str, label: str):
     """Ajouter un label (tag) à un média"""
+    logger.info(f"📡 [API] POST /label/{media_id}/{label}")
     try:
         success = await plex_client.add_label(media_id, label)
         if success:
+            logger.info(f"   ✅ Label '{label}' ajouté")
             return {"status": "ok", "message": f"Label '{label}' ajouté"}
         else:
+            logger.warning(f"   ⚠️ Échec de l'ajout du label")
             return {"status": "error", "message": "Erreur lors de l'ajout du label"}
     except Exception as e:
-        logger.error(f"❌ Erreur add_label: {e}")
+        logger.error(f"❌ [API] Erreur add_label: {e}")
         return {"status": "error", "message": str(e)}
 
 
 @api_router.delete("/label/{media_id}/{label}")
 async def remove_label_from_media(media_id: str, label: str):
     """Retirer un label d'un média"""
+    logger.info(f"📡 [API] DELETE /label/{media_id}/{label}")
     try:
         success = await plex_client.remove_label(media_id, label)
         if success:
+            logger.info(f"   ✅ Label '{label}' retiré")
             return {"status": "ok", "message": f"Label '{label}' retiré"}
         else:
+            logger.warning(f"   ⚠️ Échec de la suppression du label")
             return {"status": "error", "message": "Erreur lors de la suppression du label"}
     except Exception as e:
-        logger.error(f"❌ Erreur remove_label: {e}")
+        logger.error(f"❌ [API] Erreur remove_label: {e}")
+        return {"status": "error", "message": str(e)}
         return {"status": "error", "message": str(e)}
 
 @api_router.post("/optimize/{media_id}")
