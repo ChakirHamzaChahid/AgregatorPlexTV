@@ -417,17 +417,94 @@ class PlexClient(PlexExtensions):
             
         return on_deck_items
 
+    async def _resolve_media_payload(self, key_or_id: str):
+        """
+        Résout un ID (Movie ID ou Composite Episode ID) vers un tuple (Server, PlexItem).
+        Gère la logique multi-serveurs et multi-sources.
+        
+        Args:
+            key_or_id: "tt12345" (Movie) ou "tt12345#S01E01" (Episode) ou Plex RatingKey (Legacy)
+        
+        Returns:
+            (server_object, plex_item_object) ou (None, None)
+        """
+        target_id = key_or_id
+        target_ep_str = None
+        
+        # 1. Détection ID Composite (Episode)
+        if "#" in key_or_id:
+            try:
+                target_id, target_ep_str = key_or_id.split("#", 1) # "tt12345", "S01E01"
+            except: pass
+
+        # 2. Recherche en Base Locale
+        found_data = None
+        with sqlite3.connect(self.db_path) as conn:
+            # On cherche l'item parent (Film ou Série)
+            cursor = conn.execute("SELECT data FROM media_v2 WHERE id = ?", (target_id,))
+            row = cursor.fetchone()
+            if row:
+                found_data = json.loads(row[0])
+        
+        if not found_data:
+            logger.warning(f"⚠️ Resolve: ID inconnu en base '{target_id}'")
+            return None, None
+            
+        # 3. Extraction Info Serveur & Clé Plex
+        # Priorité : Serveur 'Owned', sinon le premier disponible
+        # Note: found_data['server_name'] est celui du scan, mais on veut un serveur connectable maintenant.
+        # Idéalement on réutilise le client déja en cache ou on reconnecte.
+        
+        server_name = found_data.get('server_name')
+        plex_key = found_data.get('key') # Clé du Show ou Movie
+        
+        # Si c'est un épisode, on doit trouver la clé de l'épisode dans 'episodes'
+        if target_ep_str and 'episodes' in found_data:
+            # Format target_ep_str: "S01E01"
+            # On parse pour avoir season/index
+            try:
+                match = re.search(r"S(\d+)E(\d+)", target_ep_str)
+                if match:
+                    s_idx, e_idx = int(match.group(1)), int(match.group(2))
+                    # Recherche de l'épisode correspondant
+                    ep_found = next(
+                        (e for e in found_data['episodes'] 
+                         if e.get('season') == s_idx and e.get('index') == e_idx), 
+                        None
+                    )
+                    if ep_found:
+                        plex_key = ep_found.get('key')
+                        # Note: L'épisode peut venir d'un autre serveur si on mergeait, 
+                        # mais pour l'instant 'episodes' est une liste simple liée au show principal.
+                        # (Amélioration future : Gérer épisode cross-server)
+            except Exception as e:
+                logger.error(f"❌ Erreur parse episode '{target_ep_str}': {e}")
+                return None, None
+
+        if not plex_key:
+            logger.error(f"❌ Resolve: Clé Plex introuvable pour '{key_or_id}'")
+            return None, None
+
+        # 4. Connexion au Serveur
+        try:
+            account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
+            resource = await asyncio.to_thread(account.resource, server_name)
+            server = await asyncio.to_thread(resource.connect)
+            
+            # 5. Fetch Item
+            item = await asyncio.to_thread(server.fetchItem, plex_key)
+            return server, item
+            
+        except Exception as e:
+            logger.error(f"❌ Resolve: Échec connexion/fetch sur {server_name}: {e}")
+            return None, None
+
     async def action_scrobble(self, key: str, action: str):
         """Mark watched/unwatched."""
         try:
-            # Note: Pour agir, il faut retrouver l'objet sur le bon serveur
-            # Simplification: On cherche sur le premier serveur connecté qui a cet item
-            # Dans une version avancée, faudrait stocker quel serveur a quel itemId
-            account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
-            resource = await asyncio.to_thread(account.resource, settings.SERVER_NAME)
-            server = await asyncio.to_thread(resource.connect)
+            server, item = await self._resolve_media_payload(key)
+            if not item: return False
             
-            item = await asyncio.to_thread(server.fetchItem, key)
             if action == 'watched':
                 await asyncio.to_thread(item.markWatched)
             elif action == 'unwatched':
@@ -440,11 +517,9 @@ class PlexClient(PlexExtensions):
     async def action_progress(self, key: str, time_ms: int):
         """Update progress."""
         try:
-            account = await asyncio.to_thread(MyPlexAccount, token=settings.PLEX_TOKEN)
-            resource = await asyncio.to_thread(account.resource, settings.SERVER_NAME)
-            server = await asyncio.to_thread(resource.connect)
+            server, item = await self._resolve_media_payload(key)
+            if not item: return False
             
-            item = await asyncio.to_thread(server.fetchItem, key)
             await asyncio.to_thread(item.updateProgress, time_ms)
             return True
         except Exception as e:
@@ -840,7 +915,7 @@ class PlexClient(PlexExtensions):
                         if e_idx not in seasons_map[s_idx]:
                             t_url = f"/proxy-image?url={urllib.parse.quote(inst['server_url'])}&thumb={urllib.parse.quote(ep['thumb'])}&token={inst['server_token']}" if ep['thumb'] else ""
                             seasons_map[s_idx][e_idx] = EpisodeDetail(
-                                id=f"S{s_idx:02d}E{e_idx:02d}", index=e_idx, title=ep['title'],
+                                id=f"{key}#S{s_idx:02d}E{e_idx:02d}", index=e_idx, title=ep['title'],
                                 summary=ep['summary'], thumb_url=t_url
                             )
                         
