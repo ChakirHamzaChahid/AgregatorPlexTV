@@ -4,6 +4,8 @@ Récemment Ajouté, Historique, Sessions Actives, etc.
 """
 import asyncio
 import logging
+import urllib.parse
+import time
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from app.models import (
@@ -99,7 +101,8 @@ class PlexExtensions:
             account = await asyncio.to_thread(MyPlexAccount, token=self.settings.PLEX_TOKEN)
             resources = await asyncio.to_thread(account.resources)
             
-            min_date = datetime.now() - timedelta(days=days_back)
+            # Convertir datetime en timestamp Unix (en secondes, pas millisecondes)
+            min_date_timestamp = int((datetime.now() - timedelta(days=days_back)).timestamp())
             
             for resource in resources:
                 if "server" not in resource.provides:
@@ -109,12 +112,13 @@ class PlexExtensions:
                     history = await asyncio.to_thread(
                         server.library.history,
                         maxresults=limit,
-                        mindate=min_date
+                        mindate=min_date_timestamp  # Passer timestamp Unix, pas datetime
                     )
                     
                     for item in history:
                         try:
-                            watched_at = datetime.fromtimestamp(item.lastViewedAt) if hasattr(item, 'lastViewedAt') and item.lastViewedAt else datetime.now()
+                            # lastViewedAt est un timestamp Unix (int)
+                            watched_at = datetime.fromtimestamp(item.lastViewedAt) if hasattr(item, 'lastViewedAt') and isinstance(item.lastViewedAt, (int, float)) else datetime.now()
                             
                             thumb_url = ""
                             if hasattr(item, 'thumb') and item.thumb:
@@ -547,12 +551,33 @@ class PlexExtensions:
         if hasattr(item, 'labels'):
             labels = [l.tag for l in item.labels]
 
+        # Gestion sécurisée des dates (peuvent être datetime ou int/timestamp)
+        try:
+            if isinstance(item.addedAt, datetime):
+                added_at = item.addedAt
+            elif isinstance(item.addedAt, (int, float)):
+                added_at = datetime.fromtimestamp(item.addedAt)
+            else:
+                added_at = datetime.now()
+        except:
+            added_at = datetime.now()
+
+        try:
+            if isinstance(item.lastViewedAt, datetime):
+                last_viewed_at = item.lastViewedAt
+            elif isinstance(item.lastViewedAt, (int, float)):
+                last_viewed_at = datetime.fromtimestamp(item.lastViewedAt)
+            else:
+                last_viewed_at = None
+        except:
+            last_viewed_at = None
+
         media_detail = MediaDetail(
             id=str(item.ratingKey) if hasattr(item, 'ratingKey') else item.title,
             type=section_type,
             title=item.title,
             year=item.year or 0,
-            added_at=item.addedAt if hasattr(item, 'addedAt') and item.addedAt else datetime.now(),
+            added_at=added_at,
             summary=getattr(item, 'summary', ''),
             rating=float(item.rating) if hasattr(item, 'rating') and item.rating else 0.0,
             poster_url=poster_url,
@@ -560,11 +585,12 @@ class PlexExtensions:
             runtime=int(getattr(item, 'duration', 0) / 60000) if hasattr(item, 'duration') else 0,
             view_count=getattr(item, 'viewCount', 0),
             view_offset=getattr(item, 'viewOffset', 0),
-            last_viewed_at=datetime.fromtimestamp(item.lastViewedAt) if hasattr(item, 'lastViewedAt') and item.lastViewedAt else None,
+            last_viewed_at=last_viewed_at,
             trailers=trailers,
             labels=labels,
             content_rating=getattr(item, 'contentRating', None),
             studio=getattr(item, 'studio', None)
         )
         
+        return media_detail
         return media_detail
