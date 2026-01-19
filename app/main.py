@@ -262,7 +262,8 @@ async def scrobble_media(payload: ActionPayload):
     """Marque un média comme vu ou non vu."""
     if not payload.action: raise HTTPException(400, "Action required")
     success = await plex_client.action_scrobble(payload.key, payload.action)
-    if not success: raise HTTPException(500, "Failed to update status")
+    if not success: 
+        raise HTTPException(404, "Media not found or failed to update status")
     return {"status": "ok"}
 
 @api_router.post("/actions/progress")
@@ -270,7 +271,8 @@ async def update_progress(payload: ActionPayload):
     """Met à jour la progression de lecture."""
     if payload.time_ms is None: raise HTTPException(400, "Time required")
     success = await plex_client.action_progress(payload.key, payload.time_ms)
-    if not success: raise HTTPException(500, "Failed to update progress")
+    if not success: 
+        raise HTTPException(404, "Media not found or failed to update progress")
     return {"status": "ok"}
 
 # ============================================================================

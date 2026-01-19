@@ -797,6 +797,34 @@ class PlexExtensions:
             content_rating=getattr(item, 'contentRating', None),
             studio=getattr(item, 'studio', None)
         )
+
+        # --- CORRECTION ID POUR EPISODES (Composite ID pour résolution API) ---
+        if section_type == 'episode' or getattr(item, 'type', '') == 'episode':
+            try:
+                # On essaie de construire un ID résolvable : ShowID#SxxExx
+                # 1. Récupération infos épisode
+                s_idx = item.seasonNumber if hasattr(item, 'seasonNumber') else (item.parentIndex if hasattr(item, 'parentIndex') else 1)
+                e_idx = item.index if hasattr(item, 'index') else 1
+                
+                # 2. Recherche du Show Parent en DB pour avoir son ID (IMDB/TMDB)
+                show_title = getattr(item, 'grandparentTitle', None)
+                if show_title:
+                    import sqlite3
+                    import json
+                    with sqlite3.connect(self.db_path) as conn:
+                        cursor = conn.execute(
+                            "SELECT data FROM media_v2 WHERE title = ? AND type = 'show' LIMIT 1",
+                            (show_title,)
+                        )
+                        row = cursor.fetchone()
+                        if row:
+                            show_data = json.loads(row[0])
+                            parent_id = show_data['id']
+                            # Construction ID Composite
+                            media_detail.id = f"{parent_id}#S{s_idx:02d}E{e_idx:02d}"
+                            logger.debug(f"   🔧 [ID Fix] Episode ID corrigé: {media_detail.id}")
+            except Exception as e:
+                logger.warning(f"   ⚠️ [ID Fix] Échec correction ID épisode {item.title}: {e}")
         
         logger.debug(f"   ✔️ MediaDetail créé: id={media_detail.id}, title={media_detail.title}")
         return media_detail
