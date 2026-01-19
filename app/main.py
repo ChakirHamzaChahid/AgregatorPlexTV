@@ -298,6 +298,9 @@ async def get_recently_added(limit: int = 50):
             for v in recently_added.values()
         ]
         logger.info(f"   📤 Renvoi {len(result)} résultats")
+        for item in result[:3]:
+            logger.debug(f"      - {item['title']} (ID: {item['id']})")
+        return result
         return result
     except Exception as e:
         logger.error(f"❌ [API] Erreur recently_added: {e}")
@@ -323,6 +326,8 @@ async def get_watch_history(limit: int = 100, days_back: int = 30):
             for entry in history
         ]
         logger.info(f"   📤 Renvoi {len(result)} résultats")
+        for item in result[:3]:
+            logger.debug(f"      - {item['title']} (ID: {item['id']})")
         return result
     except Exception as e:
         logger.error(f"❌ [API] Erreur watch_history: {e}")

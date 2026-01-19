@@ -6,6 +6,7 @@ import asyncio
 import logging
 import urllib.parse
 import time
+import re
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from app.models import (
@@ -17,6 +18,29 @@ logger = logging.getLogger("PlexExtensions")
 
 class PlexExtensions:
     """Extensions des fonctionnalités PlexClient"""
+    
+    def _extract_imdb_id(self, item) -> Optional[str]:
+        """
+        Extrait l'ID IMDB du GUID Plex.
+        
+        Args:
+            item: Objet Plex (Movie ou Show)
+            
+        Returns:
+            ID IMDB (ex: 'tt1234567') ou None
+        """
+        try:
+            if hasattr(item, 'guids') and item.guids:
+                for guid in item.guids:
+                    if 'imdb' in guid.id:
+                        match = re.search(r'tt\d+', guid.id)
+                        if match:
+                            logger.debug(f"   📍 IMDB ID extrait: {match.group(0)}")
+                            return match.group(0)
+        except Exception as e:
+            logger.debug(f"   ⚠️ Erreur extraction IMDB: {e}")
+        
+        return None
     
     # =========================================================================
     # 1. RECENTLY ADDED - Récemment Ajouté
@@ -133,6 +157,8 @@ class PlexExtensions:
                     for item in history:
                         try:
                             logger.debug(f"   📝 [History] {item.title} - {item.type}")
+                            # Extraire l'ID IMDB
+                            imdb_id = self._extract_imdb_id(item)
                             # lastViewedAt est un timestamp Unix (int)
                             watched_at = datetime.fromtimestamp(item.lastViewedAt) if hasattr(item, 'lastViewedAt') and isinstance(item.lastViewedAt, (int, float)) else datetime.now()
                             
@@ -141,7 +167,7 @@ class PlexExtensions:
                                 thumb_url = f"/proxy-image?url={urllib.parse.quote(server._baseurl)}&thumb={urllib.parse.quote(item.thumb)}&token={resource.accessToken}&width=300"
                             
                             entry = HistoryEntry(
-                                id=str(item.ratingKey),
+                                id=imdb_id or str(item.ratingKey),
                                 title=item.title,
                                 type=item.type,
                                 watched_at=watched_at,
@@ -150,7 +176,7 @@ class PlexExtensions:
                                 thumb_url=thumb_url
                             )
                             history_entries.append(entry)
-                            logger.debug(f"   ✔️ Ajouté: {item.title}")
+                            logger.debug(f"   ✔️ Ajouté: {item.title} (ID: {entry.id})")
                         except Exception as e:
                             logger.debug(f"⚠️ Erreur parsing item historique: {e}")
                             
@@ -637,7 +663,7 @@ class PlexExtensions:
             last_viewed_at = None
 
         media_detail = MediaDetail(
-            id=str(item.ratingKey) if hasattr(item, 'ratingKey') else item.title,
+            id=self._extract_imdb_id(item) or str(item.ratingKey) if hasattr(item, 'ratingKey') else item.title,
             type=section_type,
             title=item.title,
             year=item.year or 0,
@@ -656,5 +682,5 @@ class PlexExtensions:
             studio=getattr(item, 'studio', None)
         )
         
-        return media_detail
+        logger.debug(f"   ✔️ MediaDetail créé: id={media_detail.id}, title={media_detail.title}")
         return media_detail

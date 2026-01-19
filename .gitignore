@@ -19,3 +19,5 @@ app/imdb_ratings_cache.json
 # Environnement et Secrets
 .env
 server.log
+IMDB_ID_FIX.md
+LOGGING_ADDED.md
