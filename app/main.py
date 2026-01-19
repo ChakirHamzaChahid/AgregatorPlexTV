@@ -280,8 +280,10 @@ async def update_progress(payload: ActionPayload):
 @api_router.get("/recently-added")
 async def get_recently_added(limit: int = 50):
     """Récupère les médias récemment ajoutés"""
+    logger.info(f"📡 [API] GET /recently-added (limit={limit})")
     try:
         recently_added = await plex_client.get_recently_added(limit=limit)
+        logger.info(f"   ✅ {len(recently_added)} médias récupérés")
         result = [
             {
                 "id": v.id,
@@ -295,17 +297,20 @@ async def get_recently_added(limit: int = 50):
             }
             for v in recently_added.values()
         ]
+        logger.info(f"   📤 Renvoi {len(result)} résultats")
         return result
     except Exception as e:
-        logger.error(f"❌ Erreur recently_added: {e}")
+        logger.error(f"❌ [API] Erreur recently_added: {e}")
         return []
 
 
 @api_router.get("/watch-history")
 async def get_watch_history(limit: int = 100, days_back: int = 30):
     """Récupère l'historique de lecture"""
+    logger.info(f"📡 [API] GET /watch-history (limit={limit}, days_back={days_back})")
     try:
         history = await plex_client.get_watch_history(limit=limit, days_back=days_back)
+        logger.info(f"   ✅ {len(history)} entrées récupérées")
         result = [
             {
                 "id": entry.id,
@@ -317,17 +322,20 @@ async def get_watch_history(limit: int = 100, days_back: int = 30):
             }
             for entry in history
         ]
+        logger.info(f"   📤 Renvoi {len(result)} résultats")
         return result
     except Exception as e:
-        logger.error(f"❌ Erreur watch_history: {e}")
+        logger.error(f"❌ [API] Erreur watch_history: {e}")
         return []
 
 
 @api_router.get("/now-playing")
 async def get_now_playing():
     """Récupère les sessions actives (qui regarde quoi)"""
+    logger.info(f"📡 [API] GET /now-playing")
     try:
         sessions = await plex_client.get_active_sessions()
+        logger.info(f"   ✅ {len(sessions)} sessions actives")
         result = [
             {
                 "user": session.user,
@@ -338,17 +346,20 @@ async def get_now_playing():
             }
             for session in sessions
         ]
+        logger.info(f"   📤 Renvoi {len(result)} résultats")
         return result
     except Exception as e:
-        logger.error(f"❌ Erreur now_playing: {e}")
+        logger.error(f"❌ [API] Erreur now_playing: {e}")
         return []
 
 
 @api_router.get("/clients")
 async def get_clients():
     """Récupère les clients connectés"""
+    logger.info(f"📡 [API] GET /clients")
     try:
         clients = await plex_client.get_connected_clients()
+        logger.info(f"   ✅ {len(clients)} clients trouvés")
         result = [
             {
                 "name": client.name,
@@ -358,17 +369,20 @@ async def get_clients():
             }
             for client in clients
         ]
+        logger.info(f"   📤 Renvoi {len(result)} résultats")
         return result
     except Exception as e:
-        logger.error(f"❌ Erreur clients: {e}")
+        logger.error(f"❌ [API] Erreur clients: {e}")
         return []
 
 
 @api_router.get("/hubs")
 async def get_hubs(limit: int = 10):
     """Récupère les hubs de découverte (algorithme Plex)"""
+    logger.info(f"📡 [API] GET /hubs (limit={limit})")
     try:
         hubs = await plex_client.get_discovery_hubs(limit=limit)
+        logger.info(f"   ✅ {len(hubs)} hubs trouvés")
         result = {}
         for hub_title, items in hubs.items():
             result[hub_title] = [
@@ -381,9 +395,10 @@ async def get_hubs(limit: int = 10):
                 }
                 for item in items[:limit]
             ]
+        logger.info(f"   📤 Renvoi {len(result)} hubs")
         return result
     except Exception as e:
-        logger.error(f"❌ Erreur hubs: {e}")
+        logger.error(f"❌ [API] Erreur hubs: {e}")
         return {}
 
 
@@ -396,6 +411,7 @@ async def advanced_search(
     limit: int = 50
 ):
     """Recherche avancée dans les médias"""
+    logger.info(f"📡 [API] GET /search (title={title}, year={year}, unwatched={unwatched}, sort={sort}, limit={limit})")
     try:
         filters = {}
         if year:
@@ -409,6 +425,7 @@ async def advanced_search(
             filters=filters if filters else None,
             limit=limit
         )
+        logger.info(f"   ✅ {len(results)} résultats trouvés")
         
         result = [
             {
@@ -421,23 +438,27 @@ async def advanced_search(
             }
             for v in results.values()
         ]
+        logger.info(f"   📤 Renvoi {len(result)} résultats")
         return result
     except Exception as e:
-        logger.error(f"❌ Erreur search: {e}")
+        logger.error(f"❌ [API] Erreur search: {e}")
         return []
 
 
 @api_router.post("/favorite/{media_id}")
 async def toggle_favorite(media_id: str):
     """Marquer/dé-marquer comme favori"""
+    logger.info(f"📡 [API] POST /favorite/{media_id}")
     try:
         success = await plex_client.mark_as_favorite(media_id)
         if success:
+            logger.info(f"   ✅ Marqué comme favori")
             return {"status": "ok", "message": "Ajouté aux favoris"}
         else:
+            logger.warning(f"   ⚠️ Échec du marquage")
             return {"status": "error", "message": "Erreur lors de l'ajout aux favoris"}
     except Exception as e:
-        logger.error(f"❌ Erreur favorite: {e}")
+        logger.error(f"❌ [API] Erreur favorite: {e}")
         return {"status": "error", "message": str(e)}
 
 

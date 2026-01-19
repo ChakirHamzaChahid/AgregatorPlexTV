@@ -105,27 +105,34 @@ class PlexExtensions:
             Liste des HistoryEntry triée par date récente
         """
         history_entries = []
+        logger.info(f"🔍 [Watch History] Récupération sur les {days_back} derniers jours, limit={limit}")
         try:
             from plexapi.myplex import MyPlexAccount
             account = await asyncio.to_thread(MyPlexAccount, token=self.settings.PLEX_TOKEN)
             resources = await asyncio.to_thread(account.resources)
+            logger.info(f"📊 [Watch History] {len(resources)} ressources trouvées")
             
             # Convertir datetime en timestamp Unix (en secondes, pas millisecondes)
             min_date_timestamp = int((datetime.now() - timedelta(days=days_back)).timestamp())
+            logger.debug(f"⏰ [Watch History] Min timestamp: {min_date_timestamp}")
             
             for resource in resources:
                 if "server" not in resource.provides:
                     continue
                 try:
+                    logger.info(f"🔌 [Watch History] Connexion à {resource.name}...")
                     server = await asyncio.to_thread(resource.connect, timeout=10)
+                    logger.debug(f"   📡 URL: {server.baseurl}")
                     history = await asyncio.to_thread(
                         server.library.history,
                         maxresults=limit,
                         mindate=min_date_timestamp  # Passer timestamp Unix, pas datetime
                     )
+                    logger.info(f"   ✅ [Watch History] {len(history)} entrées récupérées")
                     
                     for item in history:
                         try:
+                            logger.debug(f"   📝 [History] {item.title} - {item.type}")
                             # lastViewedAt est un timestamp Unix (int)
                             watched_at = datetime.fromtimestamp(item.lastViewedAt) if hasattr(item, 'lastViewedAt') and isinstance(item.lastViewedAt, (int, float)) else datetime.now()
                             
@@ -143,14 +150,15 @@ class PlexExtensions:
                                 thumb_url=thumb_url
                             )
                             history_entries.append(entry)
+                            logger.debug(f"   ✔️ Ajouté: {item.title}")
                         except Exception as e:
                             logger.debug(f"⚠️ Erreur parsing item historique: {e}")
                             
                 except Exception as e:
-                    logger.warning(f"⚠️ Erreur historique {resource.name}: {e}")
+                    logger.warning(f"⚠️ [Watch History] Erreur sur {resource.name}: {e}")
                     
         except Exception as e:
-            logger.error(f"❌ Erreur historique: {e}")
+            logger.error(f"❌ [Watch History] Erreur globale: {e}")
         
         # Trier par date décroissante (plus récent en premier)
         history_entries.sort(key=lambda x: x.watched_at, reverse=True)
@@ -168,43 +176,57 @@ class PlexExtensions:
             Liste des SessionInfo pour chaque lecture active
         """
         sessions = []
+        logger.info(f"🔍 [Active Sessions] Récupération des sessions actives...")
         try:
             from plexapi.myplex import MyPlexAccount
             account = await asyncio.to_thread(MyPlexAccount, token=self.settings.PLEX_TOKEN)
             resources = await asyncio.to_thread(account.resources)
+            logger.info(f"📊 [Active Sessions] {len(resources)} ressources trouvées")
             
             for resource in resources:
                 if "server" not in resource.provides:
                     continue
                 try:
+                    logger.info(f"🔌 [Active Sessions] Connexion à {resource.name}...")
                     server = await asyncio.to_thread(resource.connect, timeout=10)
                     active_sessions = await asyncio.to_thread(server.sessions)
+                    logger.info(f"   ✅ [Active Sessions] {len(active_sessions)} sessions actives trouvées")
                     
                     for session in active_sessions:
                         try:
+                            user = session.usernames[0] if hasattr(session, 'usernames') and session.usernames else "Unknown"
+                            logger.debug(f"   👤 [Session] Utilisateur: {user}")
+                            logger.debug(f"   🎬 [Session] Titre: {session.title}")
+                            logger.debug(f"   📺 [Session] Type: {session.type}")
+                            
                             progress = 0
                             if hasattr(session, 'duration') and session.duration and session.duration > 0:
                                 progress = (session.viewOffset / session.duration) * 100 if hasattr(session, 'viewOffset') else 0
+                            logger.debug(f"   ⏱️ [Session] Progression: {progress:.1f}% ({session.viewOffset}/{session.duration})")
+                            
+                            client_name = session.players[0].title if hasattr(session, 'players') and session.players else "Unknown"
+                            logger.debug(f"   🖥️ [Session] Client: {client_name}")
                             
                             session_info = SessionInfo(
-                                user=session.usernames[0] if hasattr(session, 'usernames') and session.usernames else "Unknown",
+                                user=user,
                                 media_title=session.title,
                                 media_type=session.type,
                                 progress_percent=progress,
                                 view_offset=getattr(session, 'viewOffset', 0),
                                 duration=getattr(session, 'duration', 0),
-                                client_name=session.players[0].title if hasattr(session, 'players') and session.players else "Unknown"
+                                client_name=client_name
                             )
                             sessions.append(session_info)
                         except Exception as e:
-                            logger.debug(f"⚠️ Erreur parsing session: {e}")
+                            logger.debug(f"⚠️ [Session] Erreur parsing session: {e}")
                             
                 except Exception as e:
-                    logger.warning(f"⚠️ Erreur sessions {resource.name}: {e}")
+                    logger.warning(f"⚠️ [Active Sessions] Erreur sur {resource.name}: {e}")
                     
         except Exception as e:
-            logger.error(f"❌ Erreur sessions actives: {e}")
+            logger.error(f"❌ [Active Sessions] Erreur globale: {e}")
         
+        logger.info(f"✨ [Active Sessions] Total: {len(sessions)} sessions")
         return sessions
     
     # =========================================================================
@@ -219,22 +241,33 @@ class PlexExtensions:
             Liste des ClientInfo pour chaque client
         """
         clients = []
+        logger.info(f"🔍 [Connected Clients] Récupération des clients connectés...")
         try:
             from plexapi.myplex import MyPlexAccount
             account = await asyncio.to_thread(MyPlexAccount, token=self.settings.PLEX_TOKEN)
+            logger.debug(f"✅ Authentification réussie")
             
             if self.settings.SERVER_NAME:
+                logger.info(f"📍 Recherche du serveur: {self.settings.SERVER_NAME}")
                 resource = await asyncio.to_thread(account.resource, self.settings.SERVER_NAME)
             else:
+                logger.debug(f"📍 Recherche du premier serveur disponible...")
                 resources = await asyncio.to_thread(account.resources)
                 resource = next((r for r in resources if "server" in r.provides), None)
             
             if resource:
+                logger.info(f"🔌 Connexion à {resource.name}...")
                 server = await asyncio.to_thread(resource.connect, timeout=10)
                 plex_clients = await asyncio.to_thread(server.clients)
+                logger.info(f"✅ {len(plex_clients)} clients trouvés")
                 
                 for client in plex_clients:
                     try:
+                        logger.debug(f"   🖥️ [Client] {client.title}")
+                        logger.debug(f"      Platform: {getattr(client, 'platform', 'unknown')}")
+                        logger.debug(f"      Device Class: {getattr(client, 'deviceClass', 'unknown')}")
+                        logger.debug(f"      Disponible: {client.isAvailable if hasattr(client, 'isAvailable') else 'N/A'}")
+                        
                         client_info = ClientInfo(
                             name=client.title,
                             device_class=getattr(client, 'deviceClass', 'unknown'),
@@ -243,12 +276,16 @@ class PlexExtensions:
                             is_playing=False  # À améliorer avec les sessions
                         )
                         clients.append(client_info)
+                        logger.debug(f"      ✔️ Ajouté au résultat")
                     except Exception as e:
-                        logger.debug(f"⚠️ Erreur parsing client: {e}")
+                        logger.debug(f"⚠️ [Client] Erreur parsing: {e}")
+            else:
+                logger.warning(f"⚠️ [Connected Clients] Aucun serveur trouvé")
                         
         except Exception as e:
-            logger.error(f"❌ Erreur clients connectés: {e}")
+            logger.error(f"❌ [Connected Clients] Erreur globale: {e}")
         
+        logger.info(f"✨ [Connected Clients] Total: {len(clients)} clients")
         return clients
     
     # =========================================================================
@@ -388,17 +425,21 @@ class PlexExtensions:
             limit: Nombre max de résultats
         """
         results = {}
+        logger.info(f"🔍 [Advanced Search] Recherche: title={title}, year={year}, unwatched={unwatched}, sort={sort}, filters={filters}")
         try:
             from plexapi.myplex import MyPlexAccount
             account = await asyncio.to_thread(MyPlexAccount, token=self.settings.PLEX_TOKEN)
             resources = await asyncio.to_thread(account.resources)
+            logger.info(f"📊 [Advanced Search] {len(resources)} ressources trouvées")
             
             for resource in resources:
                 if "server" not in resource.provides:
                     continue
                 try:
+                    logger.info(f"🔌 [Advanced Search] Connexion à {resource.name}...")
                     server = await asyncio.to_thread(resource.connect, timeout=10)
                     sections = await asyncio.to_thread(server.library.sections)
+                    logger.debug(f"   📚 {len(sections)} sections trouvées")
                     
                     for section in sections:
                         if section.type not in ["movie", "show"]:
@@ -417,9 +458,12 @@ class PlexExtensions:
                         if filters:
                             search_kwargs.update(filters)
                         
+                        logger.info(f"   🔎 [Advanced Search] Recherche dans '{section.title}' ({section.type})...")
                         items = await asyncio.to_thread(section.search, **search_kwargs)
+                        logger.info(f"   ✅ {len(items)} résultats trouvés")
                         
                         for item in items:
+                            logger.debug(f"   📝 {item.title} ({item.year})")
                             key = f"{item.title}-{item.year}"
                             if key not in results:
                                 media_detail = await self._item_to_media_detail(
@@ -428,11 +472,12 @@ class PlexExtensions:
                                 results[key] = media_detail
                                 
                 except Exception as e:
-                    logger.debug(f"⚠️ Erreur recherche avancée {resource.name}: {e}")
+                    logger.debug(f"⚠️ [Advanced Search] Erreur sur {resource.name}: {e}")
                     
         except Exception as e:
-            logger.error(f"❌ Erreur recherche avancée: {e}")
+            logger.error(f"❌ [Advanced Search] Erreur globale: {e}")
         
+        logger.info(f"✨ [Advanced Search] Total: {len(results)} résultats")
         return results
     
     # =========================================================================
@@ -447,25 +492,33 @@ class PlexExtensions:
             Dict avec hub_title -> liste de MediaDetail
         """
         hubs_dict = {}
+        logger.info(f"🔍 [Discovery Hubs] Récupération des hubs de découverte (limit={limit})...")
         try:
             from plexapi.myplex import MyPlexAccount
             account = await asyncio.to_thread(MyPlexAccount, token=self.settings.PLEX_TOKEN)
             resources = await asyncio.to_thread(account.resources)
+            logger.info(f"📊 [Discovery Hubs] {len(resources)} ressources trouvées")
             
             for resource in resources:
                 if "server" not in resource.provides:
                     continue
                 try:
+                    logger.info(f"🔌 [Discovery Hubs] Connexion à {resource.name}...")
                     server = await asyncio.to_thread(resource.connect, timeout=10)
                     hubs = await asyncio.to_thread(server.library.hubs)
+                    logger.info(f"   ✅ {len(hubs)} hubs trouvés")
                     
                     for hub in hubs[:10]:
                         try:
+                            logger.debug(f"   🎯 [Hub] {hub.title}")
                             hub_items = []
                             if hasattr(hub, 'items'):
-                                items = hub.items[:limit]
+                                logger.debug(f"      Nombre d'items dans ce hub: {len(hub.items) if hub.items else 0}")
+                                items = hub.items[:limit] if hub.items else []
+                                logger.debug(f"      Traitement des {len(items)} premiers items...")
                                 for item in items:
                                     try:
+                                        logger.debug(f"         📝 {item.title}")
                                         media_detail = await self._item_to_media_detail(
                                             item, 
                                             getattr(item, 'type', 'movie'),
@@ -473,20 +526,22 @@ class PlexExtensions:
                                             server
                                         )
                                         hub_items.append(media_detail)
-                                    except:
-                                        pass
+                                    except Exception as e:
+                                        logger.debug(f"         ⚠️ Erreur: {e}")
                             
                             if hub_items and hub.title not in hubs_dict:
+                                logger.debug(f"      ✔️ Hub '{hub.title}' ajouté avec {len(hub_items)} items")
                                 hubs_dict[hub.title] = hub_items
                         except Exception as e:
-                            logger.debug(f"⚠️ Erreur parsing hub: {e}")
+                            logger.debug(f"⚠️ [Discovery Hubs] Erreur parsing hub: {e}")
                             
                 except Exception as e:
-                    logger.warning(f"⚠️ Erreur hubs {resource.name}: {e}")
+                    logger.warning(f"⚠️ [Discovery Hubs] Erreur sur {resource.name}: {e}")
                     
         except Exception as e:
-            logger.error(f"❌ Erreur découverte hubs: {e}")
+            logger.error(f"❌ [Discovery Hubs] Erreur globale: {e}")
         
+        logger.info(f"✨ [Discovery Hubs] Total: {len(hubs_dict)} hubs avec contenu")
         return hubs_dict
     
     # =========================================================================
