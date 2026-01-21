@@ -803,13 +803,13 @@ async def proxy_image(url: str, thumb: str, token: str, width: int = 400):
 # =============================================================================
 
 @app.get("/playlist/{play_id}.m3u")
-async def get_playlist(play_id: str, server: str, path: str, token: str, title: str = "Video", request: Request = None):
+async def get_playlist(play_id: str, server: str, path: str, token: str, title: str = "Video", offset: int = 0, request: Request = None):
     base_url = str(request.base_url).rstrip('/') if request else ""
-    stream_url = f"{base_url}/vlc-stream/{play_id}?server={urllib.parse.quote(server)}&path={urllib.parse.quote(path)}&token={token}"
+    stream_url = f"{base_url}/vlc-stream/{play_id}?server={urllib.parse.quote(server)}&path={urllib.parse.quote(path)}&token={token}&offset={offset}"
     return Response(content=f"#EXTM3U\n#EXTINF:-1,{title}\n{stream_url}", media_type="application/x-mpegurl")
 
 @app.get("/vlc-stream/{play_id}")
-async def stream_video(play_id: str, server: str, path: str, token: str):
+async def stream_video(play_id: str, server: str, path: str, token: str, offset: int = 0):
     """
     Gère le streaming vidéo relayé depuis Plex vers le client (VLC/Player).
     
@@ -826,18 +826,20 @@ async def stream_video(play_id: str, server: str, path: str, token: str):
 
         raise HTTPException(status_code=503, detail="Serveur saturé")
 
-    params_opti = {
+    # On tente d'abord la QUALITÉ MAXIMALE (Direct Play / Direct Stream)
+    params_direct = {
+        "path": path, "mediaIndex": 0, "partIndex": 0, "protocol": "http",
+        "offset": offset, "fastSeek": 1, "directPlay": 1, "directStream": 1,
+        "session": play_id, "X-Plex-Token": token, "copyts": 1
+    }
+
+    # Fallback : Transcodage (720p optimisé) si le Direct Play échoue
+    params_transcode = {
         "path": path, "mediaIndex": 0, "partIndex": 0, "protocol": "http", 
-        "offset": 0, "fastSeek": 1, "directPlay": 0, "directStream": 1, 
+        "offset": offset, "fastSeek": 1, "directPlay": 0, "directStream": 1, 
         "autoAdjustQuality": 1, "videoQuality": 60, "videoResolution": "1280x720", 
         "maxVideoBitrate": "4000", "videoCodec": "h264", "audioCodec": "aac", 
         "session": play_id, "X-Plex-Token": token, "copyts": 1, "X-Plex-Incomplete-Segments": 1
-    }
-
-    params_fallback = {
-        "path": path, "mediaIndex": 0, "partIndex": 0, "protocol": "http",
-        "offset": 0, "fastSeek": 1, "directPlay": 1, "directStream": 1,
-        "session": play_id, "X-Plex-Token": token, "copyts": 1
     }
 
     async def iter_file():
@@ -849,24 +851,27 @@ async def stream_video(play_id: str, server: str, path: str, token: str):
             logger.info(f"▶️ START Stream {play_id}")
             use_fallback = False
             
+            # TENTATIVE 1 : DIRECT PLAY
             try:
                 async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", 
-                                              params=params_opti, headers=headers) as r:
+                                              params=params_direct, headers=headers) as r:
                     if r.status_code == 200:
+                        logger.info(f"✅ Stream Direct Play OK")
                         async for chunk in r.aiter_bytes(chunk_size=settings.STREAM_CHUNK_SIZE):
                             yield chunk
                     else:
-                        logger.warning(f"⚠️ Transcode 720p refusé ({r.status_code}) -> Fallback")
+                        logger.warning(f"⚠️ Direct Play refusé ({r.status_code}) -> Tentative Transcode")
                         use_fallback = True
             except Exception as e:
-                logger.error(f"❌ Erreur stream opti: {e}")
+                logger.error(f"❌ Erreur Direct Play: {e}")
                 use_fallback = True
 
+            # TENTATIVE 2 : TRANSCODAGE (Fallback)
             if use_fallback:
                 async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", 
-                                              params=params_fallback, headers=headers) as r:
+                                              params=params_transcode, headers=headers) as r:
                     if r.status_code == 200:
-                        logger.info(f"✅ Stream Direct Play OK")
+                        logger.info(f"✅ Stream Transcode OK")
                         async for chunk in r.aiter_bytes(chunk_size=settings.STREAM_CHUNK_SIZE):
                             yield chunk
                         
