@@ -658,6 +658,10 @@ class PlexClient(PlexExtensions):
             # --- 1. Extraction de la clé unique (IMDB > TMDB > Titre-Année) ---
             key, key_source = self._get_unique_key(item)
 
+            if key_source == "title-year":
+                logger.warning(f"⏩ [STRICT] Skipping '{item.title}' (No IMDB/TMDB ID found)")
+                return
+
             # Extraction Labels (Feature 10)
             labels = [l.tag for l in item.labels] if hasattr(item, 'labels') else []
 
