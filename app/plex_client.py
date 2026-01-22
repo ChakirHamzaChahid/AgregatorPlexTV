@@ -680,8 +680,9 @@ class PlexClient(PlexExtensions):
                                 "key": getattr(extra, 'key', None),
                                 "thumb": t_thumb
                             })
+                            logger.info(f"   🎥 Trailer trouvé pour {item.title}: {extra.title}")
             except Exception as e:
-                # logger.debug(f"   ⚠️ Pas de trailers pour {item.title}: {e}")
+                logger.error(f"   ⚠️ Erreur Trailers pour {item.title}: {e}")
                 pass
 
             imdb_rating = None
