@@ -643,13 +643,13 @@ class PlexClient(PlexExtensions):
                             logger.error(f"❌ Erreur scan série '{item.title}': {e}")
 
 
-                    self._process_item(item, section.type, resource, server, episodes_data)
+                    await self._process_item(item, section.type, resource, server, episodes_data)
             
             logger.info(f"✅ [Scan] {resource.name} OK ({latency}ms)")
         except Exception as e:
             logger.warning(f"⚠️ [Scan] Échec {resource.name}: {str(e)}")
 
-    def _process_item(self, item, section_type, resource, server, episodes_data=[]):
+    async def _process_item(self, item, section_type, resource, server, episodes_data=[]):
         """
         Normalise un élément brut Plex (Film/Série) en une structure intermédiaire.
         Gère la détection IMDB pour la clé unique de fusion avec fallbacks progressifs.
@@ -663,21 +663,26 @@ class PlexClient(PlexExtensions):
 
             # Extraction Trailers (Feature 9)
             trailers_list = []
-            if hasattr(item, 'extras'):
-                 # Note: item.extras peut faire un appel réseau, attention à la perf
-                 # On suppose que lors d'un scan complet 'item' a déjà ces infos ou que c'est acceptable
-                 # Pour optimiser, on pourrait le faire en lazy loading, mais pour le cache on le veut direct
-                 try:
-                     # On ne peut pas appeler item.extras() en async ici facilement si c'est une méthode bloquante
-                     # Mais plexapi est synchrone (wrappé dans asyncio.to_thread pour les appels parents)
-                     # Ici on est DANS un thread pool via _process_item appelé par refresh_library ? 
-                     # Non refresh_library appelle _connect_and_scan -> _process_item
-                     # Et _process_item est synchrone. Donc on peut utiliser les méthodes synchrones de l'objet item.
-                     pass 
-                     # MAIS: item.extras force souvent un reload. 
-                     # On va tenter d'accéder à la propriété si chargée, sinon skip pour perf scan global
-                     # Si 'extras' n'est pas préchargé, ça va ralentir le scan énormément
-                 except: pass
+            try:
+                # Récupération asynchrone des extras (trailers)
+                # Note: Ceci ajoute un appel réseau par item, impact potentiel sur le temps de scan
+                if hasattr(item, 'extras'):
+                    extras = await asyncio.to_thread(item.extras)
+                    for extra in extras:
+                        if getattr(extra, 'subtype', '') == 'trailer':
+                            t_thumb = ""
+                            if hasattr(extra, 'thumb') and extra.thumb:
+                                t_thumb = extra.thumb # Sera proxifié plus tard si besoin, ou ici
+                                
+                            trailers_list.append({
+                                "title": extra.title,
+                                "duration": getattr(extra, 'duration', 0),
+                                "key": getattr(extra, 'key', None),
+                                "thumb": t_thumb
+                            })
+            except Exception as e:
+                # logger.debug(f"   ⚠️ Pas de trailers pour {item.title}: {e}")
+                pass
 
             imdb_rating = None
             rotten_rating = None
@@ -813,8 +818,7 @@ class PlexClient(PlexExtensions):
                 "view_count": view_count,
                 "episodes": episodes_data,
                 "labels": labels,
-                # "trailers": trailers_list # On évite de surcharger le scan global avec les trailers pour l'instant
-                # On les chargera à la demande via /movies/{id} ou on fera un update spécifique
+                "trailers": trailers_list
             })
             logger.info(f"Media Fetched '{item.title}' from {resource.name}")
         except Exception as e:
@@ -872,6 +876,19 @@ class PlexClient(PlexExtensions):
                         start_time=m['start_time'], end_time=m['end_time']
                     ))
 
+            # Construction Trailers
+            trailer_objs = []
+            if 'trailers' in main:
+                for t in main['trailers']:
+                    t_thumb = ""
+                    if t['thumb']:
+                         t_thumb = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(t['thumb'])}&token={main['server_token']}&width=400"
+                    trailer_objs.append(Trailer(
+                        title=t['title'], duration=t['duration'], 
+                        key=t['key'], thumb_url=t_thumb, 
+                        stream_url=None # Sera résolu dynamiquement si besoin ou via key
+                    ))
+                    
             media_item = MediaDetail(
                 id=key, type=main['type'], title=main['title'], year=main['year'],
                 added_at=main['added_at'], content_rating=main['content_rating'],
@@ -883,6 +900,7 @@ class PlexClient(PlexExtensions):
                 runtime=main['duration'], badges=main['badges'],
                 chapters=chapter_objs,
                 markers=marker_objs,
+                trailers=trailer_objs,
                 view_offset=main.get('view_offset', 0),
                 view_count=main.get('view_count', 0),
                 audio_tracks=[AudioTrack(**a) for a in main['audio_tracks']],
