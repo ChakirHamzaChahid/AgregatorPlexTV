@@ -809,32 +809,45 @@ async def get_playlist(play_id: str, server: str, path: str, token: str, title: 
     return Response(content=f"#EXTM3U\n#EXTINF:-1,{title}\n{stream_url}", media_type="application/x-mpegurl")
 
 @app.get("/vlc-stream/{play_id}")
-async def stream_video(play_id: str, server: str, path: str, token: str, offset: int = 0):
+async def stream_video(play_id: str, server: str, path: str, token: str, offset: int = 0, quality: str = "original"):
     """
     Gère le streaming vidéo relayé depuis Plex vers le client (VLC/Player).
     
-    Fonctionnement :
-    1. Tente d'initier un transcodage "léger" (remux) ou universel via l'API Plex.
-    2. Si le transcodage échoue ou est refusé, bascule (fallback) sur le Direct Stream/Direct Play.
-    3. Utilise un sémaphore pour limiter le nombre de streams concurrents globaux.
+    Arguments:
+        quality: "original" (Maximum/Direct), "1080p" (Transcode High), "720p" (Transcode Medium)
+    
+    Fonctionnement (Chaîne de responsabilité) :
+    1. Si quality="original" : Tentative Direct Play -> échec -> Transcode 1080p -> échec -> Transcode 720p
+    2. Si quality="1080p"    : Tentative Transcode 1080p -> échec -> Transcode 720p
+    3. Si quality="720p"     : Tentative Transcode 720p
     """
     base_plex = server.rstrip('/')
     headers = plex_client.get_chrome_headers(token, play_id)
     
     if stream_semaphore.locked():
         logger.warning(f"⛔ [Worker {os.getpid()}] Rejet stream {play_id} : Slots pleins")
-
         raise HTTPException(status_code=503, detail="Serveur saturé")
 
-    # On tente d'abord la QUALITÉ MAXIMALE (Direct Play / Direct Stream)
+    # --- DEFINITION DES PROFILS DE QUALITÉ ---
+    
+    # 1. DIRECT PLAY / STREAM (Original)
     params_direct = {
         "path": path, "mediaIndex": 0, "partIndex": 0, "protocol": "http",
         "offset": offset, "fastSeek": 1, "directPlay": 1, "directStream": 1,
         "session": play_id, "X-Plex-Token": token, "copyts": 1
     }
 
-    # Fallback : Transcodage (720p optimisé) si le Direct Play échoue
-    params_transcode = {
+    # 2. TRANSCODE 1080p (High Quality - 8Mbps)
+    params_1080p = {
+        "path": path, "mediaIndex": 0, "partIndex": 0, "protocol": "http", 
+        "offset": offset, "fastSeek": 1, "directPlay": 0, "directStream": 1, 
+        "autoAdjustQuality": 1, "videoQuality": 90, "videoResolution": "1920x1080", 
+        "maxVideoBitrate": "8000", "videoCodec": "h264", "audioCodec": "aac", 
+        "session": play_id, "X-Plex-Token": token, "copyts": 1, "X-Plex-Incomplete-Segments": 1
+    }
+
+    # 3. TRANSCODE 720p (Medium Quality - 4Mbps)
+    params_720p = {
         "path": path, "mediaIndex": 0, "partIndex": 0, "protocol": "http", 
         "offset": offset, "fastSeek": 1, "directPlay": 0, "directStream": 1, 
         "autoAdjustQuality": 1, "videoQuality": 60, "videoResolution": "1280x720", 
@@ -842,39 +855,58 @@ async def stream_video(play_id: str, server: str, path: str, token: str, offset:
         "session": play_id, "X-Plex-Token": token, "copyts": 1, "X-Plex-Incomplete-Segments": 1
     }
 
+    # --- CONSTRUCTION DE LA CHAÎNE D'ESSAIS ---
+    attempts = []
+    
+    q = quality.lower() if quality else "original"
+    
+    if q == "original":
+        attempts.append(("Direct Play", params_direct))
+        attempts.append(("Transcode 1080p", params_1080p))
+        attempts.append(("Transcode 720p", params_720p))
+    elif q == "1080p":
+        attempts.append(("Transcode 1080p", params_1080p))
+        attempts.append(("Transcode 720p", params_720p))
+    elif q == "720p":
+        attempts.append(("Transcode 720p", params_720p))
+    else:
+        # Fallback default
+        attempts.append(("Direct Play", params_direct))
+        attempts.append(("Transcode 1080p", params_1080p))
+        attempts.append(("Transcode 720p", params_720p))
+
     async def iter_file():
-         # Sécurité : Utilisation du token configuré si absent de l'URL
-        token_to_use = token if token else settings.PLEX_TOKEN
-        
         try:
             await stream_semaphore.acquire()
-            logger.info(f"▶️ START Stream {play_id}")
-            use_fallback = False
+            logger.info(f"▶️ START Stream {play_id} | Quality: {q}")
             
-            # TENTATIVE 1 : DIRECT PLAY
-            try:
-                async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", 
-                                              params=params_direct, headers=headers) as r:
-                    if r.status_code == 200:
-                        logger.info(f"✅ Stream Direct Play OK")
-                        async for chunk in r.aiter_bytes(chunk_size=settings.STREAM_CHUNK_SIZE):
-                            yield chunk
-                    else:
-                        logger.warning(f"⚠️ Direct Play refusé ({r.status_code}) -> Tentative Transcode")
-                        use_fallback = True
-            except Exception as e:
-                logger.error(f"❌ Erreur Direct Play: {e}")
-                use_fallback = True
+            stream_established = False
+            
+            for index, (label, params) in enumerate(attempts):
+                if stream_established: break
+                
+                logger.info(f"   🔄 Tentative {index+1}/{len(attempts)} : {label}")
+                try:
+                    async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", 
+                                                  params=params, headers=headers) as r:
+                        if r.status_code == 200:
+                            logger.info(f"   ✅ Succès : {label}")
+                            stream_established = True
+                            async for chunk in r.aiter_bytes(chunk_size=settings.STREAM_CHUNK_SIZE):
+                                yield chunk
+                            # Si on sort de la boucle de lecture (fin de stream ou client deco), on s'arrête
+                            break 
+                        else:
+                            logger.warning(f"   ⚠️ Échec {label} (Code {r.status_code}) -> Next")
+                            # Continue to next attempt
+                            
+                except Exception as e:
+                    logger.error(f"   ❌ Erreur Technique {label}: {e}")
+                    # Continue to next attempt
+            
+            if not stream_established:
+                 logger.error(f"❌ TOUTES les tentatives ont échoué pour {play_id}")
 
-            # TENTATIVE 2 : TRANSCODAGE (Fallback)
-            if use_fallback:
-                async with http_client.stream("GET", f"{base_plex}/video/:/transcode/universal/start", 
-                                              params=params_transcode, headers=headers) as r:
-                    if r.status_code == 200:
-                        logger.info(f"✅ Stream Transcode OK")
-                        async for chunk in r.aiter_bytes(chunk_size=settings.STREAM_CHUNK_SIZE):
-                            yield chunk
-                        
         except Exception as e:
             logger.error(f"❌ Erreur Critique Stream {play_id}: {e}")
         finally:
