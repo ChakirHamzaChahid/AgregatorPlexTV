@@ -17,7 +17,7 @@ from plexapi.myplex import MyPlexAccount
 # -----------------------
 
 from app.config import settings
-from app.models import MediaDetail, Source, ServerInfo, SeasonDetail, EpisodeDetail, AudioTrack, Subtitle, Chapter, Collection, Marker, SimilarItem
+from app.models import MediaDetail, Source, ServerInfo, SeasonDetail, EpisodeDetail, AudioTrack, Subtitle, Chapter, Collection, Marker, SimilarItem, Trailer
 from app.plex_extensions import PlexExtensions
 
 logger = logging.getLogger("PlexClient")
