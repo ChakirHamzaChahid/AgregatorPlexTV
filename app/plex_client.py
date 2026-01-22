@@ -884,10 +884,17 @@ class PlexClient(PlexExtensions):
                     t_thumb = ""
                     if t['thumb']:
                          t_thumb = f"/proxy-image?url={urllib.parse.quote(main['server_url'])}&thumb={urllib.parse.quote(t['thumb'])}&token={main['server_token']}&width=400"
+                    
+                    # Fix: Generate valid stream URL for backend proxy
+                    t_play_id = str(uuid.uuid4())
+                    # Use trailer key as path
+                    t_params = f"server={urllib.parse.quote(main['server_url'])}&path={urllib.parse.quote(t['key'])}&token={main['server_token']}"
+                    t_stream_url = f"/vlc-stream/{t_play_id}?{t_params}"
+
                     trailer_objs.append(Trailer(
                         title=t['title'], duration=t['duration'], 
                         key=t['key'], thumb_url=t_thumb, 
-                        stream_url=None # Sera résolu dynamiquement si besoin ou via key
+                        stream_url=t_stream_url
                     ))
                     
             media_item = MediaDetail(
